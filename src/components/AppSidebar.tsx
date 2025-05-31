@@ -24,7 +24,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarHeader,
-  useSidebar,
 } from "@/components/ui/sidebar";
 
 const navigationItems = [
@@ -101,7 +100,6 @@ const groupLabels = {
 };
 
 export function AppSidebar() {
-  const { collapsed } = useSidebar();
   const location = useLocation();
   const currentPath = location.pathname;
 
@@ -122,29 +120,25 @@ export function AppSidebar() {
   }, {} as Record<string, typeof navigationItems>);
 
   return (
-    <Sidebar className={collapsed ? "w-16" : "w-64"} collapsible>
+    <Sidebar className="w-64">
       <SidebarHeader className="p-4 border-b">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
             <Zap className="w-5 h-5 text-white" />
           </div>
-          {!collapsed && (
-            <div>
-              <h2 className="text-lg font-bold text-gray-900">InfluencerFlow</h2>
-              <p className="text-xs text-gray-500">AI Platform</p>
-            </div>
-          )}
+          <div>
+            <h2 className="text-lg font-bold text-gray-900">InfluencerFlow</h2>
+            <p className="text-xs text-gray-500">AI Platform</p>
+          </div>
         </div>
       </SidebarHeader>
 
       <SidebarContent className="px-2 py-4">
         {Object.entries(groupedItems).map(([groupKey, items]) => (
           <SidebarGroup key={groupKey} className="mb-4">
-            {!collapsed && (
-              <SidebarGroupLabel className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
-                {groupLabels[groupKey as keyof typeof groupLabels]}
-              </SidebarGroupLabel>
-            )}
+            <SidebarGroupLabel className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+              {groupLabels[groupKey as keyof typeof groupLabels]}
+            </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {items.map((item) => (
@@ -155,7 +149,7 @@ export function AppSidebar() {
                         className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${getNavClass(item.url)}`}
                       >
                         <item.icon className="w-5 h-5 flex-shrink-0" />
-                        {!collapsed && <span className="font-medium">{item.title}</span>}
+                        <span className="font-medium">{item.title}</span>
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
