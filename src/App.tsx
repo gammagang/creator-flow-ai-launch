@@ -7,6 +7,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 
 // Pages
+import Home from "./pages/Home";
+import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import BrandProfile from "./pages/BrandProfile";
 import CreatorDiscovery from "./pages/CreatorDiscovery";
@@ -16,8 +18,10 @@ import CampaignList from "./pages/CampaignList";
 import CampaignDetails from "./pages/CampaignDetails";
 import Outreach from "./pages/Outreach";
 import Negotiation from "./pages/Negotiation";
+import VoiceNegotiation from "./pages/VoiceNegotiation";
 import Contracts from "./pages/Contracts";
 import ContractDetails from "./pages/ContractDetails";
+import ESignature from "./pages/ESignature";
 import Payments from "./pages/Payments";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
@@ -32,7 +36,14 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Layout />}>
+          {/* Public routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/voice-negotiation/:id" element={<VoiceNegotiation />} />
+          <Route path="/e-signature/:id" element={<ESignature />} />
+          
+          {/* Protected routes with layout */}
+          <Route path="/app" element={<Layout />}>
             <Route index element={<Dashboard />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="brand-profile" element={<BrandProfile />} />
@@ -49,6 +60,7 @@ const App = () => (
             <Route path="analytics" element={<Analytics />} />
             <Route path="settings" element={<Settings />} />
           </Route>
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

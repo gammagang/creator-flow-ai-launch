@@ -30,61 +30,61 @@ import {
 const navigationItems = [
   {
     title: "Dashboard",
-    url: "/dashboard",
+    url: "/app/dashboard",
     icon: LayoutDashboard,
     group: "main"
   },
   {
     title: "Brand Profile",
-    url: "/brand-profile", 
+    url: "/app/brand-profile", 
     icon: Building,
     group: "main"
   },
   {
     title: "Creator Discovery",
-    url: "/creators",
+    url: "/app/creators",
     icon: Users,
     group: "creators"
   },
   {
     title: "Campaigns",
-    url: "/campaigns",
+    url: "/app/campaigns",
     icon: Megaphone,
     group: "campaigns"
   },
   {
     title: "Outreach",
-    url: "/outreach",
+    url: "/app/outreach",
     icon: Mail,
     group: "outreach"
   },
   {
     title: "Negotiation",
-    url: "/negotiation",
+    url: "/app/negotiation",
     icon: MessageSquare,
     group: "outreach"
   },
   {
     title: "Contracts",
-    url: "/contracts",
+    url: "/app/contracts",
     icon: FileText,
     group: "deals"
   },
   {
     title: "Payments",
-    url: "/payments",
+    url: "/app/payments",
     icon: CreditCard,
     group: "deals"
   },
   {
     title: "Analytics",
-    url: "/analytics",
+    url: "/app/analytics",
     icon: BarChart3,
     group: "insights"
   },
   {
     title: "Settings",
-    url: "/settings",
+    url: "/app/settings",
     icon: Settings,
     group: "account"
   }
@@ -101,7 +101,7 @@ const groupLabels = {
 };
 
 export function AppSidebar() {
-  const { collapsed } = useSidebar();
+  const { state } = useSidebar();
   const location = useLocation();
   const currentPath = location.pathname;
 
@@ -121,14 +121,16 @@ export function AppSidebar() {
     return acc;
   }, {} as Record<string, typeof navigationItems>);
 
+  const isCollapsed = state === "collapsed";
+
   return (
-    <Sidebar className={collapsed ? "w-16" : "w-64"} collapsible>
+    <Sidebar className={isCollapsed ? "w-16" : "w-64"} collapsible="icon">
       <SidebarHeader className="p-4 border-b">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
             <Zap className="w-5 h-5 text-white" />
           </div>
-          {!collapsed && (
+          {!isCollapsed && (
             <div>
               <h2 className="text-lg font-bold text-gray-900">InfluencerFlow</h2>
               <p className="text-xs text-gray-500">AI Platform</p>
@@ -140,7 +142,7 @@ export function AppSidebar() {
       <SidebarContent className="px-2 py-4">
         {Object.entries(groupedItems).map(([groupKey, items]) => (
           <SidebarGroup key={groupKey} className="mb-4">
-            {!collapsed && (
+            {!isCollapsed && (
               <SidebarGroupLabel className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
                 {groupLabels[groupKey as keyof typeof groupLabels]}
               </SidebarGroupLabel>
@@ -155,7 +157,7 @@ export function AppSidebar() {
                         className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${getNavClass(item.url)}`}
                       >
                         <item.icon className="w-5 h-5 flex-shrink-0" />
-                        {!collapsed && <span className="font-medium">{item.title}</span>}
+                        {!isCollapsed && <span className="font-medium">{item.title}</span>}
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
