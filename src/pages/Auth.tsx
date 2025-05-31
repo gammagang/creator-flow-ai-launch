@@ -6,9 +6,13 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Zap } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -19,6 +23,7 @@ const Auth = () => {
     contactName: "",
     phone: ""
   });
+  const navigate = useNavigate();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -27,17 +32,81 @@ const Auth = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleGoogleAuth = async () => {
+    try {
+      setLoading(true);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`
+        }
+      });
+
+      if (error) {
+        toast.error(error.message);
+      }
+    } catch (error) {
+      toast.error("An error occurred during Google authentication");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement authentication logic with Supabase
-    console.log("Form submitted:", formData);
-    
-    if (isLogin) {
-      // TODO: Handle login
-      console.log("Logging in with:", { email: formData.email, password: formData.password });
-    } else {
-      // TODO: Handle signup
-      console.log("Signing up brand with:", formData);
+    setLoading(true);
+
+    try {
+      if (isLogin) {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: formData.email,
+          password: formData.password,
+        });
+
+        if (error) {
+          toast.error(error.message);
+          return;
+        }
+
+        if (data.user) {
+          toast.success("Logged in successfully!");
+          navigate("/dashboard");
+        }
+      } else {
+        // Validate passwords match
+        if (formData.password !== formData.confirmPassword) {
+          toast.error("Passwords do not match");
+          return;
+        }
+
+        const { data, error } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/dashboard`,
+            data: {
+              brand_name: formData.brandName,
+              website_url: formData.websiteUrl,
+              contact_name: formData.contactName,
+              phone: formData.phone,
+              description: formData.description,
+            }
+          }
+        });
+
+        if (error) {
+          toast.error(error.message);
+          return;
+        }
+
+        if (data.user) {
+          toast.success("Account created successfully! Please check your email to verify your account.");
+        }
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -83,6 +152,7 @@ const Auth = () => {
                   onChange={handleInputChange}
                   placeholder="brand@company.com"
                   required
+                  disabled={loading}
                 />
               </div>
 
@@ -97,6 +167,7 @@ const Auth = () => {
                   onChange={handleInputChange}
                   placeholder="Enter your password"
                   required
+                  disabled={loading}
                 />
               </div>
 
@@ -113,6 +184,7 @@ const Auth = () => {
                       onChange={handleInputChange}
                       placeholder="Confirm your password"
                       required
+                      disabled={loading}
                     />
                   </div>
 
@@ -125,6 +197,7 @@ const Auth = () => {
                       onChange={handleInputChange}
                       placeholder="Your Brand Name"
                       required
+                      disabled={loading}
                     />
                   </div>
 
@@ -138,6 +211,7 @@ const Auth = () => {
                       onChange={handleInputChange}
                       placeholder="https://yourbrand.com"
                       required
+                      disabled={loading}
                     />
                   </div>
 
@@ -150,6 +224,7 @@ const Auth = () => {
                       onChange={handleInputChange}
                       placeholder="John Doe"
                       required
+                      disabled={loading}
                     />
                   </div>
 
@@ -162,6 +237,7 @@ const Auth = () => {
                       value={formData.phone}
                       onChange={handleInputChange}
                       placeholder="+1 (555) 123-4567"
+                      disabled={loading}
                     />
                   </div>
 
@@ -174,13 +250,14 @@ const Auth = () => {
                       onChange={handleInputChange}
                       placeholder="Tell us about your brand..."
                       rows={3}
+                      disabled={loading}
                     />
                   </div>
                 </>
               )}
 
-              <Button type="submit" className="w-full">
-                {isLogin ? "Sign In" : "Create Account"}
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Please wait..." : (isLogin ? "Sign In" : "Create Account")}
               </Button>
             </form>
 
@@ -192,13 +269,14 @@ const Auth = () => {
                   type="button"
                   onClick={() => setIsLogin(!isLogin)}
                   className="ml-1 text-blue-600 hover:text-blue-700 font-medium"
+                  disabled={loading}
                 >
                   {isLogin ? "Sign up" : "Sign in"}
                 </button>
               </p>
             </div>
 
-            {/* Google OAuth placeholder */}
+            {/* Google OAuth */}
             <div className="mt-4">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
@@ -209,7 +287,13 @@ const Auth = () => {
                 </div>
               </div>
               
-              <Button variant="outline" className="w-full mt-4" type="button">
+              <Button 
+                variant="outline" 
+                className="w-full mt-4" 
+                type="button"
+                onClick={handleGoogleAuth}
+                disabled={loading}
+              >
                 <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
                   <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                   <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
