@@ -1,9 +1,26 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
+import Layout from "./components/Layout";
+
+// Pages
+import Dashboard from "./pages/Dashboard";
+import BrandProfile from "./pages/BrandProfile";
+import CreatorDiscovery from "./pages/CreatorDiscovery";
+import CreatorProfile from "./pages/CreatorProfile";
+import CampaignCreate from "./pages/CampaignCreate";
+import CampaignList from "./pages/CampaignList";
+import CampaignDetails from "./pages/CampaignDetails";
+import Outreach from "./pages/Outreach";
+import Negotiation from "./pages/Negotiation";
+import Contracts from "./pages/Contracts";
+import ContractDetails from "./pages/ContractDetails";
+import Payments from "./pages/Payments";
+import Analytics from "./pages/Analytics";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -15,8 +32,23 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="brand-profile" element={<BrandProfile />} />
+            <Route path="creators" element={<CreatorDiscovery />} />
+            <Route path="creators/:id" element={<CreatorProfile />} />
+            <Route path="campaigns" element={<CampaignList />} />
+            <Route path="campaigns/create" element={<CampaignCreate />} />
+            <Route path="campaigns/:id" element={<CampaignDetails />} />
+            <Route path="outreach" element={<Outreach />} />
+            <Route path="negotiation" element={<Negotiation />} />
+            <Route path="contracts" element={<Contracts />} />
+            <Route path="contracts/:id" element={<ContractDetails />} />
+            <Route path="payments" element={<Payments />} />
+            <Route path="analytics" element={<Analytics />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
