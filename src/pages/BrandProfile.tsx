@@ -206,16 +206,6 @@ const BrandProfile = () => {
             />
           </div>
           <div>
-            <Label htmlFor="contactName">Contact Person</Label>
-            <Input
-              id="contactName"
-              name="contactName"
-              placeholder="Contact Person Name"
-              value={formData.contactName}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div>
             <Label htmlFor="phone">Phone Number</Label>
             <Input
               id="phone"
