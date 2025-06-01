@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -49,8 +50,9 @@ interface Company {
   description?: string;
 }
 
-const CreatorManagement = () => {
-  const { campaignId } = useParams();
+const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
+  console.log("CreatorManagement component rendered", campaignId);
+
   const [company, setCompany] = useState<Company | null>(null);
   const [creators, setCreators] = useState<CampaignCreator[]>([]);
   const [loading, setLoading] = useState(true);
@@ -61,18 +63,11 @@ const CreatorManagement = () => {
       try {
         setLoading(true);
 
-        // Fetch company details
-        const companyResponse = await apiService.get<{ data: Company }>(
-          "/company/mine"
-        );
-        setCompany(companyResponse.data);
-
-        // Fetch campaign creators
         const creatorsResponse = await apiService.get<{
           data: CampaignCreator[];
-        }>(`/${campaignId}/creator`);
+        }>(`/campaign/${campaignId}/creator`);
         setCreators(creatorsResponse.data);
-      } catch (err: any) {
+      } catch (err) {
         console.error("Error fetching data:", err);
         setError(err.response?.data?.message || "Failed to fetch data");
       } finally {

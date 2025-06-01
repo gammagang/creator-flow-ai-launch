@@ -259,11 +259,6 @@ const CreatorDiscovery = () => {
         title: "Creator Added Successfully",
         description: `${result.creatorName} has been added to ${result.campaignName}`,
       });
-
-      console.log(
-        `Successfully added creator ${creatorId} to campaign ${campaignId}`,
-        result
-      );
     } catch (error) {
       toast({
         title: "Error Adding Creator",

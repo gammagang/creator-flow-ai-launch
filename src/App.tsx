@@ -61,13 +61,18 @@ const App = () => (
               <Route path="campaigns" element={<CampaignList />} />
               <Route path="campaigns/create" element={<CampaignCreate />} />
               <Route path="campaigns/:id" element={<CampaignDetails />} />
-              <Route path="campaigns/:campaignId/creator-management" element={<CreatorManagement />} />
               <Route
                 path="campaigns/:campaignId/creators/:id"
                 element={<CreatorDetails />}
               >
-                <Route path="creator-management" element={<CreatorManagementTab />} />
-                <Route path="content-management" element={<ContentManagementTab />} />
+                <Route
+                  path="creator-management"
+                  element={<CreatorManagementTab />}
+                />
+                <Route
+                  path="content-management"
+                  element={<ContentManagementTab />}
+                />
                 <Route path="analytics" element={<AnalyticsTab />} />
               </Route>
               <Route path="outreach" element={<Outreach />} />

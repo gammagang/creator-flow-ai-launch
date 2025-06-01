@@ -74,7 +74,7 @@ interface DiscoveredCreator {
   category?: string;
   age?: number;
   gender?: string;
-  location?: string;
+  location?: string | null;
   tier: string;
   engagement_rate: number;
   email?: string;

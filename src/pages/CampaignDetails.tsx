@@ -1,154 +1,88 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CampaignHeader from "@/components/campaign/CampaignHeader";
 import CampaignProgress from "@/components/campaign/CampaignProgress";
 import CampaignStats from "@/components/campaign/CampaignStats";
+import CreatorManagement from "@/pages/CreatorManagement";
 import CampaignOverview from "@/components/campaign/CampaignOverview";
-import CampaignCreators from "@/components/campaign/CampaignCreators";
-import CampaignContent from "@/components/campaign/CampaignContent";
 import CampaignAnalytics from "@/components/campaign/CampaignAnalytics";
+import { campaignAPI } from "@/services/campaignApi";
+import { toast } from "sonner";
+
+// Define the campaign type based on what the components expect
+interface CampaignData {
+  id: number;
+  name: string;
+  status: string;
+  budget: string;
+  spent: string;
+  creatorsContacted: number;
+  creatorsResponded: number;
+  contractsSigned: number;
+  contentDelivered: number;
+  startDate: string;
+  endDate: string;
+  progress: number;
+}
 
 const CampaignDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
 
+  // State for campaign data
+  const [campaign, setCampaign] = useState<CampaignData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   // Get the active tab from URL or default to 'overview'
   const activeTab = location.hash.replace("#", "") || "overview";
 
-  // TODO: Replace with real campaign data based on ID
-  const campaigns = [
-    {
-      id: 1,
-      name: "Summer Launch 2024",
-      status: "active",
-      budget: "$15,000",
-      spent: "$8,200",
-      creatorsContacted: 24,
-      creatorsResponded: 16,
-      contractsSigned: 12,
-      contentDelivered: 8,
-      startDate: "2024-06-01",
-      endDate: "2024-07-31",
-      progress: 65,
-    },
-    {
-      id: 2,
-      name: "Back to School Campaign",
-      status: "draft",
-      budget: "$8,500",
-      spent: "$0",
-      creatorsContacted: 0,
-      creatorsResponded: 0,
-      contractsSigned: 0,
-      contentDelivered: 0,
-      startDate: "2024-08-15",
-      endDate: "2024-09-30",
-      progress: 0,
-    },
-    {
-      id: 3,
-      name: "Holiday Collection",
-      status: "completed",
-      budget: "$22,000",
-      spent: "$22,000",
-      creatorsContacted: 35,
-      creatorsResponded: 28,
-      contractsSigned: 25,
-      contentDelivered: 25,
-      startDate: "2024-11-01",
-      endDate: "2024-12-31",
-      progress: 100,
-    },
-  ];
+  // Fetch campaign data
+  useEffect(() => {
+    const fetchCampaign = async () => {
+      if (!id) return;
 
-  // Find the campaign based on the ID parameter
-  const campaign =
-    campaigns.find((c) => c.id === parseInt(id || "1")) || campaigns[0];
+      try {
+        setLoading(true);
+        const response = await campaignAPI.getCampaign(id);
 
-  // TODO: Fetch creators data for this specific campaign
-  const allCampaignCreators = {
-    1: [
-      {
-        id: 1,
-        creatorName: "Sarah Johnson",
-        campaignName: "Summer Launch 2024",
-        lifecycleStage: "fulfilled",
-      },
-      {
-        id: 2,
-        creatorName: "Mike Chen",
-        campaignName: "Summer Launch 2024",
-        lifecycleStage: "onboarded",
-      },
-      {
-        id: 3,
-        creatorName: "Emma Davis",
-        campaignName: "Summer Launch 2024",
-        lifecycleStage: "waiting for signature",
-      },
-      {
-        id: 4,
-        creatorName: "Alex Rodriguez",
-        campaignName: "Summer Launch 2024",
-        lifecycleStage: "call complete",
-      },
-      {
-        id: 5,
-        creatorName: "Lisa Thompson",
-        campaignName: "Summer Launch 2024",
-        lifecycleStage: "outreached",
-      },
-      {
-        id: 6,
-        creatorName: "David Kim",
-        campaignName: "Summer Launch 2024",
-        lifecycleStage: "discovered",
-      },
-    ],
-    2: [
-      {
-        id: 7,
-        creatorName: "Jessica Martinez",
-        campaignName: "Back to School Campaign",
-        lifecycleStage: "discovered",
-      },
-      {
-        id: 8,
-        creatorName: "Ryan Lee",
-        campaignName: "Back to School Campaign",
-        lifecycleStage: "discovered",
-      },
-    ],
-    3: [
-      {
-        id: 9,
-        creatorName: "Amanda White",
-        campaignName: "Holiday Collection",
-        lifecycleStage: "fulfilled",
-      },
-      {
-        id: 10,
-        creatorName: "Chris Brown",
-        campaignName: "Holiday Collection",
-        lifecycleStage: "fulfilled",
-      },
-      {
-        id: 11,
-        creatorName: "Taylor Swift",
-        campaignName: "Holiday Collection",
-        lifecycleStage: "fulfilled",
-      },
-      {
-        id: 12,
-        creatorName: "John Doe",
-        campaignName: "Holiday Collection",
-        lifecycleStage: "onboarded",
-      },
-    ],
-  };
+        // Transform API response to match component expectations
+        const campaignData = response.data;
 
-  const creatorsInCampaign = allCampaignCreators[parseInt(id || "1")] || [];
+        const transformedCampaign: CampaignData = {
+          id: parseInt(campaignData.id),
+          name: campaignData.name,
+          status: campaignData.state,
+          budget: campaignData.meta.budget.total || "$0",
+          spent: "$0", // This would need to come from a separate API endpoint
+          creatorsContacted: 0, // These metrics would need to come from separate API endpoints
+          creatorsResponded: 0,
+          contractsSigned: 0,
+          contentDelivered: 0,
+          startDate: campaignData.start_date,
+          endDate: campaignData.end_date,
+          progress: 0, // This would need to be calculated or come from separate API
+        };
+
+        setCampaign(transformedCampaign);
+      } catch (err: unknown) {
+        console.error("Error fetching campaign:", err);
+        const errorMessage =
+          err instanceof Error && "response" in err
+            ? (err as { response?: { data?: { message?: string } } }).response
+                ?.data?.message || "Failed to fetch campaign data"
+            : "Failed to fetch campaign data";
+        setError(errorMessage);
+        toast.error("Failed to load campaign data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCampaign();
+  }, [id]);
 
   const getLifecycleStageColor = (stage: string) => {
     switch (stage) {
@@ -188,46 +122,64 @@ const CampaignDetails = () => {
 
   return (
     <div className="space-y-6">
-      <CampaignHeader campaign={campaign} getStatusColor={getStatusColor} />
+      {loading && (
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="mt-2 text-gray-600">Loading campaign data...</p>
+          </div>
+        </div>
+      )}
 
-      <CampaignProgress progress={campaign.progress} />
+      {error && (
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <p className="text-red-600">Error: {error}</p>
+          </div>
+        </div>
+      )}
 
-      <CampaignStats campaign={campaign} />
+      {campaign && !loading && !error && (
+        <>
+          <CampaignHeader campaign={campaign} getStatusColor={getStatusColor} />
 
-      <Tabs
-        value={activeTab}
-        className="space-y-4"
-        onValueChange={(value) => {
-          navigate(`#${value}`, { replace: true });
-        }}
-      >
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="creators">Creators</TabsTrigger>
-          <TabsTrigger value="content">Content</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-        </TabsList>
+          <CampaignProgress progress={campaign.progress} />
 
-        <TabsContent value="overview" className="space-y-4">
-          <CampaignOverview campaign={campaign} />
-        </TabsContent>
+          <CampaignStats campaign={campaign} />
 
-        <TabsContent value="creators">
-          <CampaignCreators
-            creators={creatorsInCampaign}
-            campaignId={id || "1"}
-            getLifecycleStageColor={getLifecycleStageColor}
-          />
-        </TabsContent>
+          <Tabs
+            value={activeTab}
+            className="space-y-4"
+            onValueChange={(value) => {
+              navigate(`#${value}`, { replace: true });
+            }}
+          >
+            <TabsList>
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="creators">Creators</TabsTrigger>
+              <TabsTrigger value="content">Content</TabsTrigger>
+              <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            </TabsList>
 
-        <TabsContent value="content">
-          <CampaignContent />
-        </TabsContent>
+            <TabsContent value="overview" className="space-y-4">
+              <CampaignOverview campaign={campaign} />
+            </TabsContent>
 
-        <TabsContent value="analytics">
-          <CampaignAnalytics />
-        </TabsContent>
-      </Tabs>
+            <TabsContent value="creators">
+              <CreatorManagement campaignId={campaign.id} />
+            </TabsContent>
+
+            <TabsContent value="content">
+              {/* <CampaignContent /> */}
+              CampaignContent TBD Placeholder
+            </TabsContent>
+
+            <TabsContent value="analytics">
+              <CampaignAnalytics />
+            </TabsContent>
+          </Tabs>
+        </>
+      )}
     </div>
   );
 };
