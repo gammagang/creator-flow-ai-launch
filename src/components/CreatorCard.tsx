@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -61,9 +60,8 @@ const CreatorCard = ({ creator, campaigns, onAddToCampaign }: CreatorCardProps) 
           <div className="flex-shrink-0">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button size="sm" className="h-8 px-3 text-xs bg-blue-600 hover:bg-blue-700">
-                  <Plus className="w-3 h-3 mr-1" />
-                  Add to Campaign
+                <Button size="sm" className="h-8 w-8 p-0 bg-blue-600 hover:bg-blue-700">
+                  <Plus className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-white border shadow-lg z-50">
