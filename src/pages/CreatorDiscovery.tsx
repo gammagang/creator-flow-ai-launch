@@ -4,7 +4,12 @@ import { useQuery } from "@tanstack/react-query";
 import CreatorSearchFilters from "@/components/CreatorSearchFilters";
 import CreatorGrid from "@/components/CreatorGrid";
 import { campaignAPI, CampaignResponse } from "@/services/campaignApi";
-import { useAddCreatorToCampaign } from "@/services/creatorApi";
+import {
+  useAddCreatorToCampaign,
+  useDiscoverCreatorsQuery,
+  type DiscoveredCreator,
+  type DiscoverCreatorsRequest,
+} from "@/services/creatorApi";
 import { useToast } from "@/hooks/use-toast";
 
 interface DiscoverCreatorsQuery {
@@ -26,6 +31,63 @@ const CreatorDiscovery = () => {
 
   // Add creator to campaign mutation
   const addCreatorToCampaignMutation = useAddCreatorToCampaign();
+  // Transform filters to API format
+  const apiParams: DiscoverCreatorsRequest = {
+    country: filters.country?.[0], // Take first country if multiple selected
+    tier: filters.tier,
+    language: filters.language,
+    category: filters.category,
+    er: filters.er,
+    gender: filters.gender,
+    bio: searchQuery || undefined,
+    platform: "instagram", // Default to Instagram for now
+    limit: 20,
+    skip: 0,
+  };
+
+  // Fetch creators using the API
+  const {
+    data: creatorsData,
+    isLoading: isLoadingCreators,
+    error: creatorsError,
+  } = useDiscoverCreatorsQuery(apiParams, Object.keys(apiParams).length > 3); // Enable only if we have filters
+
+  // Transform API creators to match CreatorGrid expected format
+  const transformCreator = (creator: DiscoveredCreator) => ({
+    id: parseInt(creator.id), // Convert string id to number for compatibility
+    username: creator.handle.startsWith("@")
+      ? creator.handle
+      : `@${creator.handle}`,
+    displayName: creator.name,
+    followers: formatFollowerCount(creator.followersCount),
+    engagement: `${(creator.engagement_rate * 100).toFixed(1)}%`,
+    niche: creator.category || "General",
+    avatar: creator.profileImageUrl || "/placeholder.svg",
+    verified: creator.qualityScore ? creator.qualityScore > 80 : false, // Use quality score as verification indicator
+    recentPosts: creator.postsCount,
+    avgLikes: creator.averageViews ? formatNumber(creator.averageViews) : "N/A",
+    avgComments: "N/A", // Not available in API response
+  });
+
+  const formatFollowerCount = (count: number): string => {
+    if (count >= 1000000) {
+      return `${(count / 1000000).toFixed(1)}M`;
+    } else if (count >= 1000) {
+      return `${(count / 1000).toFixed(1)}K`;
+    }
+    return count.toString();
+  };
+
+  const formatNumber = (num: number): string => {
+    if (num >= 1000000) {
+      return `${(num / 1000000).toFixed(1)}M`;
+    } else if (num >= 1000) {
+      return `${(num / 1000).toFixed(1)}K`;
+    }
+    return num.toString();
+  };
+
+  const creators = creatorsData?.creators?.map(transformCreator) || [];
 
   // Fetch campaigns using React Query
   const { data: campaignsData } = useQuery<CampaignResponse>({
@@ -74,65 +136,53 @@ const CreatorDiscovery = () => {
     const newUrl = searchParams.toString() ? `?${searchParams.toString()}` : "";
     navigate(`${location.pathname}${newUrl}`, { replace: true });
   };
-
   // TODO: Replace with real Instagram creator data from API
   // This should be filtered based on the current filters state
-  const mockCreators = [
-    {
-      id: 1,
-      username: "@fashionista_jane",
-      displayName: "Jane Fashion",
-      followers: "125K",
-      engagement: "4.2%",
-      niche: "Fashion",
-      avatar: "/placeholder.svg",
-      verified: true,
-      recentPosts: 12,
-      avgLikes: "5.2K",
-      avgComments: "234",
-    },
-    {
-      id: 2,
-      username: "@fitness_guru_mike",
-      displayName: "Mike Strong",
-      followers: "89K",
-      engagement: "6.1%",
-      niche: "Fitness",
-      avatar: "/placeholder.svg",
-      verified: false,
-      recentPosts: 18,
-      avgLikes: "4.8K",
-      avgComments: "156",
-    },
-    // Add more mock creators...
-  ];
   const handleAddToCampaign = async (creatorId: number, campaignId: string) => {
     try {
-      // Find the creator data from mockCreators
-      const creator = mockCreators.find((c) => c.id === creatorId);
-      if (!creator) {
+      // Find the creator data from the API response
+      const apiCreator = creatorsData?.creators?.find(
+        (c) => parseInt(c.id) === creatorId
+      );
+      const creator = creators.find((c) => c.id === creatorId);
+
+      if (!creator || !apiCreator) {
         throw new Error("Creator not found");
       }
 
       const result = await addCreatorToCampaignMutation.mutateAsync({
         campaignId: campaignId,
         creatorData: {
-          name: creator.displayName,
-          platform: "instagram", // Assuming all mock creators are Instagram for now
-          email: `${creator.username.replace("@", "")}@example.com`, // Generate email from username
-          category: creator.niche,
-          engagement_rate:
-            parseFloat(creator.engagement.replace("%", "")) / 100,
+          name: apiCreator.name,
+          platform: apiCreator.platform as
+            | "instagram"
+            | "tiktok"
+            | "youtube"
+            | "twitter"
+            | "facebook",
+          email: apiCreator.email,
+          age: apiCreator.age,
+          gender: apiCreator.gender,
+          location: apiCreator.location,
+          tier: apiCreator.tier,
+          engagement_rate: apiCreator.engagement_rate,
+          phone: apiCreator.phone,
+          language: apiCreator.language,
+          category: apiCreator.category,
           meta: {
-            username: creator.username,
-            followers: creator.followers,
-            avgLikes: creator.avgLikes,
-            avgComments: creator.avgComments,
-            verified: creator.verified,
-            recentPosts: creator.recentPosts,
+            ...apiCreator.meta,
+            handle: apiCreator.handle,
+            followersCount: apiCreator.followersCount,
+            postsCount: apiCreator.postsCount,
+            averageViews: apiCreator.averageViews,
+            profileImageUrl: apiCreator.profileImageUrl,
+            profileUrl: apiCreator.profileUrl,
+            qualityScore: apiCreator.qualityScore,
           },
         },
-        notes: `Added from creator discovery for ${creator.niche} niche`,
+        notes: `Added from creator discovery for ${
+          apiCreator.category || "general"
+        } category`,
       });
 
       toast({
@@ -166,19 +216,56 @@ const CreatorDiscovery = () => {
             Find the perfect Instagram creators for your campaigns
           </p>
         </div>
-      </div>
+      </div>{" "}
       {/* Search and Filters */}
       <CreatorSearchFilters
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         onFiltersChange={handleFiltersChange}
-      />{" "}
-      {/* Creator Results and Load More */}
-      <CreatorGrid
-        creators={mockCreators}
-        campaigns={campaigns}
-        onAddToCampaign={handleAddToCampaign}
       />
+      {/* Loading State */}
+      {isLoadingCreators && (
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Discovering creators...</p>
+        </div>
+      )}
+      {/* Error State */}
+      {creatorsError && (
+        <div className="text-center py-12">
+          <p className="text-red-600 mb-4">
+            Error loading creators. Please try again.
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+      {/* Creator Results and Load More */}
+      {!isLoadingCreators && !creatorsError && (
+        <CreatorGrid
+          creators={creators}
+          campaigns={campaigns}
+          onAddToCampaign={handleAddToCampaign}
+        />
+      )}
+      {/* No Results State */}
+      {!isLoadingCreators &&
+        !creatorsError &&
+        creators.length === 0 &&
+        Object.keys(apiParams).length > 3 && (
+          <div className="text-center py-12">
+            <p className="text-gray-600 mb-4">
+              No creators found matching your criteria.
+            </p>
+            <p className="text-sm text-gray-500">
+              Try adjusting your filters or search terms.
+            </p>
+          </div>
+        )}
     </div>
   );
 };
