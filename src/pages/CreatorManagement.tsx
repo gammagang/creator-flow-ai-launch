@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,12 +32,12 @@ export interface Creator {
 export interface CampaignCreator extends Creator {
   campaign_creator_id: number;
   current_state:
-    | 'discovered'
-    | 'outreached'
-    | 'call complete'
-    | 'waiting for contract'
-    | 'waiting for signature'
-    | 'fulfilled';
+    | "discovered"
+    | "outreached"
+    | "call complete"
+    | "waiting for contract"
+    | "waiting for signature"
+    | "fulfilled";
   assigned_budget?: number;
   last_state_change_at?: string;
   campaign_creator_meta?: any;
@@ -61,15 +60,18 @@ const CreatorManagement = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        
+
         // Fetch company details
-        const companyResponse = await apiService.post<{ data: Company }>("/company");
+        const companyResponse = await apiService.get<{ data: Company }>(
+          "/company/mine"
+        );
         setCompany(companyResponse.data);
 
         // Fetch campaign creators
-        const creatorsResponse = await apiService.get<{ data: CampaignCreator[] }>(`/${campaignId}/creator`);
+        const creatorsResponse = await apiService.get<{
+          data: CampaignCreator[];
+        }>(`/${campaignId}/creator`);
         setCreators(creatorsResponse.data);
-
       } catch (err: any) {
         console.error("Error fetching data:", err);
         setError(err.response?.data?.message || "Failed to fetch data");
@@ -145,7 +147,9 @@ const CreatorManagement = () => {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Creator Management</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Creator Management
+          </h1>
           <p className="text-gray-600 mt-2">Campaign #{campaignId}</p>
         </div>
         {company && (
@@ -160,7 +164,9 @@ const CreatorManagement = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Creators</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Creators
+            </CardTitle>
             <Users className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -175,7 +181,7 @@ const CreatorManagement = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {creators.filter(c => c.current_state === 'fulfilled').length}
+              {creators.filter((c) => c.current_state === "fulfilled").length}
             </div>
           </CardContent>
         </Card>
@@ -188,7 +194,10 @@ const CreatorManagement = () => {
           <CardContent>
             <div className="text-2xl font-bold">
               {formatCurrency(
-                creators.reduce((sum, creator) => sum + (creator.assigned_budget || 0), 0)
+                creators.reduce(
+                  (sum, creator) => sum + (creator.assigned_budget || 0),
+                  0
+                )
               )}
             </div>
           </CardContent>
@@ -204,7 +213,9 @@ const CreatorManagement = () => {
           {creators.length === 0 ? (
             <div className="text-center py-8">
               <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500">No creators found for this campaign.</p>
+              <p className="text-gray-500">
+                No creators found for this campaign.
+              </p>
             </div>
           ) : (
             <Table>
@@ -225,7 +236,9 @@ const CreatorManagement = () => {
                       <div>
                         <div>{creator.name}</div>
                         {creator.tier && (
-                          <div className="text-sm text-gray-500">{creator.tier}</div>
+                          <div className="text-sm text-gray-500">
+                            {creator.tier}
+                          </div>
                         )}
                       </div>
                     </TableCell>
@@ -238,13 +251,16 @@ const CreatorManagement = () => {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      {creator.engagement_rate 
+                      {creator.engagement_rate
                         ? `${(creator.engagement_rate * 100).toFixed(1)}%`
-                        : "N/A"
-                      }
+                        : "N/A"}
                     </TableCell>
-                    <TableCell>{formatCurrency(creator.assigned_budget)}</TableCell>
-                    <TableCell>{formatDate(creator.last_state_change_at)}</TableCell>
+                    <TableCell>
+                      {formatCurrency(creator.assigned_budget)}
+                    </TableCell>
+                    <TableCell>
+                      {formatDate(creator.last_state_change_at)}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

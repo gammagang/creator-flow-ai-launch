@@ -1,5 +1,4 @@
-
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CampaignHeader from "@/components/campaign/CampaignHeader";
 import CampaignProgress from "@/components/campaign/CampaignProgress";
@@ -11,6 +10,11 @@ import CampaignAnalytics from "@/components/campaign/CampaignAnalytics";
 
 const CampaignDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Get the active tab from URL or default to 'overview'
+  const activeTab = location.hash.replace("#", "") || "overview";
 
   // TODO: Replace with real campaign data based on ID
   const campaigns = [
@@ -59,7 +63,8 @@ const CampaignDetails = () => {
   ];
 
   // Find the campaign based on the ID parameter
-  const campaign = campaigns.find((c) => c.id === parseInt(id || "1")) || campaigns[0];
+  const campaign =
+    campaigns.find((c) => c.id === parseInt(id || "1")) || campaigns[0];
 
   // TODO: Fetch creators data for this specific campaign
   const allCampaignCreators = {
@@ -184,12 +189,18 @@ const CampaignDetails = () => {
   return (
     <div className="space-y-6">
       <CampaignHeader campaign={campaign} getStatusColor={getStatusColor} />
-      
+
       <CampaignProgress progress={campaign.progress} />
 
       <CampaignStats campaign={campaign} />
 
-      <Tabs defaultValue="overview" className="space-y-4">
+      <Tabs
+        value={activeTab}
+        className="space-y-4"
+        onValueChange={(value) => {
+          navigate(`#${value}`, { replace: true });
+        }}
+      >
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="creators">Creators</TabsTrigger>
@@ -202,8 +213,8 @@ const CampaignDetails = () => {
         </TabsContent>
 
         <TabsContent value="creators">
-          <CampaignCreators 
-            creators={creatorsInCampaign} 
+          <CampaignCreators
+            creators={creatorsInCampaign}
             campaignId={id || "1"}
             getLifecycleStageColor={getLifecycleStageColor}
           />
