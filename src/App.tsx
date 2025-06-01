@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -34,21 +33,27 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
-      <Sonner />
+      <Sonner position="top-right" />
       <AuthProvider>
         <BrowserRouter>
           <Routes>
             <Route path="/auth" element={<Auth />} />
-            <Route path="/agent-call" element={
-              <ProtectedRoute>
-                <AgentCall />
-              </ProtectedRoute>
-            } />
-            <Route path="/" element={
-              <ProtectedRoute>
-                <Layout />
-              </ProtectedRoute>
-            }>
+            <Route
+              path="/agent-call"
+              element={
+                <ProtectedRoute>
+                  <AgentCall />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Layout />
+                </ProtectedRoute>
+              }
+            >
               <Route index element={<Dashboard />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="brand-profile" element={<BrandProfile />} />
@@ -57,7 +62,10 @@ const App = () => (
               <Route path="campaigns" element={<CampaignList />} />
               <Route path="campaigns/create" element={<CampaignCreate />} />
               <Route path="campaigns/:id" element={<CampaignDetails />} />
-              <Route path="campaigns/:campaignId/creators/:id" element={<CreatorDetails />} />
+              <Route
+                path="campaigns/:campaignId/creators/:id"
+                element={<CreatorDetails />}
+              />
               <Route path="outreach" element={<Outreach />} />
               <Route path="negotiation" element={<Negotiation />} />
               <Route path="contracts" element={<Contracts />} />

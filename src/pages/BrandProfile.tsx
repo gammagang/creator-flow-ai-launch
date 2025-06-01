@@ -57,7 +57,6 @@ const BrandProfile = () => {
       description: string;
       category: string;
       phone: string;
-      owner: string;
     }) => {
       const response = await apiService.post("/company", brandData);
       return response;
@@ -120,7 +119,6 @@ const BrandProfile = () => {
         description: formData.description,
         category: formData.industry,
         phone: formData.phone,
-        owner: formData.contactName,
       });
     } catch (error) {
       toast.error("An error occurred while saving");
