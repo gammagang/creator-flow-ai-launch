@@ -115,18 +115,31 @@ const CreatorDiscovery = () => {
     return num.toString();
   };
 
-  const creators = creatorsData?.creators?.map(transformCreator) || [];
-
-  // Fetch campaigns using React Query
-  const { data: campaignsData } = useQuery<CampaignResponse>({
+  const creators = creatorsData?.creators?.map(transformCreator) || [];  // Fetch campaigns using React Query
+  const { data: campaignsData, error: campaignsError } = useQuery<CampaignResponse>({
     queryKey: ["campaigns"],
     queryFn: () => campaignAPI.getCampaigns(),
+    retry: false,
+    // Don't throw errors to the UI for campaigns - handle gracefully
+    throwOnError: false,
   });
-  const campaigns =
-    campaignsData?.data?.items.map((campaign) => ({
-      id: campaign.id, // Keep as string UUID from backend
-      name: campaign.name,
-    })) || [];
+  // Check if campaigns failed with 400 error and handle gracefully
+  const isCampaignsBadRequest = campaignsError && 
+    (campaignsError as { response?: { status: number } }).response?.status === 400;
+
+  // Log warning for 400 errors to help with debugging
+  if (isCampaignsBadRequest) {
+    console.warn("Campaigns API returned 400 - Bad Request. This might be expected for new users or companies without campaigns.");
+  }
+
+  // Only show campaigns if data loaded successfully and no 400 error
+  const campaigns = 
+    campaignsData?.data?.items && !isCampaignsBadRequest
+      ? campaignsData.data.items.map((campaign) => ({
+          id: campaign.id, // Keep as string UUID from backend
+          name: campaign.name,
+        }))
+      : undefined; // Return undefined when campaigns can't be loaded (including 400 errors)
   // Parse URL parameters on component mount
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);

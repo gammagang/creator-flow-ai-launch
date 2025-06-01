@@ -38,9 +38,16 @@ axiosInstance.interceptors.request.use((config) => {
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
+    console.log(" error:", error);
     const errorMessage =
-      error.response?.data || error.message || "Unknown error";
-    toast.error(`Request failed: ${errorMessage}`);
+      error.response?.data.detail ||
+      error.response?.data ||
+      error.message ||
+      "Unknown error";
+
+    if (error.response.status !== 400) {
+      toast.error(`Request failed: ${errorMessage}`);
+    }
     return Promise.reject(error);
   }
 );

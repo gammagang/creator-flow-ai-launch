@@ -30,7 +30,7 @@ interface Campaign {
 
 interface CreatorCardProps {
   creator: Creator;
-  campaigns: Campaign[];
+  campaigns?: Campaign[];
   onAddToCampaign: (creatorId: number, campaignId: string) => void;
 }
 
@@ -65,32 +65,34 @@ const CreatorCard = ({
               </p>
             </div>
           </div>
-          <div className="flex-shrink-0">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  size="sm"
-                  className="h-8 w-8 p-0 bg-blue-600 hover:bg-blue-700"
-                >
-                  <Plus className="w-4 h-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                className="bg-white border shadow-lg z-50"
-              >
-                {campaigns.map((campaign) => (
-                  <DropdownMenuItem
-                    key={campaign.id}
-                    onClick={() => onAddToCampaign(creator.id, campaign.id)}
-                    className="hover:bg-gray-100"
+          {campaigns && campaigns.length > 0 && (
+            <div className="flex-shrink-0">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    size="sm"
+                    className="h-8 w-8 p-0 bg-blue-600 hover:bg-blue-700"
                   >
-                    {campaign.name}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+                    <Plus className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="bg-white border shadow-lg z-50"
+                >
+                  {campaigns.map((campaign) => (
+                    <DropdownMenuItem
+                      key={campaign.id}
+                      onClick={() => onAddToCampaign(creator.id, campaign.id)}
+                      className="hover:bg-gray-100"
+                    >
+                      {campaign.name}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          )}
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
