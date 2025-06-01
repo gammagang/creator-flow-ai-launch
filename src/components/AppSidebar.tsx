@@ -5,13 +5,11 @@ import {
   Building,
   Users,
   Megaphone,
-  Mail,
-  MessageSquare,
-  FileText,
-  CreditCard,
   BarChart3,
   Settings,
-  Zap
+  Zap,
+  Mail,
+  MessageSquare
 } from "lucide-react";
 
 import {
@@ -43,7 +41,7 @@ const navigationItems = [
     title: "Creator Discovery",
     url: "/creators",
     icon: Users,
-    group: "creators"
+    group: "main"
   },
   {
     title: "Campaigns",
@@ -55,25 +53,13 @@ const navigationItems = [
     title: "Outreach",
     url: "/outreach",
     icon: Mail,
-    group: "outreach"
+    group: "campaigns"
   },
   {
     title: "Negotiation",
     url: "/negotiation",
     icon: MessageSquare,
-    group: "outreach"
-  },
-  {
-    title: "Contracts",
-    url: "/contracts",
-    icon: FileText,
-    group: "deals"
-  },
-  {
-    title: "Payments",
-    url: "/payments",
-    icon: CreditCard,
-    group: "deals"
+    group: "campaigns"
   },
   {
     title: "Analytics",
@@ -91,10 +77,7 @@ const navigationItems = [
 
 const groupLabels = {
   main: "Main",
-  creators: "Creator Management", 
-  campaigns: "Campaign Management",
-  outreach: "Outreach & Communication",
-  deals: "Deals & Payments",
+  campaigns: "Campaigns",
   insights: "Insights",
   account: "Account"
 };
