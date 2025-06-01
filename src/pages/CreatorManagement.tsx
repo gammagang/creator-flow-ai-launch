@@ -145,7 +145,6 @@ const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
           <h1 className="text-3xl font-bold text-gray-900">
             Creator Management
           </h1>
-          <p className="text-gray-600 mt-2">Campaign #{campaignId}</p>
         </div>
         {company && (
           <div className="flex items-center gap-2 text-gray-600">
