@@ -4,10 +4,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, Filter, Users, Heart, MessageCircle, Eye } from "lucide-react";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { Search, Filter, Users, Heart, MessageCircle, Eye, Plus } from "lucide-react";
 
 const CreatorDiscovery = () => {
   const [searchQuery, setSearchQuery] = useState("");
+
+  // TODO: Replace with real campaign data from API
+  const mockCampaigns = [
+    { id: 1, name: "Summer Launch 2024" },
+    { id: 2, name: "Back to School Campaign" },
+    { id: 3, name: "Holiday Collection" }
+  ];
 
   // TODO: Replace with real Instagram creator data from API
   const mockCreators = [
@@ -39,6 +52,11 @@ const CreatorDiscovery = () => {
     },
     // Add more mock creators...
   ];
+
+  const handleAddToCampaign = (creatorId: number, campaignId: number) => {
+    // TODO: Implement API call to add creator to campaign
+    console.log(`Adding creator ${creatorId} to campaign ${campaignId}`);
+  };
 
   return (
     <div className="space-y-6">
@@ -90,7 +108,28 @@ const CreatorDiscovery = () => {
       {/* Creator Results */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {mockCreators.map((creator) => (
-          <Card key={creator.id} className="hover:shadow-lg transition-shadow cursor-pointer">
+          <Card key={creator.id} className="hover:shadow-lg transition-shadow cursor-pointer relative">
+            <div className="absolute top-3 right-3 z-10">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="sm" variant="outline" className="h-8 px-2">
+                    <Plus className="w-3 h-3 mr-1" />
+                    Add to Campaign
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {mockCampaigns.map((campaign) => (
+                    <DropdownMenuItem 
+                      key={campaign.id}
+                      onClick={() => handleAddToCampaign(creator.id, campaign.id)}
+                    >
+                      {campaign.name}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
             <CardHeader className="pb-3">
               <div className="flex items-center gap-3">
                 <img 
