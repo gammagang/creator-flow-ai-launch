@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
-const BASE_URL = import.meta.env.API_URL || "http://localhost:3000";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 // Create axios instance with base configuration
 const axiosInstance = axios.create({
