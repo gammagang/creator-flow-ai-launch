@@ -1,19 +1,18 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { campaignAPI, CampaignResponse } from "@/services/campaignApi";
+import { useQuery } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import {
-  Plus,
   Calendar,
-  Users,
   DollarSign,
-  MoreHorizontal,
-  Mail,
-  MessageSquare,
   Loader2,
+  MoreHorizontal,
+  Plus,
+  Users,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { campaignAPI, CampaignResponse } from "@/services/campaignApi";
 
 const CampaignList = () => {
   // Fetch campaigns using React Query
@@ -24,9 +23,14 @@ const CampaignList = () => {
   } = useQuery<CampaignResponse>({
     queryKey: ["campaigns"],
     queryFn: () => campaignAPI.getCampaigns(),
+    retry: false,
   });
+  console.log(" error:", error);
 
   const apiCampaigns = campaignsData?.data?.items || [];
+  const errorDetail = (error as AxiosError<{ detail: string }>)?.response?.data
+    ?.detail;
+  const isNoCompanyError = errorDetail === "No company found for the user";
 
   // Format API data to match the expected UI structure
   const campaigns = apiCampaigns.map((apiCampaign) => ({
@@ -82,6 +86,47 @@ const CampaignList = () => {
 
   // Error state
   if (error) {
+    // Check for specific "No company found" error
+    const errorDetail = (error as AxiosError<{ detail: string }>)?.response
+      ?.data?.detail;
+    const isNoCompanyError = errorDetail === "No company found for the user";
+
+    if (isNoCompanyError) {
+      return (
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Campaigns</h1>
+              <p className="text-gray-600 mt-1">
+                Manage your influencer marketing campaigns
+              </p>
+            </div>
+            <Link to="/campaigns/create">
+              <Button
+                className="bg-blue-600 hover:bg-blue-700"
+                disabled={isNoCompanyError}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                New Campaign
+              </Button>
+            </Link>
+          </div>
+          <div className="text-center py-12">
+            <p className="text-gray-600 mb-4">No brand found</p>
+            <p className="text-gray-500 text-sm mb-6">
+              Create a brand first to start managing campaigns
+            </p>
+            <Link to="/brand-profile">
+              <Button className="bg-blue-600 hover:bg-blue-700">
+                <Plus className="w-4 h-4 mr-2" />
+                Create Brand
+              </Button>
+            </Link>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="space-y-6">
         <div className="flex justify-between items-center">
@@ -92,7 +137,10 @@ const CampaignList = () => {
             </p>
           </div>
           <Link to="/campaigns/create">
-            <Button className="bg-blue-600 hover:bg-blue-700">
+            <Button
+              className="bg-blue-600 hover:bg-blue-700"
+              disabled={isNoCompanyError}
+            >
               <Plus className="w-4 h-4 mr-2" />
               New Campaign
             </Button>
@@ -118,7 +166,10 @@ const CampaignList = () => {
           </p>
         </div>
         <Link to="/campaigns/create">
-          <Button className="bg-blue-600 hover:bg-blue-700">
+          <Button
+            className="bg-blue-600 hover:bg-blue-700"
+            disabled={isNoCompanyError}
+          >
             <Plus className="w-4 h-4 mr-2" />
             New Campaign
           </Button>
