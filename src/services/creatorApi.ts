@@ -59,7 +59,7 @@ interface DiscoverCreatorsRequest {
   language?: string[];
   category?: string[];
   er?: string[];
-  gender?: string[];
+  gender?: string; // Single string value, not array
   bio?: string;
   platform?: "instagram" | "tiktok" | "youtube" | "twitter" | "facebook";
   limit?: number;
@@ -131,18 +131,6 @@ export const useDiscoverCreators = () => {
     onError: (error) => {
       console.error("Error discovering creators:", error);
     },
-  });
-};
-
-// Query hook for discovering creators with real-time filtering
-export const useDiscoverCreatorsQuery = (
-  params: DiscoverCreatorsRequest,
-  enabled: boolean = true
-) => {
-  return useQuery({
-    queryKey: ["discoverCreators", params],
-    queryFn: () => discoverCreators(params),
-    enabled: enabled && Object.keys(params).length > 0, // Only run if enabled and params exist
   });
 };
 

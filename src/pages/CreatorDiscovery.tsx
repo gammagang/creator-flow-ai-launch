@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { Search } from "lucide-react";
 import CreatorSearchFilters from "@/components/CreatorSearchFilters";
 import CreatorGrid from "@/components/CreatorGrid";
 import { campaignAPI, CampaignResponse } from "@/services/campaignApi";
 import {
   useAddCreatorToCampaign,
-  useDiscoverCreatorsQuery,
+  useDiscoverCreators,
   type DiscoveredCreator,
   type DiscoverCreatorsRequest,
 } from "@/services/creatorApi";
@@ -25,32 +26,59 @@ interface DiscoverCreatorsQuery {
 const CreatorDiscovery = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<DiscoverCreatorsQuery>({});
+  const [creatorsData, setCreatorsData] = useState<{
+    creators: DiscoveredCreator[];
+    total: number;
+    pagination: {
+      skip: number;
+      limit: number;
+      hasMore: boolean;
+    };
+  } | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   // Add creator to campaign mutation
   const addCreatorToCampaignMutation = useAddCreatorToCampaign();
-  // Transform filters to API format
-  const apiParams: DiscoverCreatorsRequest = {
+
+  // Discover creators mutation (triggered manually)
+  const discoverCreatorsMutation = useDiscoverCreators(); // Transform filters to API format
+  const buildApiParams = (): DiscoverCreatorsRequest => ({
     country: filters.country?.[0], // Take first country if multiple selected
     tier: filters.tier,
     language: filters.language,
     category: filters.category,
     er: filters.er,
-    gender: filters.gender,
+    gender:
+      filters.gender?.[0] && filters.gender[0] !== "all"
+        ? filters.gender[0]
+        : undefined, // Send gender as string if selected and not "all"
     bio: searchQuery || undefined,
     platform: "instagram", // Default to Instagram for now
     limit: 20,
     skip: 0,
+  });
+
+  // Handle search button click
+  const handleSearch = async () => {
+    const apiParams = buildApiParams();
+    try {
+      const result = await discoverCreatorsMutation.mutateAsync(apiParams);
+      setCreatorsData(result);
+    } catch (error) {
+      console.error("Failed to discover creators:", error);
+      toast({
+        title: "Search Failed",
+        description: "Failed to search creators. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
-  // Fetch creators using the API
-  const {
-    data: creatorsData,
-    isLoading: isLoadingCreators,
-    error: creatorsError,
-  } = useDiscoverCreatorsQuery(apiParams, Object.keys(apiParams).length > 3); // Enable only if we have filters
+  // Get loading and error states from the mutation
+  const isLoadingCreators = discoverCreatorsMutation.isPending;
+  const creatorsError = discoverCreatorsMutation.error;
 
   // Transform API creators to match CreatorGrid expected format
   const transformCreator = (creator: DiscoveredCreator) => ({
@@ -99,36 +127,35 @@ const CreatorDiscovery = () => {
       id: campaign.id, // Keep as string UUID from backend
       name: campaign.name,
     })) || [];
-
   // Parse URL parameters on component mount
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const parsedFilters: DiscoverCreatorsQuery = {};
 
-    // Parse each filter parameter
+    // Parse each filter parameter - handle multiple values correctly
     ["country", "tier", "er", "gender", "category", "language", "bio"].forEach(
       (param) => {
-        const value = searchParams.get(param);
-        if (value) {
-          parsedFilters[param as keyof DiscoverCreatorsQuery] =
-            value.split(",");
+        const values = searchParams.getAll(param);
+        if (values.length > 0) {
+          parsedFilters[param as keyof DiscoverCreatorsQuery] = values;
         }
       }
     );
 
     setFilters(parsedFilters);
   }, [location.search]);
-
   // Update URL when filters change
   const handleFiltersChange = (newFilters: DiscoverCreatorsQuery) => {
     setFilters(newFilters);
 
     const searchParams = new URLSearchParams();
 
-    // Add non-empty filter arrays to URL
+    // Add non-empty filter arrays to URL - use append for multiple values
     Object.entries(newFilters).forEach(([key, values]) => {
       if (values && values.length > 0) {
-        searchParams.set(key, values.join(","));
+        values.forEach((value) => {
+          searchParams.append(key, value);
+        });
       }
     });
 
@@ -222,6 +249,7 @@ const CreatorDiscovery = () => {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         onFiltersChange={handleFiltersChange}
+        onSearch={handleSearch}
       />
       {/* Loading State */}
       {isLoadingCreators && (
@@ -251,12 +279,12 @@ const CreatorDiscovery = () => {
           campaigns={campaigns}
           onAddToCampaign={handleAddToCampaign}
         />
-      )}
+      )}{" "}
       {/* No Results State */}
       {!isLoadingCreators &&
         !creatorsError &&
         creators.length === 0 &&
-        Object.keys(apiParams).length > 3 && (
+        creatorsData !== null && (
           <div className="text-center py-12">
             <p className="text-gray-600 mb-4">
               No creators found matching your criteria.
@@ -266,6 +294,21 @@ const CreatorDiscovery = () => {
             </p>
           </div>
         )}
+      {/* Initial State - No search performed yet */}
+      {!isLoadingCreators && !creatorsError && creatorsData === null && (
+        <div className="text-center py-12">
+          <div className="max-w-md mx-auto">
+            <Search className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              Ready to discover creators?
+            </h3>
+            <p className="text-gray-600 mb-4">
+              Use the search filters above and click "Search Creators" to find
+              the perfect Instagram creators for your campaigns.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
