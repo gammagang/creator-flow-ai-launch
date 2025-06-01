@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import CreatorCard from "./CreatorCard";
 
@@ -17,17 +16,21 @@ interface Creator {
 }
 
 interface Campaign {
-  id: number;
+  id: string;
   name: string;
 }
 
 interface CreatorGridProps {
   creators: Creator[];
   campaigns: Campaign[];
-  onAddToCampaign: (creatorId: number, campaignId: number) => void;
+  onAddToCampaign: (creatorId: number, campaignId: string) => void;
 }
 
-const CreatorGrid = ({ creators, campaigns, onAddToCampaign }: CreatorGridProps) => {
+const CreatorGrid = ({
+  creators,
+  campaigns,
+  onAddToCampaign,
+}: CreatorGridProps) => {
   return (
     <>
       {/* Creator Results */}

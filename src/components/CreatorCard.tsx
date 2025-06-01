@@ -1,11 +1,11 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Users, Heart, MessageCircle, Eye, Plus } from "lucide-react";
 
@@ -24,49 +24,63 @@ interface Creator {
 }
 
 interface Campaign {
-  id: number;
+  id: string;
   name: string;
 }
 
 interface CreatorCardProps {
   creator: Creator;
   campaigns: Campaign[];
-  onAddToCampaign: (creatorId: number, campaignId: number) => void;
+  onAddToCampaign: (creatorId: number, campaignId: string) => void;
 }
 
-const CreatorCard = ({ creator, campaigns, onAddToCampaign }: CreatorCardProps) => {
+const CreatorCard = ({
+  creator,
+  campaigns,
+  onAddToCampaign,
+}: CreatorCardProps) => {
   return (
     <Card className="hover:shadow-lg transition-shadow cursor-pointer relative">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3 flex-1">
-            <img 
-              src={creator.avatar} 
+            <img
+              src={creator.avatar}
               alt={creator.displayName}
               className="w-12 h-12 rounded-full bg-gray-200"
             />
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <h3 className="font-semibold truncate">{creator.displayName}</h3>
+                <h3 className="font-semibold truncate">
+                  {creator.displayName}
+                </h3>
                 {creator.verified && (
                   <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
                     <div className="w-2 h-2 bg-white rounded-full"></div>
                   </div>
                 )}
               </div>
-              <p className="text-sm text-gray-500 truncate">{creator.username}</p>
+              <p className="text-sm text-gray-500 truncate">
+                {creator.username}
+              </p>
             </div>
           </div>
           <div className="flex-shrink-0">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button size="sm" className="h-8 w-8 p-0 bg-blue-600 hover:bg-blue-700">
+                <Button
+                  size="sm"
+                  className="h-8 w-8 p-0 bg-blue-600 hover:bg-blue-700"
+                >
                   <Plus className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-white border shadow-lg z-50">
+              <DropdownMenuContent
+                align="end"
+                className="bg-white border shadow-lg z-50"
+              >
                 {campaigns.map((campaign) => (
-                  <DropdownMenuItem 
+                  <DropdownMenuItem
                     key={campaign.id}
                     onClick={() => onAddToCampaign(creator.id, campaign.id)}
                     className="hover:bg-gray-100"
@@ -87,7 +101,7 @@ const CreatorCard = ({ creator, campaigns, onAddToCampaign }: CreatorCardProps) 
           </div>
           <Badge variant="outline">{creator.niche}</Badge>
         </div>
-        
+
         <div className="grid grid-cols-3 gap-2 text-center">
           <div>
             <div className="flex items-center justify-center gap-1">

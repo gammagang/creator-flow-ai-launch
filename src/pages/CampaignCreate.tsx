@@ -16,7 +16,7 @@ import { Calendar, DollarSign, Target, Users } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import apiService from "@/services/api";
+import { campaignAPI } from "@/services/campaignApi";
 import { useState } from "react";
 
 interface CampaignFormData {
@@ -24,6 +24,7 @@ interface CampaignFormData {
   description: string;
   startDate: string;
   endDate: string;
+  budget: number;
   ageRange: string;
   gender: string;
   interests: string[];
@@ -44,6 +45,7 @@ const CampaignCreate = () => {
     description: "",
     startDate: "",
     endDate: "",
+    budget: 0,
     ageRange: "",
     gender: "",
     interests: [],
@@ -58,8 +60,7 @@ const CampaignCreate = () => {
   });
 
   const createCampaignMutation = useMutation({
-    mutationFn: (data: CampaignFormData) =>
-      apiService.post("/campaign/add", data),
+    mutationFn: (data: CampaignFormData) => campaignAPI.createCampaign(data),
     onSuccess: () => {
       toast.success("Campaign created successfully!");
       navigate("/campaigns");
@@ -92,7 +93,11 @@ const CampaignCreate = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    createCampaignMutation.mutate(formData);
+    const apiData = {
+      ...formData,
+      budget: parseFloat(formData.totalBudget.replace(/[^0-9.-]+/g, "")) || 0,
+    };
+    createCampaignMutation.mutate(apiData);
   };
 
   return (
