@@ -1,14 +1,13 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Building, Globe, Loader2 } from "lucide-react";
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { useQuery } from "@tanstack/react-query";
 import { apiService } from "@/services/api";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Building, Globe, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 interface AnalysisResult {
   brandName: string;
@@ -23,7 +22,6 @@ interface AnalysisResult {
 const BrandProfile = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [website, setWebsite] = useState("");
-  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     brandName: "",
     websiteUrl: "",
@@ -51,9 +49,27 @@ const BrandProfile = () => {
     retry: false,
   });
 
-  useEffect(() => {
-    fetchUserProfile();
-  }, []);
+  // Add mutation for saving brand details
+  const saveBrandMutation = useMutation({
+    mutationFn: async (brandData: {
+      name: string;
+      website: string;
+      description: string;
+      category: string;
+      phone: string;
+      owner: string;
+    }) => {
+      const response = await apiService.post("/company", brandData);
+      return response;
+    },
+    onSuccess: () => {
+      toast.success("Brand profile saved successfully!");
+    },
+    onError: (error) => {
+      toast.error("Failed to save brand profile");
+      console.error("Save error:", error);
+    },
+  });
 
   // Update form data when analysis results are received
   useEffect(() => {
@@ -70,32 +86,6 @@ const BrandProfile = () => {
       toast.success("Website analysis completed!");
     }
   }, [analysisData]);
-
-  const fetchUserProfile = async () => {
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (user && user.user_metadata) {
-        const metadata = user.user_metadata;
-        setFormData({
-          brandName: metadata.brand_name || "",
-          websiteUrl: metadata.website_url || "",
-          contactName: metadata.contact_name || "",
-          phone: metadata.phone || "",
-          description: metadata.description || "",
-          industry: "",
-          targetAudience: "",
-        });
-        setWebsite(metadata.website_url || "");
-      }
-    } catch (error) {
-      toast.error("Failed to load profile data");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -123,35 +113,20 @@ const BrandProfile = () => {
 
   const handleSaveProfile = async () => {
     try {
-      const { error } = await supabase.auth.updateUser({
-        data: {
-          brand_name: formData.brandName,
-          website_url: formData.websiteUrl,
-          contact_name: formData.contactName,
-          phone: formData.phone,
-          description: formData.description,
-          industry: formData.industry,
-          target_audience: formData.targetAudience,
-        },
+      // Save to company database
+      saveBrandMutation.mutate({
+        name: formData.brandName,
+        website: formData.websiteUrl,
+        description: formData.description,
+        category: formData.industry,
+        phone: formData.phone,
+        owner: formData.contactName,
       });
-
-      if (error) {
-        toast.error("Failed to save profile");
-      } else {
-        toast.success("Profile saved successfully!");
-      }
     } catch (error) {
       toast.error("An error occurred while saving");
+      console.error("Save error:", error);
     }
   };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin" />
-      </div>
-    );
-  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -288,8 +263,16 @@ const BrandProfile = () => {
         <Button
           onClick={handleSaveProfile}
           className="bg-blue-600 hover:bg-blue-700"
+          disabled={saveBrandMutation.isPending}
         >
-          Save Brand Profile
+          {saveBrandMutation.isPending ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            "Save Brand Profile"
+          )}
         </Button>
       </div>
     </div>
