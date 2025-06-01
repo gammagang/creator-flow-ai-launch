@@ -38,44 +38,46 @@ interface CreatorCardProps {
 const CreatorCard = ({ creator, campaigns, onAddToCampaign }: CreatorCardProps) => {
   return (
     <Card className="hover:shadow-lg transition-shadow cursor-pointer relative">
-      <div className="absolute top-3 right-3 z-10">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button size="sm" className="h-7 px-2 text-xs bg-blue-600 hover:bg-blue-700">
-              <Plus className="w-3 h-3 mr-1" />
-              Add to Campaign
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {campaigns.map((campaign) => (
-              <DropdownMenuItem 
-                key={campaign.id}
-                onClick={() => onAddToCampaign(creator.id, campaign.id)}
-              >
-                {campaign.name}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-
       <CardHeader className="pb-3">
-        <div className="flex items-center gap-3">
-          <img 
-            src={creator.avatar} 
-            alt={creator.displayName}
-            className="w-12 h-12 rounded-full bg-gray-200"
-          />
-          <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <h3 className="font-semibold">{creator.displayName}</h3>
-              {creator.verified && (
-                <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                  <div className="w-2 h-2 bg-white rounded-full"></div>
-                </div>
-              )}
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-3 flex-1">
+            <img 
+              src={creator.avatar} 
+              alt={creator.displayName}
+              className="w-12 h-12 rounded-full bg-gray-200"
+            />
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold truncate">{creator.displayName}</h3>
+                {creator.verified && (
+                  <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="w-2 h-2 bg-white rounded-full"></div>
+                  </div>
+                )}
+              </div>
+              <p className="text-sm text-gray-500 truncate">{creator.username}</p>
             </div>
-            <p className="text-sm text-gray-500">{creator.username}</p>
+          </div>
+          <div className="flex-shrink-0">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="sm" className="h-8 px-3 text-xs bg-blue-600 hover:bg-blue-700">
+                  <Plus className="w-3 h-3 mr-1" />
+                  Add to Campaign
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-white border shadow-lg z-50">
+                {campaigns.map((campaign) => (
+                  <DropdownMenuItem 
+                    key={campaign.id}
+                    onClick={() => onAddToCampaign(creator.id, campaign.id)}
+                    className="hover:bg-gray-100"
+                  >
+                    {campaign.name}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </CardHeader>
