@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,6 +17,7 @@ import CreatorDetails from "./pages/CreatorDetails";
 import CampaignCreate from "./pages/CampaignCreate";
 import CampaignList from "./pages/CampaignList";
 import CampaignDetails from "./pages/CampaignDetails";
+import CreatorManagement from "./pages/CreatorManagement";
 import Outreach from "./pages/Outreach";
 import Negotiation from "./pages/Negotiation";
 import Contracts from "./pages/Contracts";
@@ -62,6 +64,7 @@ const App = () => (
               <Route path="campaigns" element={<CampaignList />} />
               <Route path="campaigns/create" element={<CampaignCreate />} />
               <Route path="campaigns/:id" element={<CampaignDetails />} />
+              <Route path="campaigns/:campaignId/creator-management" element={<CreatorManagement />} />
               <Route
                 path="campaigns/:campaignId/creators/:id"
                 element={<CreatorDetails />}
