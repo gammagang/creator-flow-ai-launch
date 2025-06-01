@@ -1,91 +1,115 @@
-import { useSearchParams } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, DollarSign, Phone, PhoneOff, Mail, Send } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { campaignCreatorAPI } from "@/services/campaignCreatorApi";
+import { useQuery } from "@tanstack/react-query";
+import {
+  Calendar,
+  DollarSign,
+  Mail,
+  Phone,
+  PhoneOff,
+  Send,
+} from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 
 const AgentCall = () => {
   const [searchParams] = useSearchParams();
-  const campaignId = searchParams.get('campaign');
-  const creatorId = searchParams.get('creator');
-  const action = searchParams.get('action');
+  const action = searchParams.get("action");
+  const campaignCreatorId = searchParams.get("id");
 
-  // TODO: Replace with real campaign data fetch based on campaignId
-  const campaigns = [
-    {
-      id: 1,
-      name: "Summer Launch 2024",
-      status: "active",
-      budget: "$15,000",
-      creatorsContacted: 24,
-      creatorsResponded: 16,
-      startDate: "2024-06-01",
-      endDate: "2024-07-31",
-      deliverables: ["Posts", "Stories", "Reels"]
+  const {
+    data: campaignData,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["campaignCreatorDetails", campaignCreatorId],
+    queryFn: async () => {
+      if (!campaignCreatorId) throw new Error("Link ID is required");
+      const response = await campaignCreatorAPI.getCampaignCreatorDetails(
+        campaignCreatorId
+      );
+      return response.data;
     },
-    {
-      id: 2,
-      name: "Back to School Campaign",
-      status: "draft",
-      budget: "$8,500",
-      creatorsContacted: 0,
-      creatorsResponded: 0,
-      startDate: "2024-08-15",
-      endDate: "2024-09-30",
-      deliverables: ["Posts", "Stories"]
-    },
-    {
-      id: 3,
-      name: "Holiday Collection",
-      status: "completed",
-      budget: "$22,000",
-      creatorsContacted: 35,
-      creatorsResponded: 28,
-      startDate: "2024-11-01",
-      endDate: "2024-12-31",
-      deliverables: ["Posts", "Reels", "IGTV"]
-    }
-  ];
+    enabled: !!campaignCreatorId,
+  });
 
-  const campaign = campaigns.find(c => c.id === parseInt(campaignId || '1')) || campaigns[0];
+  const isOutreachMode = action === "outreach";
 
-  const isOutreachMode = action === 'outreach';
-
-  const emailContent = `Subject: Exciting Partnership Opportunity with ${campaign.name}
+  const emailContent = campaignData
+    ? `Subject: Exciting Partnership Opportunity with ${
+        campaignData.campaign.name
+      }
 
 Dear Creator,
 
-We hope this email finds you well. We're reaching out regarding an exciting partnership opportunity for our upcoming ${campaign.name} campaign.
+We hope this email finds you well. We're reaching out regarding an exciting partnership opportunity for our upcoming ${
+        campaignData.campaign.name
+      } campaign.
 
 Campaign Details:
-- Budget: ${campaign.budget}
-- Timeline: ${new Date(campaign.startDate).toLocaleDateString()} - ${new Date(campaign.endDate).toLocaleDateString()}
-- Deliverables: ${campaign.deliverables.join(', ')}
+- Budget: $${campaignData.campaignCreator.assignedBudget || "TBD"}
+- Timeline: ${new Date(
+        campaignData.campaign.startDate
+      ).toLocaleDateString()} - ${new Date(
+        campaignData.campaign.endDate
+      ).toLocaleDateString()}
+- Deliverables: ${campaignData.campaignCreator.agreedDeliverables.join(", ")}
 
 We believe your content style and audience would be a perfect fit for this campaign. We'd love to discuss this opportunity further and answer any questions you might have.
 
 Please let us know if you're interested in learning more about this collaboration.
 
 Best regards,
-Campaign Team`;
+Campaign Team`
+    : "";
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+        <div className="text-center">Loading...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+        <div className="text-center text-red-600">
+          Error loading campaign details
+        </div>
+      </div>
+    );
+  }
+
+  if (!campaignData) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+        <div className="text-center">No campaign data found</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
       <div className="w-full max-w-2xl">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            {isOutreachMode ? 'Outreach Email' : 'Agent Call'}
+            {isOutreachMode ? "Outreach Email" : "Agent Call"}
           </h1>
           <p className="text-gray-600 mt-2">
-            {isOutreachMode ? 'Review and send outreach email' : 'Campaign details for agent call'}
+            {isOutreachMode
+              ? "Review and send outreach email"
+              : "Campaign details for agent call"}
           </p>
-        </div>
-
+        </div>{" "}
         <Card className="shadow-lg">
           <CardHeader className="pb-3">
             <div className="flex justify-between items-start">
               <div>
-                <CardTitle className="text-xl">{campaign.name}</CardTitle>
+                <CardTitle className="text-xl">
+                  {campaignData.campaign.name}
+                </CardTitle>
               </div>
             </div>
           </CardHeader>
@@ -117,7 +141,9 @@ Campaign Team`;
                       <DollarSign className="w-4 h-4" />
                       <span>Budget</span>
                     </div>
-                    <p className="font-medium text-lg">{campaign.budget}</p>
+                    <p className="font-medium text-lg">
+                      ${campaignData.campaignCreator.assignedBudget || "TBD"}
+                    </p>
                   </div>
                 </div>
 
@@ -127,18 +153,30 @@ Campaign Team`;
                     <span>Timeline</span>
                   </div>
                   <p className="text-gray-700 text-lg">
-                    {new Date(campaign.startDate).toLocaleDateString()} - {new Date(campaign.endDate).toLocaleDateString()}
+                    {new Date(
+                      campaignData.campaign.startDate
+                    ).toLocaleDateString()}{" "}
+                    -{" "}
+                    {new Date(
+                      campaignData.campaign.endDate
+                    ).toLocaleDateString()}
                   </p>
                 </div>
 
                 <div>
                   <p className="text-sm text-gray-500 mb-2">Deliverables</p>
                   <div className="flex flex-wrap gap-2">
-                    {campaign.deliverables.map((deliverable) => (
-                      <Badge key={deliverable} variant="outline" className="text-sm">
-                        {deliverable}
-                      </Badge>
-                    ))}
+                    {campaignData.campaignCreator.agreedDeliverables.map(
+                      (deliverable) => (
+                        <Badge
+                          key={deliverable}
+                          variant="outline"
+                          className="text-sm"
+                        >
+                          {deliverable}
+                        </Badge>
+                      )
+                    )}
                   </div>
                 </div>
 
@@ -147,7 +185,10 @@ Campaign Team`;
                     <Phone className="w-4 h-4 mr-2" />
                     Start Call
                   </Button>
-                  <Button variant="outline" className="flex-1 border-red-300 text-red-600 hover:bg-red-50">
+                  <Button
+                    variant="outline"
+                    className="flex-1 border-red-300 text-red-600 hover:bg-red-50"
+                  >
                     <PhoneOff className="w-4 h-4 mr-2" />
                     End Call
                   </Button>

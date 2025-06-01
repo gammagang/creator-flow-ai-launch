@@ -38,14 +38,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/auth" element={<Auth />} />
-            <Route
-              path="/agent-call"
-              element={
-                <ProtectedRoute>
-                  <AgentCall />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/agent-call" element={<AgentCall />} />
             <Route
               path="/"
               element={
