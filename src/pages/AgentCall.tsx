@@ -130,6 +130,7 @@ const AgentCall = () => {
             <elevenlabs-convai
               agent-id="agent_01jwh13zh1eras2zsfwfc4n8d5"
               dynamic-variables={JSON.stringify({
+                campaign_creator_id: campaignCreatorId,
                 campaign_name: campaignData.campaign.name,
                 budget: campaignData.campaignCreator.assignedBudget,
                 deliverables:
