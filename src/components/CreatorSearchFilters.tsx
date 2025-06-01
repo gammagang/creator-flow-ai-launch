@@ -77,7 +77,7 @@ const CreatorSearchFilters = ({ searchQuery, onSearchChange, onFiltersChange, in
     onFiltersChange(emptyFilters);
   };
 
-  const countryOptions = ["India", "Australia", "USA", "UK", "Canada", "Germany"];
+  const countryOptions = ["India", "United States", "United Kingdom", "Brazil", "Indonesia"];
   const tierOptions = ["early", "nano", "micro", "lower-mid", "upper-mid", "macro", "mega", "celebrity"];
   const erOptions = ["vlow", "low", "micro", "mid", "macro", "high", "vhigh"];
   const genderOptions = ["Male", "Female", "Non-binary"];
