@@ -9,6 +9,7 @@ import CampaignOverview from "@/components/campaign/CampaignOverview";
 import CampaignAnalytics from "@/components/campaign/CampaignAnalytics";
 import { campaignAPI } from "@/services/campaignApi";
 import { toast } from "sonner";
+import CampaignContent from "@/components/campaign/CampaignContent";
 
 // Define the campaign type based on what the components expect
 interface CampaignData {
@@ -170,8 +171,7 @@ const CampaignDetails = () => {
             </TabsContent>
 
             <TabsContent value="content">
-              {/* <CampaignContent /> */}
-              CampaignContent TBD Placeholder
+              <CampaignContent />
             </TabsContent>
 
             <TabsContent value="analytics">
