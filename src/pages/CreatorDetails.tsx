@@ -1,13 +1,25 @@
-
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Users, Heart, MessageCircle, Eye } from "lucide-react";
+import { ArrowLeft, Users, Heart, MessageCircle, Eye, Mail, FileText, CheckCircle } from "lucide-react";
+import ContractDialog from "@/components/ContractDialog";
+import ContractSigningDialog from "@/components/ContractSigningDialog";
 
 const CreatorDetails = () => {
   const { id, campaignId } = useParams();
   const navigate = useNavigate();
+
+  // State for managing lifecycle progression
+  const [creatorState, setCreatorState] = useState({
+    currentStage: "",
+    outreachSent: false,
+    contractGenerated: false,
+    contractSent: false,
+    contractSigned: false,
+    contractData: null
+  });
 
   // TODO: Replace with real creator data based on ID
   const allCreators = [
@@ -167,6 +179,17 @@ const CreatorDetails = () => {
     );
   }
 
+  // Initialize state based on creator's current stage
+  React.useEffect(() => {
+    setCreatorState(prev => ({
+      ...prev,
+      currentStage: creator.lifecycleStage,
+      outreachSent: creator.lifecycleStage !== "discovered",
+      contractSent: ["waiting for signature", "onboarded", "fulfilled"].includes(creator.lifecycleStage),
+      contractSigned: ["onboarded", "fulfilled"].includes(creator.lifecycleStage)
+    }));
+  }, [creator.lifecycleStage]);
+
   const lifecycleStages = [
     { key: "discovered", label: "Discovered" },
     { key: "outreached", label: "Outreached" },
@@ -178,7 +201,7 @@ const CreatorDetails = () => {
     { key: "fulfilled", label: "Fulfilled" }
   ];
 
-  const currentStageIndex = lifecycleStages.findIndex(stage => stage.key === creator.lifecycleStage);
+  const currentStageIndex = lifecycleStages.findIndex(stage => stage.key === creatorState.currentStage);
 
   const getStageColor = (index: number) => {
     if (index <= currentStageIndex) {
@@ -192,6 +215,132 @@ const CreatorDetails = () => {
       return "bg-green-500";
     }
     return "bg-gray-300";
+  };
+
+  const handleSendOutreach = () => {
+    // Redirect to agent call for outreach email
+    navigate(`/agent-call?campaign=${campaignId}&creator=${id}&action=outreach`);
+    setCreatorState(prev => ({
+      ...prev,
+      outreachSent: true,
+      currentStage: "outreached"
+    }));
+  };
+
+  const handleContractGenerated = (contractData: any) => {
+    setCreatorState(prev => ({
+      ...prev,
+      contractGenerated: true,
+      contractData
+    }));
+  };
+
+  const handleSendContract = () => {
+    setCreatorState(prev => ({
+      ...prev,
+      contractSent: true,
+      currentStage: "waiting for signature"
+    }));
+  };
+
+  const handleContractSigned = () => {
+    setCreatorState(prev => ({
+      ...prev,
+      contractSigned: true,
+      currentStage: "onboarded"
+    }));
+  };
+
+  const getStageActions = (stage: any, index: number) => {
+    const actions = [];
+
+    // Stage 1: Discovered
+    if (stage.key === "discovered" && currentStageIndex === 0 && !creatorState.outreachSent) {
+      actions.push(
+        <Button
+          key="outreach"
+          size="sm"
+          onClick={handleSendOutreach}
+          className="ml-4 bg-blue-600 hover:bg-blue-700"
+        >
+          <Mail className="w-3 h-3 mr-1" />
+          Send Outreach E-mail
+        </Button>
+      );
+    }
+
+    // Stage 4: Call Complete
+    if (stage.key === "call complete" && currentStageIndex === 3) {
+      if (!creatorState.contractGenerated) {
+        actions.push(
+          <ContractDialog
+            key="generate-contract"
+            trigger={
+              <Button size="sm" className="ml-4 bg-green-600 hover:bg-green-700">
+                <FileText className="w-3 h-3 mr-1" />
+                Generate Contract
+              </Button>
+            }
+            creatorName={creator.creatorName}
+            campaignName={creator.campaignName}
+            onContractGenerated={handleContractGenerated}
+          />
+        );
+      } else if (!creatorState.contractSent) {
+        actions.push(
+          <Button
+            key="send-contract"
+            size="sm"
+            onClick={handleSendContract}
+            className="ml-4 bg-blue-600 hover:bg-blue-700"
+          >
+            <Mail className="w-3 h-3 mr-1" />
+            Send Contract
+          </Button>
+        );
+      } else {
+        actions.push(
+          <Button
+            key="view-contract"
+            size="sm"
+            variant="outline"
+            className="ml-4"
+          >
+            <FileText className="w-3 h-3 mr-1" />
+            View Contract
+          </Button>
+        );
+      }
+    }
+
+    // Stage 6: Waiting for Signature
+    if (stage.key === "waiting for signature" && currentStageIndex === 5 && !creatorState.contractSigned) {
+      actions.push(
+        <ContractSigningDialog
+          key="sign-contract"
+          trigger={
+            <Button size="sm" className="ml-4 bg-purple-600 hover:bg-purple-700">
+              <CheckCircle className="w-3 h-3 mr-1" />
+              E-Sign Contract
+            </Button>
+          }
+          contractData={creatorState.contractData}
+          onContractSigned={handleContractSigned}
+        />
+      );
+    }
+
+    return actions;
+  };
+
+  const getStageMessage = (stage: any) => {
+    if (stage.key === "discovered" && creatorState.outreachSent) {
+      return <span className="text-green-600 text-sm ml-4">Outreach sent</span>;
+    }
+    if (stage.key === "call complete" && creatorState.contractSent) {
+      return <span className="text-green-600 text-sm ml-4">Contract sent!</span>;
+    }
+    return null;
   };
 
   return (
@@ -263,7 +412,7 @@ const CreatorDetails = () => {
       <Card>
         <CardHeader>
           <CardTitle>Campaign Lifecycle Progress</CardTitle>
-          <p className="text-sm text-gray-600">Current stage: <Badge className="ml-2">{creator.lifecycleStage}</Badge></p>
+          <p className="text-sm text-gray-600">Current stage: <Badge className="ml-2">{creatorState.currentStage}</Badge></p>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col space-y-4">
@@ -278,10 +427,16 @@ const CreatorDetails = () => {
                   </div>
                   
                   {/* Stage Label */}
-                  <div className="ml-4">
+                  <div className="ml-4 flex-1">
                     <div className={`font-medium ${index <= currentStageIndex ? 'text-gray-900' : 'text-gray-500'}`}>
                       {stage.label}
                     </div>
+                    {getStageMessage(stage)}
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex items-center gap-2">
+                    {getStageActions(stage, index)}
                   </div>
                 </div>
 
