@@ -23,6 +23,7 @@ import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
+import AgentCall from "./pages/AgentCall";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,7 @@ const App = () => (
             <Route path="payments" element={<Payments />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="agent-call" element={<AgentCall />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
