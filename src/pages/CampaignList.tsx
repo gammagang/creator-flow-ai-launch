@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Calendar, Users, DollarSign, MoreHorizontal } from "lucide-react";
+import { Plus, Calendar, Users, DollarSign, MoreHorizontal, Mail, MessageSquare } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const CampaignList = () => {
@@ -131,6 +131,22 @@ const CampaignList = () => {
                 <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
                   Manage
                 </Button>
+              </div>
+
+              {/* Campaign-specific Outreach and Negotiation */}
+              <div className="flex gap-2 pt-2 border-t">
+                <Link to={`/outreach?campaign=${campaign.id}`} className="flex-1">
+                  <Button variant="outline" size="sm" className="w-full">
+                    <Mail className="w-3 h-3 mr-1" />
+                    Outreach
+                  </Button>
+                </Link>
+                <Link to={`/negotiation?campaign=${campaign.id}`} className="flex-1">
+                  <Button variant="outline" size="sm" className="w-full">
+                    <MessageSquare className="w-3 h-3 mr-1" />
+                    Negotiation
+                  </Button>
+                </Link>
               </div>
             </CardContent>
           </Card>

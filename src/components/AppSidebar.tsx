@@ -7,9 +7,7 @@ import {
   Megaphone,
   BarChart3,
   Settings,
-  Zap,
-  Mail,
-  MessageSquare
+  Zap
 } from "lucide-react";
 
 import {
@@ -47,18 +45,6 @@ const navigationItems = [
     title: "Campaigns",
     url: "/campaigns",
     icon: Megaphone,
-    group: "campaigns"
-  },
-  {
-    title: "Outreach",
-    url: "/outreach",
-    icon: Mail,
-    group: "campaigns"
-  },
-  {
-    title: "Negotiation",
-    url: "/negotiation",
-    icon: MessageSquare,
     group: "campaigns"
   },
   {
