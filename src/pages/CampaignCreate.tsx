@@ -1,22 +1,111 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, DollarSign, Target, Users } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import apiService from "@/services/api";
+import { useState } from "react";
+
+interface CampaignFormData {
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  ageRange: string;
+  gender: string;
+  interests: string[];
+  deliverables: string[];
+  contentGuidelines: string;
+  totalBudget: string;
+  budgetPerCreator: string;
+  paymentModel: string;
+  followerRange: string;
+  minEngagement: string;
+  location: string;
+}
 
 const CampaignCreate = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState<CampaignFormData>({
+    name: "",
+    description: "",
+    startDate: "",
+    endDate: "",
+    ageRange: "",
+    gender: "",
+    interests: [],
+    deliverables: [],
+    contentGuidelines: "",
+    totalBudget: "",
+    budgetPerCreator: "",
+    paymentModel: "",
+    followerRange: "",
+    minEngagement: "",
+    location: "",
+  });
+
+  const createCampaignMutation = useMutation({
+    mutationFn: (data: CampaignFormData) =>
+      apiService.post("/campaign/add", data),
+    onSuccess: () => {
+      toast.success("Campaign created successfully!");
+      navigate("/campaigns");
+    },
+    onError: (error) => {
+      toast.error("Failed to create campaign. Please try again.");
+      console.error("Campaign creation error:", error);
+    },
+  });
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleCheckboxChange = (name: string, checked: boolean) => {
+    setFormData((prev) => ({
+      ...prev,
+      deliverables: checked
+        ? [...prev.deliverables, name]
+        : prev.deliverables.filter((d) => d !== name),
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    createCampaignMutation.mutate(formData);
+  };
+
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <form onSubmit={handleSubmit} className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center gap-3">
         <Target className="w-8 h-8 text-blue-600" />
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Create New Campaign</h1>
-          <p className="text-gray-600">Set up your influencer marketing campaign</p>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Create New Campaign
+          </h1>
+          <p className="text-gray-600">
+            Set up your influencer marketing campaign
+          </p>
         </div>
       </div>
 
@@ -30,12 +119,21 @@ const CampaignCreate = () => {
             <CardContent className="space-y-4">
               <div>
                 <Label htmlFor="campaignName">Campaign Name</Label>
-                <Input id="campaignName" placeholder="Summer Launch 2024" />
+                <Input
+                  id="campaignName"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  placeholder="Summer Launch 2024"
+                />
               </div>
               <div>
                 <Label htmlFor="description">Description</Label>
-                <Textarea 
-                  id="description" 
+                <Textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
                   placeholder="Describe your campaign goals and messaging..."
                   rows={3}
                 />
@@ -43,11 +141,23 @@ const CampaignCreate = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="startDate">Start Date</Label>
-                  <Input id="startDate" type="date" />
+                  <Input
+                    id="startDate"
+                    name="startDate"
+                    type="date"
+                    value={formData.startDate}
+                    onChange={handleInputChange}
+                  />
                 </div>
                 <div>
                   <Label htmlFor="endDate">End Date</Label>
-                  <Input id="endDate" type="date" />
+                  <Input
+                    id="endDate"
+                    name="endDate"
+                    type="date"
+                    value={formData.endDate}
+                    onChange={handleInputChange}
+                  />
                 </div>
               </div>
             </CardContent>
@@ -65,7 +175,12 @@ const CampaignCreate = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="ageRange">Age Range</Label>
-                  <Select>
+                  <Select
+                    value={formData.ageRange}
+                    onValueChange={(value) =>
+                      handleSelectChange("ageRange", value)
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select age range" />
                     </SelectTrigger>
@@ -79,7 +194,12 @@ const CampaignCreate = () => {
                 </div>
                 <div>
                   <Label htmlFor="gender">Gender</Label>
-                  <Select>
+                  <Select
+                    value={formData.gender}
+                    onValueChange={(value) =>
+                      handleSelectChange("gender", value)
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select gender" />
                     </SelectTrigger>
@@ -94,12 +214,34 @@ const CampaignCreate = () => {
               <div>
                 <Label htmlFor="interests">Interests/Niches</Label>
                 <div className="flex flex-wrap gap-2 mt-2">
-                  <Badge variant="secondary">Fashion</Badge>
-                  <Badge variant="secondary">Beauty</Badge>
-                  <Badge variant="secondary">Fitness</Badge>
-                  <Badge variant="secondary">Food</Badge>
-                  <Badge variant="secondary">Travel</Badge>
-                  <Badge variant="secondary">Tech</Badge>
+                  {[
+                    "Fashion",
+                    "Beauty",
+                    "Fitness",
+                    "Food",
+                    "Travel",
+                    "Tech",
+                  ].map((interest) => (
+                    <Badge
+                      key={interest}
+                      variant={
+                        formData.interests.includes(interest)
+                          ? "default"
+                          : "secondary"
+                      }
+                      className="cursor-pointer"
+                      onClick={() => {
+                        setFormData((prev) => ({
+                          ...prev,
+                          interests: prev.interests.includes(interest)
+                            ? prev.interests.filter((i) => i !== interest)
+                            : [...prev.interests, interest],
+                        }));
+                      }}
+                    >
+                      {interest}
+                    </Badge>
+                  ))}
                 </div>
               </div>
             </CardContent>
@@ -112,27 +254,33 @@ const CampaignCreate = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="posts" />
-                  <Label htmlFor="posts">Instagram Posts</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="stories" />
-                  <Label htmlFor="stories">Instagram Stories</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="reels" />
-                  <Label htmlFor="reels">Instagram Reels</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="igtv" />
-                  <Label htmlFor="igtv">IGTV Videos</Label>
-                </div>
+                {["posts", "stories", "reels", "igtv"].map((deliverable) => (
+                  <div
+                    key={deliverable}
+                    className="flex items-center space-x-2"
+                  >
+                    <Checkbox
+                      id={deliverable}
+                      checked={formData.deliverables.includes(deliverable)}
+                      onCheckedChange={(checked) =>
+                        handleCheckboxChange(deliverable, checked as boolean)
+                      }
+                    />
+                    <Label htmlFor={deliverable}>
+                      Instagram{" "}
+                      {deliverable.charAt(0).toUpperCase() +
+                        deliverable.slice(1)}
+                    </Label>
+                  </div>
+                ))}
               </div>
               <div>
                 <Label htmlFor="contentGuidelines">Content Guidelines</Label>
-                <Textarea 
-                  id="contentGuidelines" 
+                <Textarea
+                  id="contentGuidelines"
+                  name="contentGuidelines"
+                  value={formData.contentGuidelines}
+                  onChange={handleInputChange}
                   placeholder="Specific requirements for creator content..."
                   rows={3}
                 />
@@ -154,21 +302,40 @@ const CampaignCreate = () => {
             <CardContent className="space-y-4">
               <div>
                 <Label htmlFor="totalBudget">Total Budget</Label>
-                <Input id="totalBudget" placeholder="$10,000" />
+                <Input
+                  id="totalBudget"
+                  name="totalBudget"
+                  value={formData.totalBudget}
+                  onChange={handleInputChange}
+                  placeholder="$10,000"
+                />
               </div>
               <div>
                 <Label htmlFor="budgetPerCreator">Budget Per Creator</Label>
-                <Input id="budgetPerCreator" placeholder="$500 - $2,000" />
+                <Input
+                  id="budgetPerCreator"
+                  name="budgetPerCreator"
+                  value={formData.budgetPerCreator}
+                  onChange={handleInputChange}
+                  placeholder="$500 - $2,000"
+                />
               </div>
               <div>
                 <Label htmlFor="paymentModel">Payment Model</Label>
-                <Select>
+                <Select
+                  value={formData.paymentModel}
+                  onValueChange={(value) =>
+                    handleSelectChange("paymentModel", value)
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select model" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="flat">Flat Fee</SelectItem>
-                    <SelectItem value="performance">Performance Based</SelectItem>
+                    <SelectItem value="performance">
+                      Performance Based
+                    </SelectItem>
                     <SelectItem value="milestone">Milestone Based</SelectItem>
                   </SelectContent>
                 </Select>
@@ -184,7 +351,12 @@ const CampaignCreate = () => {
             <CardContent className="space-y-4">
               <div>
                 <Label htmlFor="followerRange">Follower Range</Label>
-                <Select>
+                <Select
+                  value={formData.followerRange}
+                  onValueChange={(value) =>
+                    handleSelectChange("followerRange", value)
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select range" />
                   </SelectTrigger>
@@ -198,27 +370,50 @@ const CampaignCreate = () => {
               </div>
               <div>
                 <Label htmlFor="minEngagement">Min Engagement Rate</Label>
-                <Input id="minEngagement" placeholder="3%" />
+                <Input
+                  id="minEngagement"
+                  name="minEngagement"
+                  value={formData.minEngagement}
+                  onChange={handleInputChange}
+                  placeholder="3%"
+                />
               </div>
               <div>
                 <Label htmlFor="location">Location</Label>
-                <Input id="location" placeholder="United States" />
+                <Input
+                  id="location"
+                  name="location"
+                  value={formData.location}
+                  onChange={handleInputChange}
+                  placeholder="United States"
+                />
               </div>
             </CardContent>
           </Card>
 
           {/* Actions */}
           <div className="space-y-3">
-            <Button className="w-full bg-blue-600 hover:bg-blue-700">
-              Create Campaign
+            <Button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700"
+              disabled={createCampaignMutation.isPending}
+            >
+              {createCampaignMutation.isPending
+                ? "Creating..."
+                : "Create Campaign"}
             </Button>
-            <Button variant="outline" className="w-full">
-              Save as Draft
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={() => navigate("/campaigns")}
+            >
+              Cancel
             </Button>
           </div>
         </div>
       </div>
-    </div>
+    </form>
   );
 };
 
