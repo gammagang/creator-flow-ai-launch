@@ -1,63 +1,63 @@
-
 import { toast } from "sonner";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
-const BASE_URL = "https://influencer-flow-ai-be.onrender.com";
+const BASE_URL = import.meta.env.API_URL || "http://localhost:3000";
+
+// Create axios instance with base configuration
+const axiosInstance = axios.create({
+  baseURL: BASE_URL + "/api",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
 // Helper function to get the access token from localStorage
 const getAccessToken = (): string | null => {
   try {
-    const authData = localStorage.getItem('sb-tysrnidaipchnspynnoz-auth-token');
+    const authData = localStorage.getItem("sb-tysrnidaipchnspynnoz-auth-token");
     if (!authData) return null;
-    
+
     const parsedData = JSON.parse(authData);
     return parsedData.access_token || null;
   } catch (error) {
-    console.error('Error retrieving access token:', error);
+    console.error("Error retrieving access token:", error);
     return null;
   }
 };
 
-// Create headers with authorization
-const createHeaders = (): HeadersInit => {
+// Add request interceptor to add auth token
+axiosInstance.interceptors.request.use((config) => {
   const token = getAccessToken();
-  const headers: HeadersInit = {
-    'Content-Type': 'application/json',
-  };
-  
   if (token) {
-    headers.Authorization = `Bearer ${token}`;
+    config.headers.Authorization = `Bearer ${token}`;
   }
-  
-  return headers;
-};
+  return config;
+});
+
+// Add response interceptor for error handling
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const errorMessage =
+      error.response?.data || error.message || "Unknown error";
+    toast.error(`Request failed: ${errorMessage}`);
+    return Promise.reject(error);
+  }
+);
 
 // Generic API request function
 const apiRequest = async <T>(
   endpoint: string,
-  options: RequestInit = {}
+  config: AxiosRequestConfig = {}
 ): Promise<T> => {
-  const url = `${BASE_URL}${endpoint}`;
-  const headers = createHeaders();
-  
   try {
-    const response = await fetch(url, {
-      ...options,
-      headers: {
-        ...headers,
-        ...options.headers,
-      },
+    const response: AxiosResponse<T> = await axiosInstance({
+      url: endpoint,
+      ...config,
     });
-    
-    if (!response.ok) {
-      const errorData = await response.text();
-      throw new Error(`API Error: ${response.status} - ${errorData}`);
-    }
-    
-    const data = await response.json();
-    return data;
+    return response.data;
   } catch (error) {
     console.error(`API request failed for ${endpoint}:`, error);
-    toast.error(`Request failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     throw error;
   }
 };
@@ -66,35 +66,35 @@ const apiRequest = async <T>(
 export const apiService = {
   // GET request
   get: async <T>(endpoint: string): Promise<T> => {
-    return apiRequest<T>(endpoint, { method: 'GET' });
+    return apiRequest<T>(endpoint, { method: "GET" });
   },
-  
+
   // POST request
-  post: async <T>(endpoint: string, data?: any): Promise<T> => {
+  post: async <T, D = unknown>(endpoint: string, data?: D): Promise<T> => {
     return apiRequest<T>(endpoint, {
-      method: 'POST',
-      body: data ? JSON.stringify(data) : undefined,
+      method: "POST",
+      data,
     });
   },
-  
+
   // PUT request
-  put: async <T>(endpoint: string, data?: any): Promise<T> => {
+  put: async <T, D = unknown>(endpoint: string, data?: D): Promise<T> => {
     return apiRequest<T>(endpoint, {
-      method: 'PUT',
-      body: data ? JSON.stringify(data) : undefined,
+      method: "PUT",
+      data,
     });
   },
-  
+
   // DELETE request
   delete: async <T>(endpoint: string): Promise<T> => {
-    return apiRequest<T>(endpoint, { method: 'DELETE' });
+    return apiRequest<T>(endpoint, { method: "DELETE" });
   },
-  
+
   // PATCH request
-  patch: async <T>(endpoint: string, data?: any): Promise<T> => {
+  patch: async <T, D = unknown>(endpoint: string, data?: D): Promise<T> => {
     return apiRequest<T>(endpoint, {
-      method: 'PATCH',
-      body: data ? JSON.stringify(data) : undefined,
+      method: "PATCH",
+      data,
     });
   },
 };
