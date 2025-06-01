@@ -21,11 +21,51 @@ export type CampaignResponse = {
   };
 };
 
+// Campaign meta structure
+interface CampaignMeta {
+  budget: {
+    total: string;
+    perCreator: string;
+    paymentModel: string;
+  };
+  deliverables: string[];
+  targetAudience: {
+    gender: string;
+    ageRange: string;
+    location: string;
+    interests: string[];
+  };
+  creatorCriteria: {
+    followerRange: string;
+    minEngagement: string;
+  };
+  contentGuidelines: string;
+}
+
+// Single campaign response type
+export type SingleCampaignResponse = {
+  data: {
+    id: string;
+    company_id: string;
+    name: string;
+    description?: string;
+    start_date: string;
+    end_date: string;
+    state: string;
+    meta: CampaignMeta;
+  };
+};
+
 // Campaign API functions
 export const campaignAPI = {
   // Get all campaigns
   getCampaigns: async () => {
     return apiService.get<CampaignResponse>("/campaign");
+  },
+
+  // Get single campaign by ID
+  getCampaign: async (campaignId: string) => {
+    return apiService.get<SingleCampaignResponse>(`/campaign/${campaignId}`);
   },
 
   // Create new campaign
@@ -61,5 +101,12 @@ export const campaignAPI = {
         updatedAt: string;
       };
     }>("/campaign", campaignData);
+  },
+
+  // GET Creators in Campaign by ID
+  getCreatorsInCampaign: async (campaignId: string) => {
+    return apiService.get<{
+      data: Array<{ id: string; name: string; platform: string }>;
+    }>(`/campaign/${campaignId}/creators`);
   },
 };

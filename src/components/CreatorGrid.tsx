@@ -1,18 +1,34 @@
 import { Button } from "@/components/ui/button";
 import CreatorCard from "./CreatorCard";
 
-interface Creator {
-  id: number;
-  username: string;
-  displayName: string;
-  followers: string;
-  engagement: string;
-  niche: string;
-  avatar: string;
-  verified: boolean;
-  recentPosts: number;
-  avgLikes: string;
-  avgComments: string;
+interface DiscoveredCreator {
+  id: string;
+  name: string;
+  platform: string;
+  category?: string;
+  age?: number;
+  gender?: string;
+  location?: string | null;
+  tier: string;
+  engagement_rate: number;
+  email?: string;
+  phone?: string;
+  language?: string;
+  followersCount: number;
+  postsCount: number;
+  averageViews?: number;
+  handle: string;
+  profileImageUrl?: string;
+  profileUrl?: string;
+  insightsUrl?: string;
+  interests?: string[];
+  country?: string;
+  state?: string;
+  qualityScore?: number;
+  effectiveFollowerRate?: number;
+  createdAt: string;
+  updatedAt: string;
+  meta: Record<string, unknown>;
 }
 
 interface Campaign {
@@ -21,9 +37,9 @@ interface Campaign {
 }
 
 interface CreatorGridProps {
-  creators: Creator[];
+  creators: DiscoveredCreator[];
   campaigns: Campaign[];
-  onAddToCampaign: (creatorId: number, campaignId: string) => void;
+  onAddToCampaign: (creatorId: string, campaignId: string) => void;
 }
 
 const CreatorGrid = ({
