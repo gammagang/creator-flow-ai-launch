@@ -37,9 +37,10 @@ interface AddCreatorToCampaignResponse {
 }
 
 const addCreatorToCampaign = async (data: AddCreatorToCampaignRequest) => {
+  const { campaignId, ...rest } = data;
   const response = await apiService.post<AddCreatorToCampaignResponse>(
-    "/creator/add-creator-to-campaign",
-    data
+    `/creator/${campaignId}/creator`,
+    rest
   );
   return response; // Backend wraps response in data property
 };
