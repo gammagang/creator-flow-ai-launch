@@ -112,7 +112,7 @@ const CreatorDiscovery = () => {
             <div className="absolute top-3 right-3 z-10">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button size="sm" variant="outline" className="h-8 px-2">
+                  <Button size="sm" className="h-7 px-2 text-xs bg-blue-600 hover:bg-blue-700">
                     <Plus className="w-3 h-3 mr-1" />
                     Add to Campaign
                   </Button>
