@@ -40,6 +40,7 @@ const CampaignList = () => {
     endDate: apiCampaign.end_date,
     deliverables: ["Posts"],
   }));
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active":
