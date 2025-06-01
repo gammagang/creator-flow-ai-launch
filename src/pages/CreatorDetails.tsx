@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation, Outlet } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Users, Heart, MessageCircle, Eye, Mail, FileText, CheckCircle } from "lucide-react";
 import ContractDialog from "@/components/ContractDialog";
 import ContractSigningDialog from "@/components/ContractSigningDialog";
@@ -10,6 +11,7 @@ import ContractSigningDialog from "@/components/ContractSigningDialog";
 const CreatorDetails = () => {
   const { id, campaignId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // State for managing lifecycle progression
   const [creatorState, setCreatorState] = useState({
@@ -190,6 +192,35 @@ const CreatorDetails = () => {
     }));
   }, [creator.lifecycleStage]);
 
+  // Determine active tab based on current URL
+  const getActiveTab = () => {
+    const path = location.pathname;
+    if (path.includes('/creator-management')) return 'creator-management';
+    if (path.includes('/content-management')) return 'content-management';
+    if (path.includes('/analytics')) return 'analytics';
+    return 'overview';
+  };
+
+  const handleTabChange = (value: string) => {
+    const basePath = `/campaigns/${campaignId}/creators/${id}`;
+    switch (value) {
+      case 'overview':
+        navigate(basePath);
+        break;
+      case 'creator-management':
+        navigate(`${basePath}/creator-management`);
+        break;
+      case 'content-management':
+        navigate(`${basePath}/content-management`);
+        break;
+      case 'analytics':
+        navigate(`${basePath}/analytics`);
+        break;
+      default:
+        navigate(basePath);
+    }
+  };
+
   const lifecycleStages = [
     { key: "discovered", label: "Discovered" },
     { key: "outreached", label: "Outreached" },
@@ -216,7 +247,6 @@ const CreatorDetails = () => {
   };
 
   const handleSendOutreach = () => {
-    // Redirect to agent call for outreach email
     navigate(`/agent-call?campaign=${campaignId}&creator=${id}&action=outreach`);
     setCreatorState(prev => ({
       ...prev,
@@ -406,49 +436,64 @@ const CreatorDetails = () => {
         </Card>
       </div>
 
-      {/* Campaign Lifecycle */}
+      {/* Navigation Tabs */}
       <Card>
         <CardHeader>
-          <CardTitle>Campaign Lifecycle Progress</CardTitle>
-          <p className="text-sm text-gray-600">Current stage: <Badge className="ml-2">{creatorState.currentStage}</Badge></p>
+          <Tabs value={getActiveTab()} onValueChange={handleTabChange}>
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="creator-management">Creator Management</TabsTrigger>
+              <TabsTrigger value="content-management">Content</TabsTrigger>
+              <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            </TabsList>
+          </Tabs>
         </CardHeader>
-        <CardContent>
-          <div className="flex flex-col space-y-4">
-            {lifecycleStages.map((stage, index) => (
-              <div key={stage.key} className="flex items-center">
-                <div className="flex items-center flex-1">
-                  {/* Stage Circle */}
-                  <div 
-                    className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-medium ${getStageColor(index)}`}
-                  >
-                    {index + 1}
-                  </div>
-                  
-                  {/* Stage Label */}
-                  <div className="ml-4 flex-1">
-                    <div className={`font-medium ${index <= currentStageIndex ? 'text-gray-900' : 'text-gray-500'}`}>
-                      {stage.label}
-                    </div>
-                    {getStageMessage(stage)}
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex items-center gap-2">
-                    {getStageActions(stage, index)}
-                  </div>
-                </div>
-
-                {/* Connector Line */}
-                {index < lifecycleStages.length - 1 && (
-                  <div className="absolute left-4 mt-8 ml-0.5">
-                    <div className={`w-0.5 h-6 ${getConnectorColor(index)}`}></div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </CardContent>
       </Card>
+
+      {/* Tab Content */}
+      <div className="min-h-[400px]">
+        {getActiveTab() === 'overview' && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Campaign Lifecycle Progress</CardTitle>
+              <p className="text-sm text-gray-600">Current stage: <Badge className="ml-2">{creatorState.currentStage}</Badge></p>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col space-y-4">
+                {lifecycleStages.map((stage, index) => (
+                  <div key={stage.key} className="flex items-center">
+                    <div className="flex items-center flex-1">
+                      <div 
+                        className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-medium ${getStageColor(index)}`}
+                      >
+                        {index + 1}
+                      </div>
+                      
+                      <div className="ml-4 flex-1">
+                        <div className={`font-medium ${index <= currentStageIndex ? 'text-gray-900' : 'text-gray-500'}`}>
+                          {stage.label}
+                        </div>
+                        {getStageMessage(stage)}
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {getStageActions(stage, index)}
+                      </div>
+                    </div>
+
+                    {index < lifecycleStages.length - 1 && (
+                      <div className="absolute left-4 mt-8 ml-0.5">
+                        <div className={`w-0.5 h-6 ${getConnectorColor(index)}`}></div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+        <Outlet />
+      </div>
     </div>
   );
 };

@@ -16,6 +16,7 @@ import CreatorDetails from "./pages/CreatorDetails";
 import CampaignCreate from "./pages/CampaignCreate";
 import CampaignList from "./pages/CampaignList";
 import CampaignDetails from "./pages/CampaignDetails";
+import CreatorManagement from "./pages/CreatorManagement";
 import Outreach from "./pages/Outreach";
 import Negotiation from "./pages/Negotiation";
 import Contracts from "./pages/Contracts";
@@ -26,6 +27,11 @@ import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import AgentCall from "./pages/AgentCall";
+
+// Creator Details Tab Components
+import CreatorManagementTab from "./components/creator-details/CreatorManagementTab";
+import ContentManagementTab from "./components/creator-details/ContentManagementTab";
+import AnalyticsTab from "./components/creator-details/AnalyticsTab";
 
 const queryClient = new QueryClient();
 
@@ -55,10 +61,15 @@ const App = () => (
               <Route path="campaigns" element={<CampaignList />} />
               <Route path="campaigns/create" element={<CampaignCreate />} />
               <Route path="campaigns/:id" element={<CampaignDetails />} />
+              <Route path="campaigns/:campaignId/creator-management" element={<CreatorManagement />} />
               <Route
                 path="campaigns/:campaignId/creators/:id"
                 element={<CreatorDetails />}
-              />
+              >
+                <Route path="creator-management" element={<CreatorManagementTab />} />
+                <Route path="content-management" element={<ContentManagementTab />} />
+                <Route path="analytics" element={<AnalyticsTab />} />
+              </Route>
               <Route path="outreach" element={<Outreach />} />
               <Route path="negotiation" element={<Negotiation />} />
               <Route path="contracts" element={<Contracts />} />

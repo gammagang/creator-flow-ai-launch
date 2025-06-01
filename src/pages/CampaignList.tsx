@@ -12,7 +12,7 @@ import {
   Plus,
   Users,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const CampaignList = () => {
   // Fetch campaigns using React Query
@@ -25,7 +25,8 @@ const CampaignList = () => {
     queryFn: () => campaignAPI.getCampaigns(),
     retry: false,
   });
-  console.log(" error:", error);
+
+  const navigate = useNavigate();
 
   const apiCampaigns = campaignsData?.data?.items || [];
   const errorDetail = (error as AxiosError<{ detail: string }>)?.response?.data
@@ -250,6 +251,7 @@ const CampaignList = () => {
               <Button
                 size="sm"
                 className="bg-blue-600 hover:bg-blue-700 w-full"
+                onClick={() => navigate(`/campaigns/${campaign.id}`)}
               >
                 Manage
               </Button>
