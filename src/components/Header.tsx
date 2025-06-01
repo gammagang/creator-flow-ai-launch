@@ -1,7 +1,7 @@
 
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { Search, User, LogOut } from "lucide-react";
+import { User, LogOut } from "lucide-react";
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -37,14 +37,6 @@ export function Header() {
     <header className="h-16 border-b bg-white flex items-center justify-between px-6">
       <div className="flex items-center gap-4">
         <SidebarTrigger />
-        <div className="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2 w-96">
-          <Search className="w-4 h-4 text-gray-500" />
-          <input 
-            type="text" 
-            placeholder="Search creators, campaigns, contracts..."
-            className="bg-transparent flex-1 outline-none text-sm"
-          />
-        </div>
       </div>
       
       <div className="flex items-center gap-3">
