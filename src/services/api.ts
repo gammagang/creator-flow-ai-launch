@@ -11,6 +11,14 @@ const axiosInstance = axios.create({
   },
 });
 
+// Create public axios instance without /api prefix
+export const publicAxiosInstance = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
 // Helper function to get the access token from localStorage
 const getAccessToken = (): string | null => {
   try {
@@ -36,6 +44,24 @@ axiosInstance.interceptors.request.use((config) => {
 
 // Add response interceptor for error handling
 axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.log(" error:", error);
+    const errorMessage =
+      error.response?.data.detail ||
+      error.response?.data ||
+      error.message ||
+      "Unknown error";
+
+    if (error.response.status !== 400) {
+      toast.error(`Request failed: ${errorMessage}`);
+    }
+    return Promise.reject(error);
+  }
+);
+
+// Add the same error handling to public instance
+publicAxiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     console.log(" error:", error);

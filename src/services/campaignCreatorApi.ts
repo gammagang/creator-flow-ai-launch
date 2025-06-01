@@ -1,4 +1,4 @@
-import { apiService } from "./api";
+import { apiService, publicAxiosInstance } from "./api";
 
 export type CampaignCreator = {
   id: string;
@@ -69,9 +69,11 @@ export type CampaignCreatorListResponse = {
 export const campaignCreatorAPI = {
   // Get campaign-creator details with campaign info
   getCampaignCreatorDetails: async (linkId: string) => {
-    return apiService.get<{ data: CampaignCreatorDetailsResponse }>(
-      `/campaign-creator/${linkId}/details`
-    );
+    const response = await publicAxiosInstance.get<{
+      data: CampaignCreatorDetailsResponse;
+    }>(`/public/campaign_creator_details/${linkId}`);
+
+    return response.data;
   },
 
   // Get campaign-creator links with filters
