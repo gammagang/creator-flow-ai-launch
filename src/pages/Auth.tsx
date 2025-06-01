@@ -1,10 +1,8 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
 import { Zap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -19,12 +17,7 @@ const Auth = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    confirmPassword: "",
-    brandName: "",
-    websiteUrl: "",
-    description: "",
-    contactName: "",
-    phone: ""
+    confirmPassword: ""
   });
 
   // Redirect authenticated users to dashboard
@@ -106,14 +99,7 @@ const Auth = () => {
           email: formData.email,
           password: formData.password,
           options: {
-            emailRedirectTo: `${window.location.origin}/dashboard`,
-            data: {
-              brand_name: formData.brandName,
-              website_url: formData.websiteUrl,
-              contact_name: formData.contactName,
-              phone: formData.phone,
-              description: formData.description,
-            }
+            emailRedirectTo: `${window.location.origin}/dashboard`
           }
         });
 
@@ -196,87 +182,19 @@ const Auth = () => {
 
               {/* Signup Additional Fields */}
               {!isLogin && (
-                <>
-                  <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Confirm Password</Label>
-                    <Input
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      type="password"
-                      value={formData.confirmPassword}
-                      onChange={handleInputChange}
-                      placeholder="Confirm your password"
-                      required
-                      disabled={submitLoading}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="brandName">Brand/Company Name</Label>
-                    <Input
-                      id="brandName"
-                      name="brandName"
-                      value={formData.brandName}
-                      onChange={handleInputChange}
-                      placeholder="Your Brand Name"
-                      required
-                      disabled={submitLoading}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="websiteUrl">Website URL</Label>
-                    <Input
-                      id="websiteUrl"
-                      name="websiteUrl"
-                      type="url"
-                      value={formData.websiteUrl}
-                      onChange={handleInputChange}
-                      placeholder="https://yourbrand.com"
-                      required
-                      disabled={submitLoading}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="contactName">Contact Person Name</Label>
-                    <Input
-                      id="contactName"
-                      name="contactName"
-                      value={formData.contactName}
-                      onChange={handleInputChange}
-                      placeholder="John Doe"
-                      required
-                      disabled={submitLoading}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      placeholder="+1 (555) 123-4567"
-                      disabled={submitLoading}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="description">Brand Description (Optional)</Label>
-                    <Textarea
-                      id="description"
-                      name="description"
-                      value={formData.description}
-                      onChange={handleInputChange}
-                      placeholder="Tell us about your brand..."
-                      rows={3}
-                      disabled={submitLoading}
-                    />
-                  </div>
-                </>
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <Input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type="password"
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                    placeholder="Confirm your password"
+                    required
+                    disabled={submitLoading}
+                  />
+                </div>
               )}
 
               <Button type="submit" className="w-full" disabled={submitLoading}>
