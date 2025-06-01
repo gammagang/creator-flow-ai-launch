@@ -21,8 +21,6 @@ export function Header() {
   const name =
     (user?.identities[0]?.identity_data?.contact_name as string) || "User";
 
-  console.log("Header user:", user);
-
   const handleLogout = async () => {
     try {
       const { error } = await supabase.auth.signOut();
