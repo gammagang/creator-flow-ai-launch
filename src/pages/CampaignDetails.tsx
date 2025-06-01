@@ -11,61 +11,138 @@ import { Users, DollarSign, Calendar, Target, Mail, FileText } from "lucide-reac
 const CampaignDetails = () => {
   const { id } = useParams();
 
-  // TODO: Fetch campaign data based on ID
-  const campaign = {
-    id: 1,
-    name: "Summer Launch 2024",
-    status: "active",
-    budget: "$15,000",
-    spent: "$8,200",
-    creatorsContacted: 24,
-    creatorsResponded: 16,
-    contractsSigned: 12,
-    contentDelivered: 8,
-    startDate: "2024-06-01",
-    endDate: "2024-07-31",
-    progress: 65
-  };
-
-  // TODO: Fetch creators data for this campaign
-  const campaignCreators = [
+  // TODO: Replace with real campaign data based on ID
+  const campaigns = [
     {
       id: 1,
-      creatorName: "Sarah Johnson",
-      campaignName: "Summer Launch 2024",
-      lifecycleStage: "fulfilled"
+      name: "Summer Launch 2024",
+      status: "active",
+      budget: "$15,000",
+      spent: "$8,200",
+      creatorsContacted: 24,
+      creatorsResponded: 16,
+      contractsSigned: 12,
+      contentDelivered: 8,
+      startDate: "2024-06-01",
+      endDate: "2024-07-31",
+      progress: 65
     },
     {
       id: 2,
-      creatorName: "Mike Chen",
-      campaignName: "Summer Launch 2024",
-      lifecycleStage: "onboarded"
+      name: "Back to School Campaign",
+      status: "draft",
+      budget: "$8,500",
+      spent: "$0",
+      creatorsContacted: 0,
+      creatorsResponded: 0,
+      contractsSigned: 0,
+      contentDelivered: 0,
+      startDate: "2024-08-15",
+      endDate: "2024-09-30",
+      progress: 0
     },
     {
       id: 3,
-      creatorName: "Emma Davis",
-      campaignName: "Summer Launch 2024",
-      lifecycleStage: "waiting for signature"
-    },
-    {
-      id: 4,
-      creatorName: "Alex Rodriguez",
-      campaignName: "Summer Launch 2024",
-      lifecycleStage: "call complete"
-    },
-    {
-      id: 5,
-      creatorName: "Lisa Thompson",
-      campaignName: "Summer Launch 2024",
-      lifecycleStage: "outreached"
-    },
-    {
-      id: 6,
-      creatorName: "David Kim",
-      campaignName: "Summer Launch 2024",
-      lifecycleStage: "discovered"
+      name: "Holiday Collection",
+      status: "completed",
+      budget: "$22,000",
+      spent: "$22,000",
+      creatorsContacted: 35,
+      creatorsResponded: 28,
+      contractsSigned: 25,
+      contentDelivered: 25,
+      startDate: "2024-11-01",
+      endDate: "2024-12-31",
+      progress: 100
     }
   ];
+
+  // Find the campaign based on the ID parameter
+  const campaign = campaigns.find(c => c.id === parseInt(id || "1")) || campaigns[0];
+
+  // TODO: Fetch creators data for this specific campaign
+  const allCampaignCreators = {
+    1: [
+      {
+        id: 1,
+        creatorName: "Sarah Johnson",
+        campaignName: "Summer Launch 2024",
+        lifecycleStage: "fulfilled"
+      },
+      {
+        id: 2,
+        creatorName: "Mike Chen",
+        campaignName: "Summer Launch 2024",
+        lifecycleStage: "onboarded"
+      },
+      {
+        id: 3,
+        creatorName: "Emma Davis",
+        campaignName: "Summer Launch 2024",
+        lifecycleStage: "waiting for signature"
+      },
+      {
+        id: 4,
+        creatorName: "Alex Rodriguez",
+        campaignName: "Summer Launch 2024",
+        lifecycleStage: "call complete"
+      },
+      {
+        id: 5,
+        creatorName: "Lisa Thompson",
+        campaignName: "Summer Launch 2024",
+        lifecycleStage: "outreached"
+      },
+      {
+        id: 6,
+        creatorName: "David Kim",
+        campaignName: "Summer Launch 2024",
+        lifecycleStage: "discovered"
+      }
+    ],
+    2: [
+      {
+        id: 7,
+        creatorName: "Jessica Martinez",
+        campaignName: "Back to School Campaign",
+        lifecycleStage: "discovered"
+      },
+      {
+        id: 8,
+        creatorName: "Ryan Lee",
+        campaignName: "Back to School Campaign",
+        lifecycleStage: "discovered"
+      }
+    ],
+    3: [
+      {
+        id: 9,
+        creatorName: "Amanda White",
+        campaignName: "Holiday Collection",
+        lifecycleStage: "fulfilled"
+      },
+      {
+        id: 10,
+        creatorName: "Chris Brown",
+        campaignName: "Holiday Collection",
+        lifecycleStage: "fulfilled"
+      },
+      {
+        id: 11,
+        creatorName: "Taylor Swift",
+        campaignName: "Holiday Collection",
+        lifecycleStage: "fulfilled"
+      },
+      {
+        id: 12,
+        creatorName: "John Doe",
+        campaignName: "Holiday Collection",
+        lifecycleStage: "onboarded"
+      }
+    ]
+  };
+
+  const campaignCreators = allCampaignCreators[parseInt(id || "1")] || [];
 
   const getLifecycleStageColor = (stage: string) => {
     switch (stage) {
@@ -90,6 +167,15 @@ const CampaignDetails = () => {
     }
   };
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "active": return "bg-green-100 text-green-800";
+      case "draft": return "bg-gray-100 text-gray-800";
+      case "completed": return "bg-blue-100 text-blue-800";
+      default: return "bg-gray-100 text-gray-800";
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -97,7 +183,9 @@ const CampaignDetails = () => {
         <div>
           <h1 className="text-3xl font-bold text-gray-900">{campaign.name}</h1>
           <div className="flex items-center gap-2 mt-2">
-            <Badge className="bg-green-100 text-green-800">Active</Badge>
+            <Badge className={getStatusColor(campaign.status)}>
+              {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
+            </Badge>
             <span className="text-gray-500">•</span>
             <span className="text-gray-600">{campaign.progress}% Complete</span>
           </div>
