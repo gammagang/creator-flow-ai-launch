@@ -36,16 +36,16 @@ const navigationItems = [
     group: "main"
   },
   {
+    title: "Campaigns",
+    url: "/campaigns",
+    icon: Megaphone,
+    group: "main"
+  },
+  {
     title: "Creator Discovery",
     url: "/creators",
     icon: Users,
     group: "main"
-  },
-  {
-    title: "Campaigns",
-    url: "/campaigns",
-    icon: Megaphone,
-    group: "campaigns"
   },
   {
     title: "Analytics",
