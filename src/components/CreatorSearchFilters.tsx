@@ -5,12 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Filter, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface CreatorSearchFiltersProps {
   searchQuery: string;
   onSearchChange: (value: string) => void;
   onFiltersChange: (filters: DiscoverCreatorsQuery) => void;
+  initialFilters?: DiscoverCreatorsQuery;
 }
 
 interface DiscoverCreatorsQuery {
@@ -23,9 +24,9 @@ interface DiscoverCreatorsQuery {
   bio?: string[];
 }
 
-const CreatorSearchFilters = ({ searchQuery, onSearchChange, onFiltersChange }: CreatorSearchFiltersProps) => {
+const CreatorSearchFilters = ({ searchQuery, onSearchChange, onFiltersChange, initialFilters }: CreatorSearchFiltersProps) => {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
-  const [filters, setFilters] = useState<DiscoverCreatorsQuery>({
+  const [filters, setFilters] = useState<DiscoverCreatorsQuery>(initialFilters || {
     country: [],
     tier: [],
     er: [],
@@ -35,7 +36,16 @@ const CreatorSearchFilters = ({ searchQuery, onSearchChange, onFiltersChange }: 
     bio: []
   });
 
+  // Update filters when initialFilters prop changes
+  useEffect(() => {
+    if (initialFilters) {
+      setFilters(initialFilters);
+    }
+  }, [initialFilters]);
+
   const addFilter = (type: keyof DiscoverCreatorsQuery, value: string) => {
+    if (filters[type]?.includes(value)) return; // Prevent duplicates
+    
     const newFilters = {
       ...filters,
       [type]: [...(filters[type] || []), value]
@@ -68,11 +78,11 @@ const CreatorSearchFilters = ({ searchQuery, onSearchChange, onFiltersChange }: 
   };
 
   const countryOptions = ["India", "Australia", "USA", "UK", "Canada", "Germany"];
-  const tierOptions = ["Nano", "Micro", "Macro", "Mega"];
-  const erOptions = ["1-3%", "3-6%", "6-10%", "10%+"];
+  const tierOptions = ["early", "nano", "micro", "lower-mid", "upper-mid", "macro", "mega", "celebrity"];
+  const erOptions = ["vlow", "low", "micro", "mid", "macro", "high", "vhigh"];
   const genderOptions = ["Male", "Female", "Non-binary"];
-  const categoryOptions = ["Fashion", "Fitness", "Food", "Tech", "Travel", "Beauty", "Lifestyle", "Gaming"];
-  const languageOptions = ["English", "Spanish", "Hindi", "French", "German", "Portuguese"];
+  const categoryOptions = ["art & design", "automobiles", "beauty & hygiene", "books & writing", "business & entrepreneurship", "cinema & entertainment", "family & relationships", "fashion", "finance", "food & beverages", "gaming", "health & fitness", "home & lifestyle", "learning & education", "infotainment", "vloggers & bloggers", "politics", "pets & animals", "non profits", "fan pages", "music & dance", "motivational", "news & journalism", "parenting", "photography", "religion & spirituality", "sports", "technology", "travel & adventure", "work & career"];
+  const languageOptions = ["hindi", "english", "tamil", "telugu", "malayalam", "kannada", "arabic", "assamese", "bengali", "french", "gujarati", "marathi", "nepali", "oriya", "punjabi", "sindhi", "sinhala", "urdu"];
 
   return (
     <Card>
@@ -244,44 +254,44 @@ const CreatorSearchFilters = ({ searchQuery, onSearchChange, onFiltersChange }: 
           <Badge 
             variant="secondary" 
             className="cursor-pointer hover:bg-gray-300"
-            onClick={() => addFilter('category', 'Fashion')}
+            onClick={() => addFilter('category', 'fashion')}
           >
             Fashion
           </Badge>
           <Badge 
             variant="secondary" 
             className="cursor-pointer hover:bg-gray-300"
-            onClick={() => addFilter('category', 'Fitness')}
+            onClick={() => addFilter('category', 'health & fitness')}
           >
-            Fitness
+            Health & Fitness
           </Badge>
           <Badge 
             variant="secondary" 
             className="cursor-pointer hover:bg-gray-300"
-            onClick={() => addFilter('category', 'Food')}
+            onClick={() => addFilter('category', 'food & beverages')}
           >
-            Food
+            Food & Beverages
           </Badge>
           <Badge 
             variant="secondary" 
             className="cursor-pointer hover:bg-gray-300"
-            onClick={() => addFilter('category', 'Tech')}
+            onClick={() => addFilter('category', 'technology')}
           >
-            Tech
+            Technology
           </Badge>
           <Badge 
             variant="secondary" 
             className="cursor-pointer hover:bg-gray-300"
-            onClick={() => addFilter('category', 'Travel')}
+            onClick={() => addFilter('category', 'travel & adventure')}
           >
-            Travel
+            Travel & Adventure
           </Badge>
           <Badge 
             variant="secondary" 
             className="cursor-pointer hover:bg-gray-300"
-            onClick={() => addFilter('category', 'Beauty')}
+            onClick={() => addFilter('category', 'beauty & hygiene')}
           >
-            Beauty
+            Beauty & Hygiene
           </Badge>
         </div>
       </CardContent>
