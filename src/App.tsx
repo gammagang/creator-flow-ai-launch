@@ -4,7 +4,9 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
 import Layout from "./components/Layout";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // Pages
 import Dashboard from "./pages/Dashboard";
@@ -33,31 +35,41 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/agent-call" element={<AgentCall />} />
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="brand-profile" element={<BrandProfile />} />
-            <Route path="creators" element={<CreatorDiscovery />} />
-            <Route path="creators/:id" element={<CreatorProfile />} />
-            <Route path="campaigns" element={<CampaignList />} />
-            <Route path="campaigns/create" element={<CampaignCreate />} />
-            <Route path="campaigns/:id" element={<CampaignDetails />} />
-            <Route path="campaigns/:campaignId/creators/:id" element={<CreatorDetails />} />
-            <Route path="outreach" element={<Outreach />} />
-            <Route path="negotiation" element={<Negotiation />} />
-            <Route path="contracts" element={<Contracts />} />
-            <Route path="contracts/:id" element={<ContractDetails />} />
-            <Route path="payments" element={<Payments />} />
-            <Route path="analytics" element={<Analytics />} />
-            <Route path="settings" element={<Settings />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/agent-call" element={
+              <ProtectedRoute>
+                <AgentCall />
+              </ProtectedRoute>
+            } />
+            <Route path="/" element={
+              <ProtectedRoute>
+                <Layout />
+              </ProtectedRoute>
+            }>
+              <Route index element={<Dashboard />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="brand-profile" element={<BrandProfile />} />
+              <Route path="creators" element={<CreatorDiscovery />} />
+              <Route path="creators/:id" element={<CreatorProfile />} />
+              <Route path="campaigns" element={<CampaignList />} />
+              <Route path="campaigns/create" element={<CampaignCreate />} />
+              <Route path="campaigns/:id" element={<CampaignDetails />} />
+              <Route path="campaigns/:campaignId/creators/:id" element={<CreatorDetails />} />
+              <Route path="outreach" element={<Outreach />} />
+              <Route path="negotiation" element={<Negotiation />} />
+              <Route path="contracts" element={<Contracts />} />
+              <Route path="contracts/:id" element={<ContractDetails />} />
+              <Route path="payments" element={<Payments />} />
+              <Route path="analytics" element={<Analytics />} />
+              <Route path="settings" element={<Settings />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
