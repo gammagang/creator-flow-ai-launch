@@ -147,6 +147,7 @@ export type Database = {
           meta: Json | null
           name: string
           owner_name: string | null
+          user_id: string | null
           website: string | null
         }
         Insert: {
@@ -156,6 +157,7 @@ export type Database = {
           meta?: Json | null
           name: string
           owner_name?: string | null
+          user_id?: string | null
           website?: string | null
         }
         Update: {
@@ -165,6 +167,7 @@ export type Database = {
           meta?: Json | null
           name?: string
           owner_name?: string | null
+          user_id?: string | null
           website?: string | null
         }
         Relationships: []
