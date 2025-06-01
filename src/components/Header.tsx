@@ -1,14 +1,13 @@
-
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { User, LogOut } from "lucide-react";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuLabel, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -18,6 +17,11 @@ import { useAuth } from "@/contexts/AuthContext";
 export function Header() {
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  const name =
+    (user?.identities[0]?.identity_data?.contact_name as string) || "User";
+
+  console.log("Header user:", user);
 
   const handleLogout = async () => {
     try {
@@ -38,7 +42,7 @@ export function Header() {
       <div className="flex items-center gap-4">
         <SidebarTrigger />
       </div>
-      
+
       <div className="flex items-center gap-3">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -49,7 +53,7 @@ export function Header() {
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>
               <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium">{user?.user_metadata?.name || "User"}</p>
+                <p className="text-sm font-medium">{name}</p>
                 <p className="text-xs text-muted-foreground">{user?.email}</p>
               </div>
             </DropdownMenuLabel>
