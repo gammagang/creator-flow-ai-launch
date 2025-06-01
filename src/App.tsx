@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -28,6 +27,11 @@ import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import AgentCall from "./pages/AgentCall";
+
+// Creator Details Tab Components
+import CreatorManagementTab from "./components/creator-details/CreatorManagementTab";
+import ContentManagementTab from "./components/creator-details/ContentManagementTab";
+import AnalyticsTab from "./components/creator-details/AnalyticsTab";
 
 const queryClient = new QueryClient();
 
@@ -68,7 +72,11 @@ const App = () => (
               <Route
                 path="campaigns/:campaignId/creators/:id"
                 element={<CreatorDetails />}
-              />
+              >
+                <Route path="creator-management" element={<CreatorManagementTab />} />
+                <Route path="content-management" element={<ContentManagementTab />} />
+                <Route path="analytics" element={<AnalyticsTab />} />
+              </Route>
               <Route path="outreach" element={<Outreach />} />
               <Route path="negotiation" element={<Negotiation />} />
               <Route path="contracts" element={<Contracts />} />
