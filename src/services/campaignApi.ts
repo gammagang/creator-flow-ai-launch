@@ -60,6 +60,6 @@ export const campaignAPI = {
         createdAt: string;
         updatedAt: string;
       };
-    }>("/campaign/add", campaignData);
+    }>("/campaign", campaignData);
   },
 };
