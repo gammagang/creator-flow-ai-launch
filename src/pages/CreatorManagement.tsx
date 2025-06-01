@@ -51,8 +51,6 @@ interface Company {
 }
 
 const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
-  console.log("CreatorManagement component rendered", campaignId);
-
   const [company, setCompany] = useState<Company | null>(null);
   const [creators, setCreators] = useState<CampaignCreator[]>([]);
   const [loading, setLoading] = useState(true);

@@ -66,7 +66,8 @@ const CreatorDiscovery = () => {
     };
 
     fetchInitialCreators();
-  }, []); // Empty dependency array means this runs once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty dependency array - only run once on mount
 
   // Transform filters to API format
   const buildApiParams = (): DiscoverCreatorsRequest => ({
@@ -105,42 +106,8 @@ const CreatorDiscovery = () => {
   const isLoadingCreators = discoverCreatorsMutation.isPending;
   const creatorsError = discoverCreatorsMutation.error;
 
-  // Transform API creators to match CreatorGrid expected format
-  const transformCreator = (creator: DiscoveredCreator) => ({
-    id: parseInt(creator.id), // Convert string id to number for compatibility
-    username: creator.handle.startsWith("@")
-      ? creator.handle
-      : `@${creator.handle}`,
-    displayName: creator.name,
-    followers: formatFollowerCount(creator.followersCount),
-    engagement: `${(creator.engagement_rate * 100).toFixed(1)}%`,
-    niche: creator.category || "General",
-    avatar: creator.profileImageUrl || "/placeholder.svg",
-    verified: creator.qualityScore ? creator.qualityScore > 80 : false, // Use quality score as verification indicator
-    recentPosts: creator.postsCount,
-    avgLikes: creator.averageViews ? formatNumber(creator.averageViews) : "N/A",
-    avgComments: "N/A", // Not available in API response
-  });
-
-  const formatFollowerCount = (count: number): string => {
-    if (count >= 1000000) {
-      return `${(count / 1000000).toFixed(1)}M`;
-    } else if (count >= 1000) {
-      return `${(count / 1000).toFixed(1)}K`;
-    }
-    return count.toString();
-  };
-
-  const formatNumber = (num: number): string => {
-    if (num >= 1000000) {
-      return `${(num / 1000000).toFixed(1)}M`;
-    } else if (num >= 1000) {
-      return `${(num / 1000).toFixed(1)}K`;
-    }
-    return num.toString();
-  };
-
-  const creators = creatorsData?.creators?.map(transformCreator) || []; // Fetch campaigns using React Query
+  // Use creators directly from API response without transformation
+  const creators = creatorsData?.creators || []; // Fetch campaigns using React Query
   const { data: campaignsData, error: campaignsError } =
     useQuery<CampaignResponse>({
       queryKey: ["campaigns"],
@@ -206,17 +173,15 @@ const CreatorDiscovery = () => {
     const newUrl = searchParams.toString() ? `?${searchParams.toString()}` : "";
     navigate(`${location.pathname}${newUrl}`, { replace: true });
   };
-  // TODO: Replace with real Instagram creator data from API
-  // This should be filtered based on the current filters state
-  const handleAddToCampaign = async (creatorId: number, campaignId: string) => {
+  // Handle adding creator to campaign - work directly with API data
+  const handleAddToCampaign = async (creatorId: string, campaignId: string) => {
     try {
       // Find the creator data from the API response
       const apiCreator = creatorsData?.creators?.find(
-        (c) => parseInt(c.id) === creatorId
+        (c) => c.id === creatorId
       );
-      const creator = creators.find((c) => c.id === creatorId);
 
-      if (!creator || !apiCreator) {
+      if (!apiCreator) {
         throw new Error("Creator not found");
       }
 
