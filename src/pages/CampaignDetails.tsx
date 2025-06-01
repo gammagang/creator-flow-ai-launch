@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Users, DollarSign, Calendar, Target, Mail, FileText } from "lucide-react";
 
 const CampaignDetails = () => {
@@ -24,6 +25,69 @@ const CampaignDetails = () => {
     startDate: "2024-06-01",
     endDate: "2024-07-31",
     progress: 65
+  };
+
+  // TODO: Fetch creators data for this campaign
+  const campaignCreators = [
+    {
+      id: 1,
+      creatorName: "Sarah Johnson",
+      campaignName: "Summer Launch 2024",
+      lifecycleStage: "fulfilled"
+    },
+    {
+      id: 2,
+      creatorName: "Mike Chen",
+      campaignName: "Summer Launch 2024",
+      lifecycleStage: "onboarded"
+    },
+    {
+      id: 3,
+      creatorName: "Emma Davis",
+      campaignName: "Summer Launch 2024",
+      lifecycleStage: "waiting for signature"
+    },
+    {
+      id: 4,
+      creatorName: "Alex Rodriguez",
+      campaignName: "Summer Launch 2024",
+      lifecycleStage: "call complete"
+    },
+    {
+      id: 5,
+      creatorName: "Lisa Thompson",
+      campaignName: "Summer Launch 2024",
+      lifecycleStage: "outreached"
+    },
+    {
+      id: 6,
+      creatorName: "David Kim",
+      campaignName: "Summer Launch 2024",
+      lifecycleStage: "discovered"
+    }
+  ];
+
+  const getLifecycleStageColor = (stage: string) => {
+    switch (stage) {
+      case "discovered":
+        return "bg-gray-100 text-gray-800";
+      case "outreached":
+        return "bg-blue-100 text-blue-800";
+      case "call initiated":
+        return "bg-yellow-100 text-yellow-800";
+      case "call complete":
+        return "bg-orange-100 text-orange-800";
+      case "waiting for contract":
+        return "bg-purple-100 text-purple-800";
+      case "waiting for signature":
+        return "bg-pink-100 text-pink-800";
+      case "onboarded":
+        return "bg-green-100 text-green-800";
+      case "fulfilled":
+        return "bg-emerald-100 text-emerald-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
   };
 
   return (
@@ -169,8 +233,28 @@ const CampaignDetails = () => {
               <CardTitle>Creator Management</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-500">Creator list and management tools will be implemented here.</p>
-              {/* TODO: Implement creator management table */}
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Creator Name</TableHead>
+                    <TableHead>Campaign Name</TableHead>
+                    <TableHead>Campaign Lifecycle</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {campaignCreators.map((creator) => (
+                    <TableRow key={creator.id}>
+                      <TableCell className="font-medium">{creator.creatorName}</TableCell>
+                      <TableCell>{creator.campaignName}</TableCell>
+                      <TableCell>
+                        <Badge className={getLifecycleStageColor(creator.lifecycleStage)}>
+                          {creator.lifecycleStage}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         </TabsContent>
