@@ -33,17 +33,38 @@ const CampaignList = () => {
   const isNoCompanyError = errorDetail === "No company found for the user";
 
   // Format API data to match the expected UI structure
-  const campaigns = apiCampaigns.map((apiCampaign) => ({
-    id: apiCampaign.id,
-    name: apiCampaign.name,
-    status: apiCampaign.state || "draft",
-    budget: "$0",
-    creatorsContacted: 0,
-    creatorsResponded: 0,
-    startDate: apiCampaign.start_date,
-    endDate: apiCampaign.end_date,
-    deliverables: ["Posts"],
-  }));
+  const campaigns = apiCampaigns.map((apiCampaign) => {
+    let budget = "$0";
+    let deliverables = ["Posts"];
+    try {
+      if (apiCampaign.meta) {
+        const metaData = JSON.parse(apiCampaign.meta);
+        // Extract total budget from the nested structure
+        const totalBudget = metaData.budget?.total;
+        if (totalBudget) {
+          budget = `$${parseInt(totalBudget).toLocaleString()}`;
+        }
+        // Get deliverables from meta if available
+        if (metaData.deliverables?.length > 0) {
+          deliverables = metaData.deliverables;
+        }
+      }
+    } catch (e) {
+      console.error("Error parsing campaign meta data:", e);
+    }
+
+    return {
+      id: apiCampaign.id,
+      name: apiCampaign.name,
+      status: apiCampaign.state || "draft",
+      budget,
+      creatorsContacted: 0,
+      creatorsResponded: 0,
+      startDate: apiCampaign.start_date,
+      endDate: apiCampaign.end_date,
+      deliverables,
+    };
+  });
 
   const getStatusColor = (status: string) => {
     switch (status) {

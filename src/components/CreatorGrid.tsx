@@ -44,11 +44,6 @@ const CreatorGrid = ({
           />
         ))}
       </div>
-
-      {/* Load More */}
-      <div className="text-center">
-        <Button variant="outline">Load More Creators</Button>
-      </div>
     </>
   );
 };
