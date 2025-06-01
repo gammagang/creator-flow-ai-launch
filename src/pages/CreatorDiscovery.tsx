@@ -1,10 +1,58 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import CreatorSearchFilters from "@/components/CreatorSearchFilters";
 import CreatorGrid from "@/components/CreatorGrid";
 
+interface DiscoverCreatorsQuery {
+  country?: string[];
+  tier?: string[];
+  er?: string[];
+  gender?: string[];
+  category?: string[];
+  language?: string[];
+  bio?: string[];
+}
+
 const CreatorDiscovery = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [filters, setFilters] = useState<DiscoverCreatorsQuery>({});
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Parse URL parameters on component mount
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const parsedFilters: DiscoverCreatorsQuery = {};
+
+    // Parse each filter parameter
+    ['country', 'tier', 'er', 'gender', 'category', 'language', 'bio'].forEach(param => {
+      const value = searchParams.get(param);
+      if (value) {
+        parsedFilters[param as keyof DiscoverCreatorsQuery] = value.split(',');
+      }
+    });
+
+    setFilters(parsedFilters);
+  }, [location.search]);
+
+  // Update URL when filters change
+  const handleFiltersChange = (newFilters: DiscoverCreatorsQuery) => {
+    setFilters(newFilters);
+
+    const searchParams = new URLSearchParams();
+    
+    // Add non-empty filter arrays to URL
+    Object.entries(newFilters).forEach(([key, values]) => {
+      if (values && values.length > 0) {
+        searchParams.set(key, values.join(','));
+      }
+    });
+
+    // Update URL without triggering a page reload
+    const newUrl = searchParams.toString() ? `?${searchParams.toString()}` : '';
+    navigate(`${location.pathname}${newUrl}`, { replace: true });
+  };
 
   // TODO: Replace with real campaign data from API
   const mockCampaigns = [
@@ -14,6 +62,7 @@ const CreatorDiscovery = () => {
   ];
 
   // TODO: Replace with real Instagram creator data from API
+  // This should be filtered based on the current filters state
   const mockCreators = [
     {
       id: 1,
@@ -47,6 +96,7 @@ const CreatorDiscovery = () => {
   const handleAddToCampaign = (creatorId: number, campaignId: number) => {
     // TODO: Implement API call to add creator to campaign
     console.log(`Adding creator ${creatorId} to campaign ${campaignId}`);
+    console.log('Current filters:', filters);
   };
 
   return (
@@ -62,6 +112,7 @@ const CreatorDiscovery = () => {
       <CreatorSearchFilters 
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        onFiltersChange={handleFiltersChange}
       />
 
       {/* Creator Results and Load More */}
