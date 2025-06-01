@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,10 +9,13 @@ import { Zap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Auth = () => {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
-  const [loading, setLoading] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -23,7 +26,27 @@ const Auth = () => {
     contactName: "",
     phone: ""
   });
-  const navigate = useNavigate();
+
+  // Redirect authenticated users to dashboard
+  useEffect(() => {
+    if (!loading && user) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [user, loading, navigate]);
+
+  // Show loading while checking auth state
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  // Don't render auth form if user is already authenticated
+  if (user) {
+    return null;
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -34,7 +57,7 @@ const Auth = () => {
 
   const handleGoogleAuth = async () => {
     try {
-      setLoading(true);
+      setSubmitLoading(true);
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -48,13 +71,13 @@ const Auth = () => {
     } catch (error) {
       toast.error("An error occurred during Google authentication");
     } finally {
-      setLoading(false);
+      setSubmitLoading(false);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setSubmitLoading(true);
 
     try {
       if (isLogin) {
@@ -106,7 +129,7 @@ const Auth = () => {
     } catch (error) {
       toast.error("An unexpected error occurred");
     } finally {
-      setLoading(false);
+      setSubmitLoading(false);
     }
   };
 
@@ -152,7 +175,7 @@ const Auth = () => {
                   onChange={handleInputChange}
                   placeholder="brand@company.com"
                   required
-                  disabled={loading}
+                  disabled={submitLoading}
                 />
               </div>
 
@@ -167,7 +190,7 @@ const Auth = () => {
                   onChange={handleInputChange}
                   placeholder="Enter your password"
                   required
-                  disabled={loading}
+                  disabled={submitLoading}
                 />
               </div>
 
@@ -184,7 +207,7 @@ const Auth = () => {
                       onChange={handleInputChange}
                       placeholder="Confirm your password"
                       required
-                      disabled={loading}
+                      disabled={submitLoading}
                     />
                   </div>
 
@@ -197,7 +220,7 @@ const Auth = () => {
                       onChange={handleInputChange}
                       placeholder="Your Brand Name"
                       required
-                      disabled={loading}
+                      disabled={submitLoading}
                     />
                   </div>
 
@@ -211,7 +234,7 @@ const Auth = () => {
                       onChange={handleInputChange}
                       placeholder="https://yourbrand.com"
                       required
-                      disabled={loading}
+                      disabled={submitLoading}
                     />
                   </div>
 
@@ -224,7 +247,7 @@ const Auth = () => {
                       onChange={handleInputChange}
                       placeholder="John Doe"
                       required
-                      disabled={loading}
+                      disabled={submitLoading}
                     />
                   </div>
 
@@ -237,7 +260,7 @@ const Auth = () => {
                       value={formData.phone}
                       onChange={handleInputChange}
                       placeholder="+1 (555) 123-4567"
-                      disabled={loading}
+                      disabled={submitLoading}
                     />
                   </div>
 
@@ -250,14 +273,14 @@ const Auth = () => {
                       onChange={handleInputChange}
                       placeholder="Tell us about your brand..."
                       rows={3}
-                      disabled={loading}
+                      disabled={submitLoading}
                     />
                   </div>
                 </>
               )}
 
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Please wait..." : (isLogin ? "Sign In" : "Create Account")}
+              <Button type="submit" className="w-full" disabled={submitLoading}>
+                {submitLoading ? "Please wait..." : (isLogin ? "Sign In" : "Create Account")}
               </Button>
             </form>
 
@@ -269,7 +292,7 @@ const Auth = () => {
                   type="button"
                   onClick={() => setIsLogin(!isLogin)}
                   className="ml-1 text-blue-600 hover:text-blue-700 font-medium"
-                  disabled={loading}
+                  disabled={submitLoading}
                 >
                   {isLogin ? "Sign up" : "Sign in"}
                 </button>
@@ -292,7 +315,7 @@ const Auth = () => {
                 className="w-full mt-4" 
                 type="button"
                 onClick={handleGoogleAuth}
-                disabled={loading}
+                disabled={submitLoading}
               >
                 <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
                   <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
