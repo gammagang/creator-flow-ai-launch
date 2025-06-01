@@ -1,5 +1,4 @@
-
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,6 +9,7 @@ import { Users, DollarSign, Calendar, Target, Mail, FileText } from "lucide-reac
 
 const CampaignDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   // TODO: Replace with real campaign data based on ID
   const campaigns = [
@@ -176,6 +176,10 @@ const CampaignDetails = () => {
     }
   };
 
+  const handleCreatorRowClick = (creatorId: number) => {
+    navigate(`/campaigns/${id}/creators/${creatorId}`);
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -331,7 +335,11 @@ const CampaignDetails = () => {
                 </TableHeader>
                 <TableBody>
                   {campaignCreators.map((creator) => (
-                    <TableRow key={creator.id}>
+                    <TableRow 
+                      key={creator.id} 
+                      className="cursor-pointer hover:bg-gray-50"
+                      onClick={() => handleCreatorRowClick(creator.id)}
+                    >
                       <TableCell className="font-medium">{creator.creatorName}</TableCell>
                       <TableCell>{creator.campaignName}</TableCell>
                       <TableCell>

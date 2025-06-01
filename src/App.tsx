@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import BrandProfile from "./pages/BrandProfile";
 import CreatorDiscovery from "./pages/CreatorDiscovery";
 import CreatorProfile from "./pages/CreatorProfile";
+import CreatorDetails from "./pages/CreatorDetails";
 import CampaignCreate from "./pages/CampaignCreate";
 import CampaignList from "./pages/CampaignList";
 import CampaignDetails from "./pages/CampaignDetails";
@@ -45,6 +46,7 @@ const App = () => (
             <Route path="campaigns" element={<CampaignList />} />
             <Route path="campaigns/create" element={<CampaignCreate />} />
             <Route path="campaigns/:id" element={<CampaignDetails />} />
+            <Route path="campaigns/:campaignId/creators/:id" element={<CreatorDetails />} />
             <Route path="outreach" element={<Outreach />} />
             <Route path="negotiation" element={<Negotiation />} />
             <Route path="contracts" element={<Contracts />} />
