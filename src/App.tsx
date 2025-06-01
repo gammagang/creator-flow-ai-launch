@@ -35,6 +35,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/auth" element={<Auth />} />
+          <Route path="/agent-call" element={<AgentCall />} />
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
             <Route path="dashboard" element={<Dashboard />} />
@@ -51,7 +52,6 @@ const App = () => (
             <Route path="payments" element={<Payments />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="settings" element={<Settings />} />
-            <Route path="agent-call" element={<AgentCall />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

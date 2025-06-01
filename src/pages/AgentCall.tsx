@@ -49,13 +49,13 @@ const AgentCall = () => {
   const campaign = campaigns.find(c => c.id === parseInt(campaignId || '1')) || campaigns[0];
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Agent Call</h1>
-        <p className="text-gray-600 mt-1">Campaign details for agent call</p>
-      </div>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+      <div className="w-full max-w-2xl">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Agent Call</h1>
+          <p className="text-gray-600 mt-2">Campaign details for agent call</p>
+        </div>
 
-      <div className="max-w-2xl mx-auto">
         <Card className="shadow-lg">
           <CardHeader className="pb-3">
             <div className="flex justify-between items-start">
