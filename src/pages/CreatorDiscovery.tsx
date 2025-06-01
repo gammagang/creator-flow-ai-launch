@@ -43,7 +43,32 @@ const CreatorDiscovery = () => {
   const addCreatorToCampaignMutation = useAddCreatorToCampaign();
 
   // Discover creators mutation (triggered manually)
-  const discoverCreatorsMutation = useDiscoverCreators(); // Transform filters to API format
+  const discoverCreatorsMutation = useDiscoverCreators();
+
+  // Fetch creators on component mount
+  useEffect(() => {
+    const fetchInitialCreators = async () => {
+      try {
+        const result = await discoverCreatorsMutation.mutateAsync({
+          platform: "instagram",
+          limit: 20,
+          skip: 0,
+        });
+        setCreatorsData(result);
+      } catch (error) {
+        console.error("Failed to fetch initial creators:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load creators. Please try again.",
+          variant: "destructive",
+        });
+      }
+    };
+
+    fetchInitialCreators();
+  }, []); // Empty dependency array means this runs once on mount
+
+  // Transform filters to API format
   const buildApiParams = (): DiscoverCreatorsRequest => ({
     country: filters.country?.[0], // Take first country if multiple selected
     tier: filters.tier,
@@ -115,25 +140,30 @@ const CreatorDiscovery = () => {
     return num.toString();
   };
 
-  const creators = creatorsData?.creators?.map(transformCreator) || [];  // Fetch campaigns using React Query
-  const { data: campaignsData, error: campaignsError } = useQuery<CampaignResponse>({
-    queryKey: ["campaigns"],
-    queryFn: () => campaignAPI.getCampaigns(),
-    retry: false,
-    // Don't throw errors to the UI for campaigns - handle gracefully
-    throwOnError: false,
-  });
+  const creators = creatorsData?.creators?.map(transformCreator) || []; // Fetch campaigns using React Query
+  const { data: campaignsData, error: campaignsError } =
+    useQuery<CampaignResponse>({
+      queryKey: ["campaigns"],
+      queryFn: () => campaignAPI.getCampaigns(),
+      retry: false,
+      // Don't throw errors to the UI for campaigns - handle gracefully
+      throwOnError: false,
+    });
   // Check if campaigns failed with 400 error and handle gracefully
-  const isCampaignsBadRequest = campaignsError && 
-    (campaignsError as { response?: { status: number } }).response?.status === 400;
+  const isCampaignsBadRequest =
+    campaignsError &&
+    (campaignsError as { response?: { status: number } }).response?.status ===
+      400;
 
   // Log warning for 400 errors to help with debugging
   if (isCampaignsBadRequest) {
-    console.warn("Campaigns API returned 400 - Bad Request. This might be expected for new users or companies without campaigns.");
+    console.warn(
+      "Campaigns API returned 400 - Bad Request. This might be expected for new users or companies without campaigns."
+    );
   }
 
   // Only show campaigns if data loaded successfully and no 400 error
-  const campaigns = 
+  const campaigns =
     campaignsData?.data?.items && !isCampaignsBadRequest
       ? campaignsData.data.items.map((campaign) => ({
           id: campaign.id, // Keep as string UUID from backend
