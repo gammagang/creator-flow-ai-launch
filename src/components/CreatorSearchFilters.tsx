@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter, X } from "lucide-react";
+import { Search, Filter } from "lucide-react";
 import { useState, useEffect } from "react";
 
 interface CreatorSearchFiltersProps {
@@ -210,7 +210,7 @@ const CreatorSearchFilters = ({ searchQuery, onSearchChange, onFiltersChange, in
 
             {/* Bio Search */}
             <div>
-              <label className="text-sm font-medium mb-2 block">Bio Keywords</label>
+              <label className="text-sm font-medium mb-2 block">Bio</label>
               <Input 
                 placeholder="Enter bio keywords..."
                 onKeyPress={(e) => {
@@ -220,31 +220,6 @@ const CreatorSearchFilters = ({ searchQuery, onSearchChange, onFiltersChange, in
                   }
                 }}
               />
-            </div>
-
-            {/* Applied Filters */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Applied Filters:</span>
-                {Object.values(filters).some(arr => arr && arr.length > 0) && (
-                  <Button variant="ghost" size="sm" onClick={clearAllFilters}>
-                    Clear All
-                  </Button>
-                )}
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {Object.entries(filters).map(([type, values]) =>
-                  values?.map(value => (
-                    <Badge key={`${type}-${value}`} variant="secondary" className="flex items-center gap-1">
-                      {type}: {value}
-                      <X 
-                        className="w-3 h-3 cursor-pointer" 
-                        onClick={() => removeFilter(type as keyof DiscoverCreatorsQuery, value)}
-                      />
-                    </Badge>
-                  ))
-                )}
-              </div>
             </div>
           </div>
         )}
