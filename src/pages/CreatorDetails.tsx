@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -194,11 +193,9 @@ const CreatorDetails = () => {
   const lifecycleStages = [
     { key: "discovered", label: "Discovered" },
     { key: "outreached", label: "Outreached" },
-    { key: "call initiated", label: "Call Initiated" },
     { key: "call complete", label: "Call Complete" },
     { key: "waiting for contract", label: "Waiting for Contract" },
     { key: "waiting for signature", label: "Waiting for Signature" },
-    { key: "onboarded", label: "Onboarded" },
     { key: "fulfilled", label: "Fulfilled" }
   ];
 

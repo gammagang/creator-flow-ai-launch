@@ -15,18 +15,13 @@ interface ContractSigningDialogProps {
 const ContractSigningDialog = ({ trigger, contractData, onContractSigned }: ContractSigningDialogProps) => {
   const [open, setOpen] = useState(false);
   const [brandSigned, setBrandSigned] = useState(false);
-  const [creatorSigned, setCreatorSigned] = useState(false);
 
   const handleBrandSign = () => {
     setBrandSigned(true);
   };
 
-  const handleCreatorSign = () => {
-    setCreatorSigned(true);
-  };
-
   const handleComplete = () => {
-    if (brandSigned && creatorSigned) {
+    if (brandSigned) {
       onContractSigned();
       setOpen(false);
     }
@@ -75,25 +70,6 @@ const ContractSigningDialog = ({ trigger, contractData, onContractSigned }: Cont
                 )}
               </div>
             </div>
-
-            <div className="flex items-center justify-between p-4 border rounded-lg">
-              <div>
-                <h4 className="font-medium">Creator Signature</h4>
-                <p className="text-sm text-gray-600">Creator signature required</p>
-              </div>
-              <div className="flex items-center gap-2">
-                {creatorSigned ? (
-                  <Badge className="bg-green-100 text-green-800">
-                    <Check className="w-3 h-3 mr-1" />
-                    Signed
-                  </Badge>
-                ) : (
-                  <Button onClick={handleCreatorSign} size="sm">
-                    Sign as Creator
-                  </Button>
-                )}
-              </div>
-            </div>
           </div>
 
           <div className="flex gap-2 justify-end">
@@ -102,7 +78,7 @@ const ContractSigningDialog = ({ trigger, contractData, onContractSigned }: Cont
             </Button>
             <Button 
               onClick={handleComplete}
-              disabled={!brandSigned || !creatorSigned}
+              disabled={!brandSigned}
               className="bg-green-600 hover:bg-green-700"
             >
               Complete Contract
