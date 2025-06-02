@@ -249,7 +249,7 @@ export const campaignCreatorAPI = {
   // Send outreach email to creator
   sendOutreach: async (
     campaignCreatorMappingId: string,
-    data: { subject: string; body: string }
+    data: { subject: string; body: string; receiverEmail: string }
   ) => {
     return apiService.post<SendOutreachResponse>(
       `/campaign-creator/${campaignCreatorMappingId}/outreach/send`,
