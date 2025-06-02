@@ -37,8 +37,19 @@ const CampaignDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Get the active tab from URL or default to 'overview'
-  const activeTab = location.hash.replace("#", "") || "overview";
+  // Get active tab from URL path or default to 'overview'
+  const pathname = location.pathname;
+  let activeTab = "overview";
+
+  if (pathname.includes("/creators")) {
+    activeTab = "creators";
+  } else if (pathname.includes("/content")) {
+    activeTab = "content";
+  } else if (pathname.includes("/analytics")) {
+    activeTab = "analytics";
+  } else if (pathname.includes("/overview")) {
+    activeTab = "overview";
+  }
 
   // Fetch campaign data
   useEffect(() => {
@@ -152,7 +163,7 @@ const CampaignDetails = () => {
             value={activeTab}
             className="space-y-4"
             onValueChange={(value) => {
-              navigate(`#${value}`, { replace: true });
+              navigate(`/campaigns/${id}/${value}`, { replace: true });
             }}
           >
             <TabsList>

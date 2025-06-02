@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"; // <-- Import useNavigate
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -51,6 +51,7 @@ interface Company {
 }
 
 const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
+  const navigate = useNavigate(); // <-- Initialize navigate
   const [company, setCompany] = useState<Company | null>(null);
   const [creators, setCreators] = useState<CampaignCreator[]>([]);
   const [loading, setLoading] = useState(true);
@@ -60,7 +61,6 @@ const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-
         const creatorsResponse = await apiService.get<{
           data: CampaignCreator[];
         }>(`/campaign/${campaignId}/creator`);
@@ -81,17 +81,11 @@ const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
   const getStateColor = (state: string) => {
     switch (state) {
       case "discovered":
-        return "bg-gray-100 text-gray-800";
       case "outreached":
-        return "bg-blue-100 text-blue-800";
       case "call complete":
-        return "bg-orange-100 text-orange-800";
       case "waiting for contract":
-        return "bg-purple-100 text-purple-800";
       case "waiting for signature":
-        return "bg-pink-100 text-pink-800";
       case "fulfilled":
-        return "bg-green-100 text-green-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -223,7 +217,15 @@ const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
               </TableHeader>
               <TableBody>
                 {creators.map((creator) => (
-                  <TableRow key={creator.campaign_creator_id}>
+                  <TableRow
+                    key={creator.campaign_creator_id}
+                    onClick={() =>
+                      navigate(
+                        `/campaigns/${campaignId}/creators/${creator.campaign_creator_id}`
+                      )
+                    }
+                    className="cursor-pointer hover:bg-gray-50"
+                  >
                     <TableCell className="font-medium">
                       <div>
                         <div>{creator.name}</div>
