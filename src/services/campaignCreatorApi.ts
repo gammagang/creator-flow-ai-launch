@@ -207,6 +207,13 @@ export const campaignCreatorAPI = {
     return apiService.post(`/campaign-creator/${linkId}/payments`, data);
   },
 
+  // Send outreach to creator
+  sendOutreach: async (campaignCreatorMappingId: string) => {
+    return apiService.post(
+      `/campaign-creator/${campaignCreatorMappingId}/outreach`
+    );
+  },
+
   // GET campaign creator mapping by campaign_creator_id
   getCampaignCreatorMapping: async (mappingId: string) => {
     return apiService.get<{
