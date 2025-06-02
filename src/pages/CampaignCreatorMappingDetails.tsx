@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation, Outlet } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,13 +16,23 @@ import {
 } from "lucide-react";
 import ContractDialog from "@/components/ContractDialog";
 import ContractSigningDialog from "@/components/ContractSigningDialog";
+import {
+  campaignCreatorAPI,
+  CampaignCreatorMapping,
+} from "@/services/campaignCreatorApi";
 
 const CampaignCreatorMappingDetails = () => {
   const { campaignId, creatorId, mappingId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
 
-  // State for managing lifecycle progression
+  const [mappingData, setMappingData] = useState<CampaignCreatorMapping | null>(
+    null
+  );
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Lifecycle state management for the creator
   const [creatorState, setCreatorState] = useState({
     currentStage: "",
     outreachSent: false,
@@ -32,183 +42,47 @@ const CampaignCreatorMappingDetails = () => {
     contractData: null,
   });
 
-  // TODO: Replace with real creator data based on ID
-  const allCreators = [
-    {
-      id: 1,
-      creatorName: "Sarah Johnson",
-      campaignName: "Summer Launch 2024",
-      lifecycleStage: "fulfilled",
-      followers: "125K",
-      avgLikes: "3.2K",
-      avgComments: "245",
-      engagement: "2.8%",
-      platform: "Instagram",
-    },
-    {
-      id: 2,
-      creatorName: "Mike Chen",
-      campaignName: "Summer Launch 2024",
-      lifecycleStage: "onboarded",
-      followers: "89K",
-      avgLikes: "2.1K",
-      avgComments: "180",
-      engagement: "3.1%",
-      platform: "TikTok",
-    },
-    {
-      id: 3,
-      creatorName: "Emma Davis",
-      campaignName: "Summer Launch 2024",
-      lifecycleStage: "waiting for signature",
-      followers: "156K",
-      avgLikes: "4.5K",
-      avgComments: "320",
-      engagement: "3.5%",
-      platform: "Instagram",
-    },
-    {
-      id: 4,
-      creatorName: "Alex Rodriguez",
-      campaignName: "Summer Launch 2024",
-      lifecycleStage: "call complete",
-      followers: "203K",
-      avgLikes: "5.8K",
-      avgComments: "410",
-      engagement: "3.2%",
-      platform: "YouTube",
-    },
-    {
-      id: 5,
-      creatorName: "Lisa Thompson",
-      campaignName: "Summer Launch 2024",
-      lifecycleStage: "outreached",
-      followers: "67K",
-      avgLikes: "1.8K",
-      avgComments: "125",
-      engagement: "2.9%",
-      platform: "Instagram",
-    },
-    {
-      id: 6,
-      creatorName: "David Kim",
-      campaignName: "Summer Launch 2024",
-      lifecycleStage: "discovered",
-      followers: "298K",
-      avgLikes: "8.2K",
-      avgComments: "650",
-      engagement: "3.8%",
-      platform: "TikTok",
-    },
-    {
-      id: 7,
-      creatorName: "Jessica Martinez",
-      campaignName: "Back to School Campaign",
-      lifecycleStage: "discovered",
-      followers: "45K",
-      avgLikes: "1.2K",
-      avgComments: "89",
-      engagement: "2.7%",
-      platform: "Instagram",
-    },
-    {
-      id: 8,
-      creatorName: "Ryan Lee",
-      campaignName: "Back to School Campaign",
-      lifecycleStage: "discovered",
-      followers: "78K",
-      avgLikes: "2.3K",
-      avgComments: "156",
-      engagement: "3.2%",
-      platform: "TikTok",
-    },
-    {
-      id: 9,
-      creatorName: "Amanda White",
-      campaignName: "Holiday Collection",
-      lifecycleStage: "fulfilled",
-      followers: "187K",
-      avgLikes: "5.1K",
-      avgComments: "380",
-      engagement: "3.1%",
-      platform: "Instagram",
-    },
-    {
-      id: 10,
-      creatorName: "Chris Brown",
-      campaignName: "Holiday Collection",
-      lifecycleStage: "fulfilled",
-      followers: "234K",
-      avgLikes: "6.8K",
-      avgComments: "520",
-      engagement: "3.4%",
-      platform: "YouTube",
-    },
-    {
-      id: 11,
-      creatorName: "Taylor Swift",
-      campaignName: "Holiday Collection",
-      lifecycleStage: "fulfilled",
-      followers: "1.2M",
-      avgLikes: "45K",
-      avgComments: "2.8K",
-      engagement: "4.2%",
-      platform: "Instagram",
-    },
-    {
-      id: 12,
-      creatorName: "John Doe",
-      campaignName: "Holiday Collection",
-      lifecycleStage: "onboarded",
-      followers: "112K",
-      avgLikes: "3.1K",
-      avgComments: "210",
-      engagement: "2.9%",
-      platform: "TikTok",
-    },
-  ];
+  // Fetch mapping data from API using mappingId
+  useEffect(() => {
+    if (!mappingId) return;
+    const fetchMapping = async () => {
+      try {
+        setLoading(true);
+        const response = await campaignCreatorAPI.getCampaignCreatorMapping(
+          mappingId
+        );
+        // Note: the API response shape is { data: CampaignCreatorMapping }
+        setMappingData(response.data);
+      } catch (err: any) {
+        console.error("Error fetching mapping data:", err);
+        setError("Failed to fetch creator mapping details");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // const creator = allCreators.find((c) => c.id === parseInt(creatorId || "1"));
-  const creator = allCreators.find((c) => c.id === parseInt("1"));
+    fetchMapping();
+  }, [mappingId]);
 
-  if (!creator) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="outline"
-            onClick={() => navigate(`/campaigns/${campaignId}`)}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Campaign
-          </Button>
-        </div>
-        <div className="text-center py-12">
-          <h2 className="text-2xl font-bold text-gray-900">
-            Creator not found
-          </h2>
-        </div>
-      </div>
-    );
-  }
-
-  // Initialize state based on creator's current stage
-  React.useEffect(() => {
-    setCreatorState((prev) => ({
-      ...prev,
-      currentStage: creator.lifecycleStage,
-      outreachSent: creator.lifecycleStage !== "discovered",
-      contractSent: [
-        "waiting for signature",
-        "onboarded",
-        "fulfilled",
-      ].includes(creator.lifecycleStage),
-      contractSigned: ["onboarded", "fulfilled"].includes(
-        creator.lifecycleStage
-      ),
-    }));
-  }, [creator.lifecycleStage]);
+  // Once mappingData is available, initialize creatorState based on the current stage
+  useEffect(() => {
+    if (mappingData) {
+      setCreatorState((prev) => ({
+        ...prev,
+        currentStage: mappingData.campaign_creator_current_state,
+        outreachSent:
+          mappingData.campaign_creator_current_state !== "discovered",
+        contractSent: [
+          "waiting for signature",
+          "onboarded",
+          "fulfilled",
+        ].includes(mappingData.campaign_creator_current_state),
+        contractSigned: ["onboarded", "fulfilled"].includes(
+          mappingData.campaign_creator_current_state
+        ),
+      }));
+    }
+  }, [mappingData]);
 
   // Determine active tab based on current URL
   const getActiveTab = () => {
@@ -220,7 +94,6 @@ const CampaignCreatorMappingDetails = () => {
   };
 
   const handleTabChange = (value: string) => {
-    console.log("Tab changed to:", value);
     const basePath = `/campaigns/${campaignId}/creators/${creatorId}`;
     switch (value) {
       case "overview":
@@ -339,8 +212,8 @@ const CampaignCreatorMappingDetails = () => {
                 Generate Contract
               </Button>
             }
-            creatorName={creator.creatorName}
-            campaignName={creator.campaignName}
+            creatorName={mappingData?.creator_name || ""}
+            campaignName={mappingData?.campaign_name || ""}
             onContractGenerated={handleContractGenerated}
           />
         );
@@ -410,6 +283,33 @@ const CampaignCreatorMappingDetails = () => {
     return null;
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Loading creator details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !mappingData) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <p className="text-red-600">{error || "Creator details not found"}</p>
+          <Button
+            variant="outline"
+            onClick={() => navigate(`/campaigns/${campaignId}`)}
+          >
+            <ArrowLeft className="w-4 h-4 mr-1" />
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -420,13 +320,14 @@ const CampaignCreatorMappingDetails = () => {
           className="flex items-center gap-2"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Campaign
         </Button>
         <div>
           <h1 className="text-3xl font-bold text-gray-900">
-            {creator.creatorName}
+            {mappingData.creator_name}
           </h1>
-          <p className="text-gray-600">{creator.platform} Creator</p>
+          <p className="text-gray-600">
+            {mappingData.creator_platform} Creator
+          </p>
         </div>
       </div>
 
@@ -438,7 +339,9 @@ const CampaignCreatorMappingDetails = () => {
             <Users className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{creator.followers}</div>
+            <div className="text-2xl font-bold">
+              {mappingData.creator_meta.followersCount || "N/A"}
+            </div>
             <p className="text-xs text-muted-foreground">Total followers</p>
           </CardContent>
         </Card>
@@ -449,7 +352,11 @@ const CampaignCreatorMappingDetails = () => {
             <Heart className="w-4 h-4 text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{creator.avgLikes}</div>
+            <div className="text-2xl font-bold">
+              {mappingData.creator_meta.averageViews ||
+                mappingData.creator_meta.postsCount ||
+                "N/A"}
+            </div>
             <p className="text-xs text-muted-foreground">Per post</p>
           </CardContent>
         </Card>
@@ -460,7 +367,7 @@ const CampaignCreatorMappingDetails = () => {
             <MessageCircle className="w-4 h-4 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{creator.avgComments}</div>
+            <div className="text-2xl font-bold">N/A</div>
             <p className="text-xs text-muted-foreground">Per post</p>
           </CardContent>
         </Card>
@@ -473,7 +380,11 @@ const CampaignCreatorMappingDetails = () => {
             <Eye className="w-4 h-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{creator.engagement}</div>
+            <div className="text-2xl font-bold">
+              {mappingData.creator_engagement_rate
+                ? `${(+mappingData.creator_engagement_rate * 100).toFixed(1)}%`
+                : "N/A"}
+            </div>
             <p className="text-xs text-muted-foreground">Overall rate</p>
           </CardContent>
         </Card>
@@ -509,7 +420,7 @@ const CampaignCreatorMappingDetails = () => {
             <CardContent>
               <div className="flex flex-col space-y-4">
                 {lifecycleStages.map((stage, index) => (
-                  <div key={stage.key} className="flex items-center">
+                  <div key={stage.key} className="flex items-center relative">
                     <div className="flex items-center flex-1">
                       <div
                         className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-medium ${getStageColor(
@@ -518,7 +429,6 @@ const CampaignCreatorMappingDetails = () => {
                       >
                         {index + 1}
                       </div>
-
                       <div className="ml-4 flex-1">
                         <div
                           className={`font-medium ${
@@ -531,12 +441,10 @@ const CampaignCreatorMappingDetails = () => {
                         </div>
                         {getStageMessage(stage)}
                       </div>
-
                       <div className="flex items-center gap-2">
                         {getStageActions(stage, index)}
                       </div>
                     </div>
-
                     {index < lifecycleStages.length - 1 && (
                       <div className="absolute left-4 mt-8 ml-0.5">
                         <div

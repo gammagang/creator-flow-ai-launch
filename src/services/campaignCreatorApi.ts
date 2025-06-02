@@ -65,6 +65,71 @@ export type CampaignCreatorListResponse = {
   };
 };
 
+// Define types based on the API response
+export type CampaignCreatorMapping = {
+  cc_id: string;
+  campaign_creator_current_state: string;
+  assigned_budget: number | null;
+  cc_notes: string | null;
+  campaign_creator_meta: any;
+  campaign_id: string;
+  company_id: string;
+  campaign_name: string;
+  campaign_description: string;
+  campaign_start_date: string;
+  campaign_end_date: string;
+  campaign_state: string;
+  campaign_meta: {
+    budget: {
+      total: string;
+      perCreator: string;
+      paymentModel: string;
+    };
+    deliverables: any[];
+    targetAudience: {
+      gender: string;
+      ageRange: string;
+      location: string;
+      interests: any[];
+    };
+    creatorCriteria: {
+      followerRange: string;
+      minEngagement: string;
+    };
+    contentGuidelines: string;
+  };
+  creator_id: string;
+  creator_name: string;
+  creator_platform: string;
+  creator_category: string;
+  creator_age: number;
+  creator_gender: string;
+  creator_location: string | null;
+  creator_tier: string;
+  creator_engagement_rate: string;
+  creator_email: string | null;
+  creator_phone: string | null;
+  creator_language: string;
+  creator_meta: {
+    ylyticId?: string;
+    source?: string;
+    status?: string;
+    inMyCreators?: boolean;
+    audience?: any;
+    quality?: {
+      profile_quality_score: number;
+      profile_quality_rating: number;
+    };
+    handle?: string;
+    followersCount?: number;
+    postsCount?: number;
+    averageViews?: number;
+    profileImageUrl?: string;
+    profileUrl?: string;
+    qualityScore?: number;
+  };
+};
+
 // Campaign-Creator API functions
 export const campaignCreatorAPI = {
   // Get campaign-creator details with campaign info
