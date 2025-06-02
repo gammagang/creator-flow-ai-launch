@@ -147,6 +147,21 @@ export type CampaignCreatorMapping = {
   };
 };
 
+export type OutreachPreviewResponse = {
+  data: {
+    message: string;
+    subject: string;
+    body: string;
+  };
+};
+
+export type SendOutreachResponse = {
+  data: {
+    success: boolean;
+    message: string;
+  };
+};
+
 // Campaign-Creator API functions
 export const campaignCreatorAPI = {
   // Get campaign-creator details with campaign info
@@ -225,9 +240,20 @@ export const campaignCreatorAPI = {
   },
 
   // Send outreach to creator
-  sendOutreach: async (campaignCreatorMappingId: string) => {
-    return apiService.post(
+  getOutreachPreview: async (campaignCreatorMappingId: string) => {
+    return apiService.get<OutreachPreviewResponse>(
       `/campaign-creator/${campaignCreatorMappingId}/outreach/preview`
+    );
+  },
+
+  // Send outreach email to creator
+  sendOutreach: async (
+    campaignCreatorMappingId: string,
+    data: { subject: string; body: string }
+  ) => {
+    return apiService.post<SendOutreachResponse>(
+      `/campaign-creator/${campaignCreatorMappingId}/outreach/send`,
+      data
     );
   },
 

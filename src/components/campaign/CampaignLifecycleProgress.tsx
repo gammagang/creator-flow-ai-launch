@@ -3,14 +3,24 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Mail, FileText, CheckCircle } from "lucide-react";
+import { Mail, FileText, CheckCircle, Send } from "lucide-react";
 import ContractDialog from "@/components/ContractDialog";
 import ContractSigningDialog from "@/components/ContractSigningDialog";
 import {
   CampaignCreatorMapping,
   campaignCreatorAPI,
+  OutreachPreviewResponse,
 } from "@/services/campaignCreatorApi";
 import { useMutation } from "@tanstack/react-query";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 
 interface ContractData {
   campaignName: string;
@@ -28,6 +38,110 @@ interface CampaignLifecycleProgressProps {
   mappingId: string | undefined;
 }
 
+interface EmailContent {
+  subject: string;
+  body: string;
+}
+
+const OutreachPreviewDialog: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  emailContent: string;
+  mappingId: string;
+  onEmailSent: () => void;
+}> = ({
+  isOpen,
+  onClose,
+  emailContent: initialEmailContent,
+  mappingId,
+  onEmailSent,
+}) => {
+  const [editedContent, setEditedContent] = useState(initialEmailContent);
+  const [isSending, setIsSending] = useState(false);
+
+  useEffect(() => {
+    setEditedContent(initialEmailContent);
+  }, [initialEmailContent]);
+
+  const sendOutreachMutation = useMutation({
+    mutationFn: async () => {
+      const [subject, ...bodyLines] = editedContent.split("\n\n");
+      return await campaignCreatorAPI.sendOutreach(mappingId, {
+        subject,
+        body: bodyLines.join("\n\n"),
+      });
+    },
+    onSuccess: () => {
+      toast.success("Outreach email sent successfully!");
+      onEmailSent();
+      onClose();
+    },
+    onError: (error: unknown) => {
+      toast.error("Failed to send outreach email. Please try again.");
+      console.error("Error sending outreach:", error);
+    },
+    onSettled: () => {
+      setIsSending(false);
+    },
+  });
+
+  const handleSend = () => {
+    setIsSending(true);
+    sendOutreachMutation.mutate();
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Outreach Email Preview</DialogTitle>
+        </DialogHeader>
+        <div className="mt-4 space-y-4">
+          <div>
+            <label className="text-sm font-medium mb-1 block">Subject</label>
+            <Textarea
+              value={editedContent.split("\n\n")[0]}
+              onChange={(e) => {
+                const [_, ...bodyLines] = editedContent.split("\n\n");
+                setEditedContent(
+                  `${e.target.value}\n\n${bodyLines.join("\n\n")}`
+                );
+              }}
+              className="min-h-[50px] font-mono text-sm"
+              placeholder="Email subject..."
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium mb-1 block">Body</label>
+            <Textarea
+              value={editedContent.split("\n\n").slice(1).join("\n\n")}
+              onChange={(e) => {
+                const subject = editedContent.split("\n\n")[0];
+                setEditedContent(`${subject}\n\n${e.target.value}`);
+              }}
+              className="min-h-[300px] font-mono text-sm"
+              placeholder="Email body..."
+            />
+          </div>
+        </div>
+        <DialogFooter className="mt-4">
+          <Button variant="outline" onClick={onClose} disabled={isSending}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSend}
+            disabled={isSending}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            <Send className="w-4 h-4 mr-2" />
+            {isSending ? "Sending..." : "Send Email"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
   mappingData,
   campaignId,
@@ -35,6 +149,8 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
   mappingId,
 }) => {
   const navigate = useNavigate();
+  const [showOutreachPreview, setShowOutreachPreview] = useState(false);
+  const [outreachEmailContent, setOutreachEmailContent] = useState("");
 
   const [creatorState, setCreatorState] = useState({
     currentStage: "",
@@ -42,17 +158,21 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
     contractGenerated: false,
     contractSent: false,
     contractSigned: false,
-    contractData: null,
+    contractData: null as ContractData | null,
   });
 
   const sendOutreachMutation = useMutation({
-    mutationFn: () => campaignCreatorAPI.sendOutreach(mappingId!),
-    onSuccess: () => {
+    mutationFn: () => campaignCreatorAPI.getOutreachPreview(mappingId!),
+    onSuccess: (response: OutreachPreviewResponse) => {
       setCreatorState((prev) => ({
         ...prev,
         outreachSent: true,
         currentStage: "outreached",
       }));
+      setOutreachEmailContent(
+        `${response.data.subject}\n\n${response.data.body}`
+      );
+      setShowOutreachPreview(true);
     },
     onError: (error: unknown) => {
       console.error("Error sending outreach:", error);
@@ -114,6 +234,14 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
       ...prev,
       contractSigned: true,
       currentStage: "onboarded",
+    }));
+  };
+
+  const handleEmailSent = () => {
+    setCreatorState((prev) => ({
+      ...prev,
+      outreachSent: true,
+      currentStage: "outreached",
     }));
   };
 
@@ -194,7 +322,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                         }
                         creatorName={mappingData.creator_name || ""}
                         campaignName={mappingData.campaign_name || ""}
-                        onContractGenerated={(data: any) => {
+                        onContractGenerated={(data: ContractData) => {
                           setCreatorState((prev) => ({
                             ...prev,
                             contractGenerated: true,
@@ -265,6 +393,13 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
           </div>
         </CardContent>
       </Card>
+      <OutreachPreviewDialog
+        isOpen={showOutreachPreview}
+        onClose={() => setShowOutreachPreview(false)}
+        emailContent={outreachEmailContent}
+        mappingId={mappingId!}
+        onEmailSent={handleEmailSent}
+      />
     </div>
   );
 };
