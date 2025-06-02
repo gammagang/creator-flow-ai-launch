@@ -6,7 +6,20 @@ import { Button } from "@/components/ui/button";
 import { Mail, FileText, CheckCircle } from "lucide-react";
 import ContractDialog from "@/components/ContractDialog";
 import ContractSigningDialog from "@/components/ContractSigningDialog";
-import { CampaignCreatorMapping } from "@/services/campaignCreatorApi";
+import {
+  CampaignCreatorMapping,
+  campaignCreatorAPI,
+} from "@/services/campaignCreatorApi";
+import { useMutation } from "@tanstack/react-query";
+
+interface ContractData {
+  campaignName: string;
+  creatorName: string;
+  agreedBudget: string;
+  deliverables: string;
+  timeline: string;
+  additionalTerms: string;
+}
 
 interface CampaignLifecycleProgressProps {
   mappingData: CampaignCreatorMapping;
@@ -30,6 +43,20 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
     contractSent: false,
     contractSigned: false,
     contractData: null,
+  });
+
+  const sendOutreachMutation = useMutation({
+    mutationFn: () => campaignCreatorAPI.sendOutreach(mappingId!),
+    onSuccess: () => {
+      setCreatorState((prev) => ({
+        ...prev,
+        outreachSent: true,
+        currentStage: "outreached",
+      }));
+    },
+    onError: (error: unknown) => {
+      console.error("Error sending outreach:", error);
+    },
   });
 
   useEffect(() => {
@@ -61,7 +88,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
     { key: "fulfilled", label: "Fulfilled" },
   ];
 
-  // Determine active state for call complete’s three actions
+  // Determine active state for call complete's three actions
   let callCompleteAction: "generate" | "send" | "view" = "generate";
   if (creatorState.currentStage === "call complete") {
     if (creatorState.contractGenerated) {
@@ -70,14 +97,8 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
   }
 
   const handleSendOutreach = () => {
-    navigate(
-      `/agent-call?campaign=${campaignId}&creator=${creatorId}&action=outreach`
-    );
-    setCreatorState((prev) => ({
-      ...prev,
-      outreachSent: true,
-      currentStage: "outreached",
-    }));
+    if (!mappingId) return;
+    sendOutreachMutation.mutate();
   };
 
   const handleSendContract = () => {

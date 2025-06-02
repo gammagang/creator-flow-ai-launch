@@ -1,26 +1,25 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, useLocation, Outlet } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import CampaignLifecycleProgress from "@/components/campaign/CampaignLifecycleProgress";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  ArrowLeft,
-  Users,
-  Heart,
-  MessageCircle,
-  Eye,
-  Mail,
-  FileText,
-  CheckCircle,
-} from "lucide-react";
-import ContractDialog from "@/components/ContractDialog";
-import ContractSigningDialog from "@/components/ContractSigningDialog";
 import {
   campaignCreatorAPI,
   CampaignCreatorMapping,
 } from "@/services/campaignCreatorApi";
-import CampaignLifecycleProgress from "@/components/campaign/CampaignLifecycleProgress";
+import { ArrowLeft, Eye, Heart, MessageCircle, Users } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
+
+interface Stage {
+  key: string;
+  label: string;
+}
+
+interface ContractData {
+  id: string;
+  content: string;
+  status: string;
+}
 
 const CampaignCreatorMappingDetails = () => {
   const { campaignId, creatorId, mappingId } = useParams();
@@ -40,7 +39,7 @@ const CampaignCreatorMappingDetails = () => {
     contractGenerated: false,
     contractSent: false,
     contractSigned: false,
-    contractData: null,
+    contractData: null as ContractData | null,
   });
 
   // Fetch mapping data from API using mappingId
@@ -54,7 +53,7 @@ const CampaignCreatorMappingDetails = () => {
         );
         // Note: the API response shape is { data: CampaignCreatorMapping }
         setMappingData(response.data);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Error fetching mapping data:", err);
         setError("Failed to fetch creator mapping details");
       } finally {
@@ -141,18 +140,7 @@ const CampaignCreatorMappingDetails = () => {
     return "bg-gray-300";
   };
 
-  const handleSendOutreach = () => {
-    navigate(
-      `/agent-call?campaign=${campaignId}&creator=${creatorId}&action=outreach`
-    );
-    setCreatorState((prev) => ({
-      ...prev,
-      outreachSent: true,
-      currentStage: "outreached",
-    }));
-  };
-
-  const handleContractGenerated = (contractData: any) => {
+  const handleContractGenerated = (contractData: ContractData) => {
     setCreatorState((prev) => ({
       ...prev,
       contractGenerated: true,
@@ -174,114 +162,6 @@ const CampaignCreatorMappingDetails = () => {
       contractSigned: true,
       currentStage: "onboarded",
     }));
-  };
-
-  const getStageActions = (stage: any, index: number) => {
-    const actions = [];
-
-    // Stage 1: Discovered
-    if (
-      stage.key === "discovered" &&
-      currentStageIndex === 0 &&
-      !creatorState.outreachSent
-    ) {
-      actions.push(
-        <Button
-          key="outreach"
-          size="sm"
-          onClick={handleSendOutreach}
-          className="ml-4 bg-blue-600 hover:bg-blue-700"
-        >
-          <Mail className="w-3 h-3 mr-1" />
-          Send Outreach E-mail
-        </Button>
-      );
-    }
-
-    // Stage 4: Call Complete
-    if (stage.key === "call complete" && currentStageIndex === 3) {
-      if (!creatorState.contractGenerated) {
-        actions.push(
-          <ContractDialog
-            key="generate-contract"
-            trigger={
-              <Button
-                size="sm"
-                className="ml-4 bg-green-600 hover:bg-green-700"
-              >
-                <FileText className="w-3 h-3 mr-1" />
-                Generate Contract
-              </Button>
-            }
-            creatorName={mappingData?.creator_name || ""}
-            campaignName={mappingData?.campaign_name || ""}
-            onContractGenerated={handleContractGenerated}
-          />
-        );
-      } else if (!creatorState.contractSent) {
-        actions.push(
-          <Button
-            key="send-contract"
-            size="sm"
-            onClick={handleSendContract}
-            className="ml-4 bg-blue-600 hover:bg-blue-700"
-          >
-            <Mail className="w-3 h-3 mr-1" />
-            Send Contract
-          </Button>
-        );
-      } else {
-        actions.push(
-          <Button
-            key="view-contract"
-            size="sm"
-            variant="outline"
-            className="ml-4"
-          >
-            <FileText className="w-3 h-3 mr-1" />
-            View Contract
-          </Button>
-        );
-      }
-    }
-
-    // Stage 6: Waiting for Signature
-    if (
-      stage.key === "waiting for signature" &&
-      currentStageIndex === 5 &&
-      !creatorState.contractSigned
-    ) {
-      actions.push(
-        <ContractSigningDialog
-          key="sign-contract"
-          trigger={
-            <Button
-              size="sm"
-              className="ml-4 bg-purple-600 hover:bg-purple-700"
-            >
-              <CheckCircle className="w-3 h-3 mr-1" />
-              E-Sign Contract
-            </Button>
-          }
-          contractData={creatorState.contractData}
-          onContractSigned={handleContractSigned}
-        />
-      );
-    }
-
-    return actions;
-  };
-
-  const getStageMessage = (stage: any) => {
-    if (stage.key === "discovered" && creatorState.outreachSent) {
-      return <span className="text-green-600 text-sm ml-4">Outreach sent</span>;
-    }
-    if (stage.key === "call complete" && creatorState.contractSent) {
-      return (
-        <span className="text-green-600 text-sm ml-4">Contract sent!</span>
-      );
-    }
-    return null;
   };
 
   if (loading) {

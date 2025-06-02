@@ -71,7 +71,7 @@ export type CampaignCreatorMapping = {
   campaign_creator_current_state: string;
   assigned_budget: number | null;
   cc_notes: string | null;
-  campaign_creator_meta: any;
+  campaign_creator_meta: Record<string, unknown>;
   campaign_id: string;
   company_id: string;
   campaign_name: string;
@@ -85,12 +85,19 @@ export type CampaignCreatorMapping = {
       perCreator: string;
       paymentModel: string;
     };
-    deliverables: any[];
+    deliverables: Array<{
+      type: string;
+      description: string;
+      quantity: number;
+    }>;
     targetAudience: {
       gender: string;
       ageRange: string;
       location: string;
-      interests: any[];
+      interests: Array<{
+        name: string;
+        category: string;
+      }>;
     };
     creatorCriteria: {
       followerRange: string;
@@ -115,7 +122,17 @@ export type CampaignCreatorMapping = {
     source?: string;
     status?: string;
     inMyCreators?: boolean;
-    audience?: any;
+    audience?: {
+      demographics: {
+        age: Record<string, number>;
+        gender: Record<string, number>;
+        location: Record<string, number>;
+      };
+      interests: Array<{
+        name: string;
+        percentage: number;
+      }>;
+    };
     quality?: {
       profile_quality_score: number;
       profile_quality_rating: number;
@@ -210,14 +227,14 @@ export const campaignCreatorAPI = {
   // Send outreach to creator
   sendOutreach: async (campaignCreatorMappingId: string) => {
     return apiService.post(
-      `/campaign-creator/${campaignCreatorMappingId}/outreach`
+      `/campaign-creator/${campaignCreatorMappingId}/outreach/preview`
     );
   },
 
   // GET campaign creator mapping by campaign_creator_id
   getCampaignCreatorMapping: async (mappingId: string) => {
     return apiService.get<{
-      data: any;
+      data: CampaignCreatorMapping;
     }>(`/campaign-creator/${mappingId}`);
   },
 };
