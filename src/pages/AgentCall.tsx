@@ -87,6 +87,13 @@ const AgentCall = () => {
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
+          <div>
+            <p className="text-sm text-gray-500 mb-2">Description</p>
+            <p className="text-gray-700 text-lg">
+              {campaignData.campaign.description}
+            </p>
+          </div>
+
           <div className="grid grid-cols-1 gap-4 text-sm">
             <div>
               <div className="flex items-center gap-1 text-gray-500 mb-1">
