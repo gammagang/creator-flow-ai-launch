@@ -1,11 +1,12 @@
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { campaignCreatorAPI } from "@/services/campaignCreatorApi";
 import { useQuery } from "@tanstack/react-query";
 import { Calendar, DollarSign } from "lucide-react";
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
+
+const AGENT_ID = import.meta.env.VITE_AGENT_ID;
 
 const AgentCall = () => {
   const [searchParams] = useSearchParams();
@@ -128,7 +129,7 @@ const AgentCall = () => {
 
           <div className="mt-6">
             <elevenlabs-convai
-              agent-id="agent_01jwh13zh1eras2zsfwfc4n8d5"
+              agent-id={AGENT_ID}
               dynamic-variables={JSON.stringify({
                 campaign_creator_id: campaignCreatorId,
                 campaign_name: campaignData.campaign.name,
