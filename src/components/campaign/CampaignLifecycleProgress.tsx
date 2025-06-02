@@ -57,6 +57,7 @@ const OutreachPreviewDialog: React.FC<{
   onEmailSent,
 }) => {
   const [editedContent, setEditedContent] = useState(initialEmailContent);
+  const [receiverEmail, setReceiverEmail] = useState("gammagang100x@gmail.com"); // New state for receiver email
   const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
@@ -69,6 +70,7 @@ const OutreachPreviewDialog: React.FC<{
       return await campaignCreatorAPI.sendOutreach(mappingId, {
         subject,
         body: bodyLines.join("\n\n"),
+        receiverEmail, // Pass the receiverEmail along to the API
       });
     },
     onSuccess: () => {
@@ -97,6 +99,17 @@ const OutreachPreviewDialog: React.FC<{
           <DialogTitle>Outreach Email Preview</DialogTitle>
         </DialogHeader>
         <div className="mt-4 space-y-4">
+          {/* New Receiver Email Input */}
+          <div>
+            <label className="text-sm font-medium mb-1 block">Receiver Email</label>
+            <input
+              type="email"
+              value={receiverEmail}
+              onChange={(e) => setReceiverEmail(e.target.value)}
+              className="w-full px-3 py-2 border rounded-md font-mono text-sm"
+              placeholder="Enter recipient email..."
+            />
+          </div>
           <div>
             <label className="text-sm font-medium mb-1 block">Subject</label>
             <Textarea
