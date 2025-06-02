@@ -57,8 +57,8 @@ const CreatorSearchFilters = ({
     }
   }, [initialFilters]);
   const addFilter = (type: keyof DiscoverCreatorsQuery, value: string) => {
-    // Gender should be single select, not multi-select
-    if (type === "gender") {
+    // Gender and country should be single select, not multi-select
+    if (type === "gender" || type === "country") {
       const newFilters = {
         ...filters,
         [type]: value === "all" ? [] : [value], // Clear filter if "all" is selected

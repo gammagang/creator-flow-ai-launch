@@ -71,7 +71,7 @@ const CreatorDiscovery = () => {
 
   // Transform filters to API format
   const buildApiParams = (): DiscoverCreatorsRequest => ({
-    country: filters.country?.[0], // Take first country if multiple selected
+    country: filters.country?.[0], // Take the most recently selected country
     tier: filters.tier,
     language: filters.language,
     category: filters.category,
@@ -79,9 +79,9 @@ const CreatorDiscovery = () => {
     gender:
       filters.gender?.[0] && filters.gender[0] !== "all"
         ? filters.gender[0]
-        : undefined, // Send gender as string if selected and not "all"
+        : undefined,
     bio: searchQuery || undefined,
-    platform: "instagram", // Default to Instagram for now
+    platform: "instagram",
     limit: 20,
     skip: 0,
   });
