@@ -221,7 +221,7 @@ const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
                     key={creator.campaign_creator_id}
                     onClick={() =>
                       navigate(
-                        `/campaigns/${campaignId}/creators/${creator.campaign_creator_id}`
+                        `/campaigns/${campaignId}/creators/${creator.id}/mapping/${creator.campaign_creator_id}`
                       )
                     }
                     className="cursor-pointer hover:bg-gray-50"

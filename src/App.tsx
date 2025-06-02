@@ -12,7 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import BrandProfile from "./pages/BrandProfile";
 import CreatorDiscovery from "./pages/CreatorDiscovery";
 import CreatorProfile from "./pages/CreatorProfile";
-import CreatorDetails from "./pages/CreatorDetails";
+import CampaignCreatorMappingDetails from "./pages/CampaignCreatorMappingDetails";
 import CampaignCreate from "./pages/CampaignCreate";
 import CampaignList from "./pages/CampaignList";
 import CampaignDetails from "./pages/CampaignDetails";
@@ -67,8 +67,8 @@ const App = () => (
                 <Route path="analytics" element={<CampaignDetails />} />
               </Route>
               <Route
-                path="campaigns/:campaignId/creators/:creatorId"
-                element={<CreatorDetails />}
+                path="campaigns/:campaignId/creators/:creatorId/mapping/:mappingId"
+                element={<CampaignCreatorMappingDetails />}
               >
                 <Route
                   path="creator-management"

@@ -4,12 +4,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Users, Heart, MessageCircle, Eye, Mail, FileText, CheckCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  Users,
+  Heart,
+  MessageCircle,
+  Eye,
+  Mail,
+  FileText,
+  CheckCircle,
+} from "lucide-react";
 import ContractDialog from "@/components/ContractDialog";
 import ContractSigningDialog from "@/components/ContractSigningDialog";
 
-const CreatorDetails = () => {
-  const { id, campaignId } = useParams();
+const CampaignCreatorMappingDetails = () => {
+  const { campaignId, creatorId, mappingId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -20,7 +29,7 @@ const CreatorDetails = () => {
     contractGenerated: false,
     contractSent: false,
     contractSigned: false,
-    contractData: null
+    contractData: null,
   });
 
   // TODO: Replace with real creator data based on ID
@@ -34,7 +43,7 @@ const CreatorDetails = () => {
       avgLikes: "3.2K",
       avgComments: "245",
       engagement: "2.8%",
-      platform: "Instagram"
+      platform: "Instagram",
     },
     {
       id: 2,
@@ -45,7 +54,7 @@ const CreatorDetails = () => {
       avgLikes: "2.1K",
       avgComments: "180",
       engagement: "3.1%",
-      platform: "TikTok"
+      platform: "TikTok",
     },
     {
       id: 3,
@@ -56,7 +65,7 @@ const CreatorDetails = () => {
       avgLikes: "4.5K",
       avgComments: "320",
       engagement: "3.5%",
-      platform: "Instagram"
+      platform: "Instagram",
     },
     {
       id: 4,
@@ -67,7 +76,7 @@ const CreatorDetails = () => {
       avgLikes: "5.8K",
       avgComments: "410",
       engagement: "3.2%",
-      platform: "YouTube"
+      platform: "YouTube",
     },
     {
       id: 5,
@@ -78,7 +87,7 @@ const CreatorDetails = () => {
       avgLikes: "1.8K",
       avgComments: "125",
       engagement: "2.9%",
-      platform: "Instagram"
+      platform: "Instagram",
     },
     {
       id: 6,
@@ -89,7 +98,7 @@ const CreatorDetails = () => {
       avgLikes: "8.2K",
       avgComments: "650",
       engagement: "3.8%",
-      platform: "TikTok"
+      platform: "TikTok",
     },
     {
       id: 7,
@@ -100,7 +109,7 @@ const CreatorDetails = () => {
       avgLikes: "1.2K",
       avgComments: "89",
       engagement: "2.7%",
-      platform: "Instagram"
+      platform: "Instagram",
     },
     {
       id: 8,
@@ -111,7 +120,7 @@ const CreatorDetails = () => {
       avgLikes: "2.3K",
       avgComments: "156",
       engagement: "3.2%",
-      platform: "TikTok"
+      platform: "TikTok",
     },
     {
       id: 9,
@@ -122,7 +131,7 @@ const CreatorDetails = () => {
       avgLikes: "5.1K",
       avgComments: "380",
       engagement: "3.1%",
-      platform: "Instagram"
+      platform: "Instagram",
     },
     {
       id: 10,
@@ -133,7 +142,7 @@ const CreatorDetails = () => {
       avgLikes: "6.8K",
       avgComments: "520",
       engagement: "3.4%",
-      platform: "YouTube"
+      platform: "YouTube",
     },
     {
       id: 11,
@@ -144,7 +153,7 @@ const CreatorDetails = () => {
       avgLikes: "45K",
       avgComments: "2.8K",
       engagement: "4.2%",
-      platform: "Instagram"
+      platform: "Instagram",
     },
     {
       id: 12,
@@ -155,18 +164,19 @@ const CreatorDetails = () => {
       avgLikes: "3.1K",
       avgComments: "210",
       engagement: "2.9%",
-      platform: "TikTok"
-    }
+      platform: "TikTok",
+    },
   ];
 
-  const creator = allCreators.find(c => c.id === parseInt(id || "1"));
+  // const creator = allCreators.find((c) => c.id === parseInt(creatorId || "1"));
+  const creator = allCreators.find((c) => c.id === parseInt("1"));
 
   if (!creator) {
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => navigate(`/campaigns/${campaignId}`)}
             className="flex items-center gap-2"
           >
@@ -175,7 +185,9 @@ const CreatorDetails = () => {
           </Button>
         </div>
         <div className="text-center py-12">
-          <h2 className="text-2xl font-bold text-gray-900">Creator not found</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Creator not found
+          </h2>
         </div>
       </div>
     );
@@ -183,37 +195,44 @@ const CreatorDetails = () => {
 
   // Initialize state based on creator's current stage
   React.useEffect(() => {
-    setCreatorState(prev => ({
+    setCreatorState((prev) => ({
       ...prev,
       currentStage: creator.lifecycleStage,
       outreachSent: creator.lifecycleStage !== "discovered",
-      contractSent: ["waiting for signature", "onboarded", "fulfilled"].includes(creator.lifecycleStage),
-      contractSigned: ["onboarded", "fulfilled"].includes(creator.lifecycleStage)
+      contractSent: [
+        "waiting for signature",
+        "onboarded",
+        "fulfilled",
+      ].includes(creator.lifecycleStage),
+      contractSigned: ["onboarded", "fulfilled"].includes(
+        creator.lifecycleStage
+      ),
     }));
   }, [creator.lifecycleStage]);
 
   // Determine active tab based on current URL
   const getActiveTab = () => {
     const path = location.pathname;
-    if (path.includes('/creator-management')) return 'creator-management';
-    if (path.includes('/content-management')) return 'content-management';
-    if (path.includes('/analytics')) return 'analytics';
-    return 'overview';
+    if (path.includes("/creator-management")) return "creator-management";
+    if (path.includes("/content-management")) return "content-management";
+    if (path.includes("/analytics")) return "analytics";
+    return "overview";
   };
 
   const handleTabChange = (value: string) => {
-    const basePath = `/campaigns/${campaignId}/creators/${id}`;
+    console.log("Tab changed to:", value);
+    const basePath = `/campaigns/${campaignId}/creators/${creatorId}`;
     switch (value) {
-      case 'overview':
+      case "overview":
         navigate(basePath);
         break;
-      case 'creator-management':
+      case "creator-management":
         navigate(`${basePath}/creator-management`);
         break;
-      case 'content-management':
+      case "content-management":
         navigate(`${basePath}/content-management`);
         break;
-      case 'analytics':
+      case "analytics":
         navigate(`${basePath}/analytics`);
         break;
       default:
@@ -227,10 +246,12 @@ const CreatorDetails = () => {
     { key: "call complete", label: "Call Complete" },
     { key: "waiting for contract", label: "Waiting for Contract" },
     { key: "waiting for signature", label: "Waiting for Signature" },
-    { key: "fulfilled", label: "Fulfilled" }
+    { key: "fulfilled", label: "Fulfilled" },
   ];
 
-  const currentStageIndex = lifecycleStages.findIndex(stage => stage.key === creatorState.currentStage);
+  const currentStageIndex = lifecycleStages.findIndex(
+    (stage) => stage.key === creatorState.currentStage
+  );
 
   const getStageColor = (index: number) => {
     if (index <= currentStageIndex) {
@@ -247,35 +268,37 @@ const CreatorDetails = () => {
   };
 
   const handleSendOutreach = () => {
-    navigate(`/agent-call?campaign=${campaignId}&creator=${id}&action=outreach`);
-    setCreatorState(prev => ({
+    navigate(
+      `/agent-call?campaign=${campaignId}&creator=${creatorId}&action=outreach`
+    );
+    setCreatorState((prev) => ({
       ...prev,
       outreachSent: true,
-      currentStage: "outreached"
+      currentStage: "outreached",
     }));
   };
 
   const handleContractGenerated = (contractData: any) => {
-    setCreatorState(prev => ({
+    setCreatorState((prev) => ({
       ...prev,
       contractGenerated: true,
-      contractData
+      contractData,
     }));
   };
 
   const handleSendContract = () => {
-    setCreatorState(prev => ({
+    setCreatorState((prev) => ({
       ...prev,
       contractSent: true,
-      currentStage: "waiting for signature"
+      currentStage: "waiting for signature",
     }));
   };
 
   const handleContractSigned = () => {
-    setCreatorState(prev => ({
+    setCreatorState((prev) => ({
       ...prev,
       contractSigned: true,
-      currentStage: "onboarded"
+      currentStage: "onboarded",
     }));
   };
 
@@ -283,7 +306,11 @@ const CreatorDetails = () => {
     const actions = [];
 
     // Stage 1: Discovered
-    if (stage.key === "discovered" && currentStageIndex === 0 && !creatorState.outreachSent) {
+    if (
+      stage.key === "discovered" &&
+      currentStageIndex === 0 &&
+      !creatorState.outreachSent
+    ) {
       actions.push(
         <Button
           key="outreach"
@@ -304,7 +331,10 @@ const CreatorDetails = () => {
           <ContractDialog
             key="generate-contract"
             trigger={
-              <Button size="sm" className="ml-4 bg-green-600 hover:bg-green-700">
+              <Button
+                size="sm"
+                className="ml-4 bg-green-600 hover:bg-green-700"
+              >
                 <FileText className="w-3 h-3 mr-1" />
                 Generate Contract
               </Button>
@@ -342,12 +372,19 @@ const CreatorDetails = () => {
     }
 
     // Stage 6: Waiting for Signature
-    if (stage.key === "waiting for signature" && currentStageIndex === 5 && !creatorState.contractSigned) {
+    if (
+      stage.key === "waiting for signature" &&
+      currentStageIndex === 5 &&
+      !creatorState.contractSigned
+    ) {
       actions.push(
         <ContractSigningDialog
           key="sign-contract"
           trigger={
-            <Button size="sm" className="ml-4 bg-purple-600 hover:bg-purple-700">
+            <Button
+              size="sm"
+              className="ml-4 bg-purple-600 hover:bg-purple-700"
+            >
               <CheckCircle className="w-3 h-3 mr-1" />
               E-Sign Contract
             </Button>
@@ -366,7 +403,9 @@ const CreatorDetails = () => {
       return <span className="text-green-600 text-sm ml-4">Outreach sent</span>;
     }
     if (stage.key === "call complete" && creatorState.contractSent) {
-      return <span className="text-green-600 text-sm ml-4">Contract sent!</span>;
+      return (
+        <span className="text-green-600 text-sm ml-4">Contract sent!</span>
+      );
     }
     return null;
   };
@@ -375,8 +414,8 @@ const CreatorDetails = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           onClick={() => navigate(`/campaigns/${campaignId}`)}
           className="flex items-center gap-2"
         >
@@ -384,7 +423,9 @@ const CreatorDetails = () => {
           Back to Campaign
         </Button>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{creator.creatorName}</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            {creator.creatorName}
+          </h1>
           <p className="text-gray-600">{creator.platform} Creator</p>
         </div>
       </div>
@@ -426,7 +467,9 @@ const CreatorDetails = () => {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Engagement Rate</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Engagement Rate
+            </CardTitle>
             <Eye className="w-4 h-4 text-green-500" />
           </CardHeader>
           <CardContent>
@@ -442,7 +485,9 @@ const CreatorDetails = () => {
           <Tabs value={getActiveTab()} onValueChange={handleTabChange}>
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="creator-management">Creator Management</TabsTrigger>
+              <TabsTrigger value="creator-management">
+                Creator Management
+              </TabsTrigger>
               <TabsTrigger value="content-management">Content</TabsTrigger>
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
             </TabsList>
@@ -452,25 +497,36 @@ const CreatorDetails = () => {
 
       {/* Tab Content */}
       <div className="min-h-[400px]">
-        {getActiveTab() === 'overview' && (
+        {getActiveTab() === "overview" && (
           <Card>
             <CardHeader>
               <CardTitle>Campaign Lifecycle Progress</CardTitle>
-              <p className="text-sm text-gray-600">Current stage: <Badge className="ml-2">{creatorState.currentStage}</Badge></p>
+              <p className="text-sm text-gray-600">
+                Current stage:{" "}
+                <Badge className="ml-2">{creatorState.currentStage}</Badge>
+              </p>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col space-y-4">
                 {lifecycleStages.map((stage, index) => (
                   <div key={stage.key} className="flex items-center">
                     <div className="flex items-center flex-1">
-                      <div 
-                        className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-medium ${getStageColor(index)}`}
+                      <div
+                        className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-medium ${getStageColor(
+                          index
+                        )}`}
                       >
                         {index + 1}
                       </div>
-                      
+
                       <div className="ml-4 flex-1">
-                        <div className={`font-medium ${index <= currentStageIndex ? 'text-gray-900' : 'text-gray-500'}`}>
+                        <div
+                          className={`font-medium ${
+                            index <= currentStageIndex
+                              ? "text-gray-900"
+                              : "text-gray-500"
+                          }`}
+                        >
                           {stage.label}
                         </div>
                         {getStageMessage(stage)}
@@ -483,7 +539,9 @@ const CreatorDetails = () => {
 
                     {index < lifecycleStages.length - 1 && (
                       <div className="absolute left-4 mt-8 ml-0.5">
-                        <div className={`w-0.5 h-6 ${getConnectorColor(index)}`}></div>
+                        <div
+                          className={`w-0.5 h-6 ${getConnectorColor(index)}`}
+                        ></div>
                       </div>
                     )}
                   </div>
@@ -498,4 +556,4 @@ const CreatorDetails = () => {
   );
 };
 
-export default CreatorDetails;
+export default CampaignCreatorMappingDetails;
