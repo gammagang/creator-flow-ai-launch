@@ -20,6 +20,7 @@ import {
   campaignCreatorAPI,
   CampaignCreatorMapping,
 } from "@/services/campaignCreatorApi";
+import CampaignLifecycleProgress from "@/components/campaign/CampaignLifecycleProgress";
 
 const CampaignCreatorMappingDetails = () => {
   const { campaignId, creatorId, mappingId } = useParams();
@@ -409,56 +410,12 @@ const CampaignCreatorMappingDetails = () => {
       {/* Tab Content */}
       <div className="min-h-[400px]">
         {getActiveTab() === "overview" && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Campaign Lifecycle Progress</CardTitle>
-              <div className="text-sm text-gray-600">
-                Current stage:{" "}
-                <span className="ml-2 inline-block">
-                  <Badge>{creatorState.currentStage}</Badge>
-                </span>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col space-y-4">
-                {lifecycleStages.map((stage, index) => (
-                  <div key={stage.key} className="flex items-center relative">
-                    <div className="flex items-center flex-1">
-                      <div
-                        className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-medium ${getStageColor(
-                          index
-                        )}`}
-                      >
-                        {index + 1}
-                      </div>
-                      <div className="ml-4 flex-1">
-                        <div
-                          className={`font-medium ${
-                            index <= currentStageIndex
-                              ? "text-gray-900"
-                              : "text-gray-500"
-                          }`}
-                        >
-                          {stage.label}
-                        </div>
-                        {getStageMessage(stage)}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {getStageActions(stage, index)}
-                      </div>
-                    </div>
-                    {index < lifecycleStages.length - 1 && (
-                      <div className="absolute left-4 mt-8 ml-0.5">
-                        <div
-                          className={`w-0.5 h-6 ${getConnectorColor(index)}`}
-                        ></div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <CampaignLifecycleProgress
+            mappingData={mappingData}
+            campaignId={campaignId}
+            creatorId={creatorId}
+            mappingId={mappingId}
+          />
         )}
         <Outlet />
       </div>
