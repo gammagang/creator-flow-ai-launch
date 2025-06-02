@@ -36,12 +36,17 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
     if (mappingData) {
       setCreatorState({
         currentStage: mappingData.campaign_creator_current_state,
-        outreachSent: mappingData.campaign_creator_current_state !== "discovered",
+        outreachSent:
+          mappingData.campaign_creator_current_state !== "discovered",
         contractGenerated: false,
-        contractSent: ["waiting for signature", "onboarded", "fulfilled"].includes(
+        contractSent: [
+          "waiting for signature",
+          "onboarded",
+          "fulfilled",
+        ].includes(mappingData.campaign_creator_current_state),
+        contractSigned: ["onboarded", "fulfilled"].includes(
           mappingData.campaign_creator_current_state
         ),
-        contractSigned: ["onboarded", "fulfilled"].includes(mappingData.campaign_creator_current_state),
         contractData: null,
       });
     }
@@ -65,7 +70,9 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
   }
 
   const handleSendOutreach = () => {
-    navigate(`/agent-call?campaign=${campaignId}&creator=${creatorId}&action=outreach`);
+    navigate(
+      `/agent-call?campaign=${campaignId}&creator=${creatorId}&action=outreach`
+    );
     setCreatorState((prev) => ({
       ...prev,
       outreachSent: true,
@@ -107,7 +114,11 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
               <div className="flex items-center">
                 <div
                   className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-medium 
-                    ${creatorState.currentStage === stage.key ? "bg-green-500 text-white border-green-500" : "bg-gray-200 text-gray-500 border-gray-300"}`}
+                    ${
+                      creatorState.currentStage === stage.key
+                        ? "bg-green-500 text-white border-green-500"
+                        : "bg-gray-200 text-gray-500 border-gray-300"
+                    }`}
                 >
                   {index + 1}
                 </div>
@@ -138,7 +149,10 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                       trigger={
                         <Button
                           size="sm"
-                          disabled={creatorState.currentStage !== "call complete" || callCompleteAction !== "generate"}
+                          disabled={
+                            creatorState.currentStage !== "call complete" ||
+                            callCompleteAction !== "generate"
+                          }
                           className="bg-green-600 hover:bg-green-700"
                         >
                           <FileText className="w-3 h-3 mr-1" />
@@ -157,7 +171,10 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                     />
                     <Button
                       size="sm"
-                      disabled={creatorState.currentStage !== "call complete" || callCompleteAction !== "send"}
+                      disabled={
+                        creatorState.currentStage !== "call complete" ||
+                        callCompleteAction !== "send"
+                      }
                       onClick={handleSendContract}
                       className="bg-blue-600 hover:bg-blue-700"
                     >
@@ -166,7 +183,10 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                     </Button>
                     <Button
                       size="sm"
-                      disabled={creatorState.currentStage !== "call complete" || callCompleteAction !== "view"}
+                      disabled={
+                        creatorState.currentStage !== "call complete" ||
+                        callCompleteAction !== "view"
+                      }
                       className="border border-gray-400 cursor-not-allowed"
                     >
                       <FileText className="w-3 h-3 mr-1" />
@@ -184,7 +204,9 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                     trigger={
                       <Button
                         size="sm"
-                        disabled={creatorState.currentStage !== "waiting for signature"}
+                        disabled={
+                          creatorState.currentStage !== "waiting for signature"
+                        }
                         className="bg-purple-600 hover:bg-purple-700"
                       >
                         <CheckCircle className="w-3 h-3 mr-1" />
