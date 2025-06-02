@@ -51,7 +51,7 @@ const CreatorDiscovery = () => {
       try {
         const result = await discoverCreatorsMutation.mutateAsync({
           platform: "instagram",
-          limit: 20,
+          limit: 12,
           skip: 0,
         });
         setCreatorsData(result);
