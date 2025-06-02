@@ -2,7 +2,13 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Zap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +23,7 @@ const Auth = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
 
   // Redirect authenticated users to dashboard
@@ -41,10 +47,12 @@ const Auth = () => {
     return null;
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -52,10 +60,10 @@ const Auth = () => {
     try {
       setSubmitLoading(true);
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
+        provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/dashboard`
-        }
+          redirectTo: `${window.location.origin}/dashboard`,
+        },
       });
 
       if (error) {
@@ -99,8 +107,8 @@ const Auth = () => {
           email: formData.email,
           password: formData.password,
           options: {
-            emailRedirectTo: `${window.location.origin}/dashboard`
-          }
+            emailRedirectTo: `${window.location.origin}/dashboard`,
+          },
         });
 
         if (error) {
@@ -109,7 +117,9 @@ const Auth = () => {
         }
 
         if (data.user) {
-          toast.success("Account created successfully! Please check your email to verify your account.");
+          toast.success(
+            "Account created successfully! Please check your email to verify your account."
+          );
         }
       }
     } catch (error) {
@@ -129,7 +139,9 @@ const Auth = () => {
               <Zap className="w-6 h-6 text-white" />
             </div>
             <div className="text-left">
-              <h1 className="text-2xl font-bold text-gray-900">InfluencerFlow</h1>
+              <h1 className="text-2xl font-bold text-gray-900">
+                InfluencerFlow
+              </h1>
               <p className="text-sm text-gray-500">AI Platform</p>
             </div>
           </div>
@@ -141,13 +153,12 @@ const Auth = () => {
               {isLogin ? "Welcome Back" : "Get Started"}
             </CardTitle>
             <CardDescription>
-              {isLogin 
-                ? "Sign in to your brand account" 
-                : "Create your brand account to start discovering creators"
-              }
+              {isLogin
+                ? "Sign in to your brand account"
+                : "Create your brand account to start discovering creators"}
             </CardDescription>
           </CardHeader>
-          
+
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Email */}
@@ -198,14 +209,20 @@ const Auth = () => {
               )}
 
               <Button type="submit" className="w-full" disabled={submitLoading}>
-                {submitLoading ? "Please wait..." : (isLogin ? "Sign In" : "Create Account")}
+                {submitLoading
+                  ? "Please wait..."
+                  : isLogin
+                  ? "Sign In"
+                  : "Create Account"}
               </Button>
             </form>
 
             {/* Toggle between login/signup */}
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
-                {isLogin ? "Don't have an account?" : "Already have an account?"}
+                {isLogin
+                  ? "Don't have an account?"
+                  : "Already have an account?"}
                 <button
                   type="button"
                   onClick={() => setIsLogin(!isLogin)}
@@ -218,7 +235,7 @@ const Auth = () => {
             </div>
 
             {/* Google OAuth */}
-            <div className="mt-4">
+            {/* <div className="mt-4">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-300" />
@@ -243,7 +260,7 @@ const Auth = () => {
                 </svg>
                 Continue with Google
               </Button>
-            </div>
+            </div> */}
           </CardContent>
         </Card>
       </div>
