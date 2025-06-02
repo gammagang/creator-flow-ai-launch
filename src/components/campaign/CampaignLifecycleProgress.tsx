@@ -216,7 +216,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
     }
   }
 
-  const handleSendOutreach = () => {
+  const handlePreviewOutreach = () => {
     if (!mappingId) return;
     sendOutreachMutation.mutate();
   };
@@ -291,12 +291,12 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                   {stage.key === "discovered" && (
                     <Button
                       size="sm"
-                      onClick={handleSendOutreach}
+                      onClick={handlePreviewOutreach}
                       disabled={creatorState.currentStage !== "discovered"}
                       className="bg-blue-600 hover:bg-blue-700"
                     >
                       <Mail className="w-3 h-3 mr-1" />
-                      Send Outreach E-mail
+                      Preview Outreach E-mail
                     </Button>
                   )}
                   {stage.key === "outreached" && (
