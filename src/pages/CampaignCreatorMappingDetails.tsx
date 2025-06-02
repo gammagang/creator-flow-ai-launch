@@ -412,10 +412,12 @@ const CampaignCreatorMappingDetails = () => {
           <Card>
             <CardHeader>
               <CardTitle>Campaign Lifecycle Progress</CardTitle>
-              <p className="text-sm text-gray-600">
+              <div className="text-sm text-gray-600">
                 Current stage:{" "}
-                <Badge className="ml-2">{creatorState.currentStage}</Badge>
-              </p>
+                <span className="ml-2 inline-block">
+                  <Badge>{creatorState.currentStage}</Badge>
+                </span>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col space-y-4">
