@@ -21,6 +21,21 @@ export type CampaignResponse = {
   };
 };
 
+export interface CampaignData {
+  id: number;
+  name: string;
+  status: string;
+  budget: string;
+  spent: string;
+  creatorsContacted: number;
+  creatorsResponded: number;
+  contractsSigned: number;
+  contentDelivered: number;
+  startDate: string;
+  endDate: string;
+  progress: number;
+}
+
 // Campaign meta structure
 interface CampaignMeta {
   budget: {

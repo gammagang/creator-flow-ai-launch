@@ -141,4 +141,11 @@ export const campaignCreatorAPI = {
   ) => {
     return apiService.post(`/campaign-creator/${linkId}/payments`, data);
   },
+
+  // GET campaign creator mapping by campaign_creator_id
+  getCampaignCreatorMapping: async (mappingId: string) => {
+    return apiService.get<{
+      data: any;
+    }>(`/campaign-creator/${mappingId}`);
+  },
 };
