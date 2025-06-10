@@ -14,7 +14,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { campaignAPI } from "@/services/campaignApi";
 import { useMutation } from "@tanstack/react-query";
-import { DollarSign, IndianRupee, Target, Users } from "lucide-react";
+import { IndianRupee, Target, Users } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";

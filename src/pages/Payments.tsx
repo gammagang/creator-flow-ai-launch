@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CreditCard, DollarSign, Calendar, User, Plus } from "lucide-react";
+import { CreditCard, IndianRupee, Calendar, User, Plus } from "lucide-react";
 
 const Payments = () => {
   // TODO: Replace with real payment data

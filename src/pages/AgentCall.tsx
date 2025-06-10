@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { campaignCreatorAPI } from "@/services/campaignCreatorApi";
 import { useQuery } from "@tanstack/react-query";
-import { Calendar, DollarSign } from "lucide-react";
+import { Calendar, IndianRupee } from "lucide-react";
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 

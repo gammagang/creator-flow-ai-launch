@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, TrendingUp, Users, Mail, DollarSign } from "lucide-react";
+import { Plus, TrendingUp, Users, Mail, IndianRupee } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -32,7 +32,7 @@ const Dashboard = () => {
       title: "Total Spent",
       value: "$24,500",
       change: "+$3,200 this month",
-      icon: DollarSign,
+      icon: IndianRupee,
       color: "text-orange-600",
     },
   ];

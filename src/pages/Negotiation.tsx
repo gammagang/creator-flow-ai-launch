@@ -14,7 +14,7 @@ import {
 import {
   MessageSquare,
   Phone,
-  DollarSign,
+  IndianRupee,
   Calendar,
   FileText,
 } from "lucide-react";

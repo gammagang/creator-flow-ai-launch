@@ -7,7 +7,7 @@ import {
   Download,
   Mail,
   Calendar,
-  DollarSign,
+  IndianRupee,
   CheckCircle,
 } from "lucide-react";
 

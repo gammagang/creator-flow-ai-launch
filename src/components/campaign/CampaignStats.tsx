@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign, Users, FileText, Target } from "lucide-react";
+import { IndianRupee, Users, FileText, Target } from "lucide-react";
 
 interface Campaign {
   spent: string;
