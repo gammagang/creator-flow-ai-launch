@@ -101,7 +101,7 @@ const AgentCall = () => {
                 <span>Budget</span>
               </div>
               <p className="font-medium text-lg">
-                ${campaignData.campaignCreator.assignedBudget || "TBD"}
+                ₹{campaignData.campaignCreator.assignedBudget || "TBD"}
               </p>
             </div>
           </div>

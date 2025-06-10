@@ -167,7 +167,7 @@ export const campaignCreatorAPI = {
   getCampaignCreatorDetails: async (linkId: string) => {
     const response = await publicAxiosInstance.get<{
       data: CampaignCreatorDetailsResponse;
-    }>(`/public/campaign_creator_details/${linkId}`);
+    }>(`/public/campaign-creator-details/${linkId}`);
 
     return response.data;
   },
