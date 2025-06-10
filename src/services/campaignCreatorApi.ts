@@ -8,7 +8,7 @@ export type CampaignCreator = {
   lastStateChangeAt: string;
   assignedBudget: number;
   notes: string;
-  agreedDeliverables: string[];
+  contentDeliverables: string;
   contractId: string | null;
 };
 
@@ -33,8 +33,8 @@ export type CampaignCreatorLink = {
   campaignId: string;
   creatorId: string;
   status: string;
-  agreedDeliverables: string[];
   negotiatedRate: number;
+  contentDeliverables: string;
   contractId: string | null;
   notes: string;
   createdAt: string;
@@ -198,7 +198,6 @@ export const campaignCreatorAPI = {
     campaignId: string;
     creatorId: string;
     status?: string;
-    agreedDeliverables?: string[];
     negotiatedRate?: number;
     notes?: string;
   }) => {
@@ -210,7 +209,6 @@ export const campaignCreatorAPI = {
     linkId: string,
     data: Partial<{
       status: string;
-      agreedDeliverables: string[];
       negotiatedRate: number;
       notes: string;
     }>

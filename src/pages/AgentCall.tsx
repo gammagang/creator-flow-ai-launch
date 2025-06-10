@@ -120,17 +120,7 @@ const AgentCall = () => {
           <div>
             <p className="text-sm text-gray-500 mb-2">Deliverables</p>
             <div className="flex flex-wrap gap-2">
-              {campaignData.campaignCreator.agreedDeliverables.map(
-                (deliverable) => (
-                  <Badge
-                    key={deliverable}
-                    variant="outline"
-                    className="text-sm"
-                  >
-                    {deliverable}
-                  </Badge>
-                )
-              )}
+              {campaignData.campaignCreator.contentDeliverables}
             </div>
           </div>
 
@@ -141,8 +131,7 @@ const AgentCall = () => {
                 campaign_creator_id: campaignCreatorId,
                 campaign_name: campaignData.campaign.name,
                 budget: campaignData.campaignCreator.assignedBudget,
-                deliverables:
-                  campaignData.campaignCreator.agreedDeliverables.join(", "),
+                deliverables: campaignData.campaignCreator.contentDeliverables,
                 timeline: `${new Date(
                   campaignData.campaign.startDate
                 ).toLocaleDateString()} - ${new Date(
