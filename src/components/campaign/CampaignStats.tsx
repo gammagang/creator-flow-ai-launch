@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, Users, FileText, Target } from "lucide-react";
 
@@ -21,13 +20,11 @@ const CampaignStats = ({ campaign }: CampaignStatsProps) => {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Budget Spent</CardTitle>
-          <DollarSign className="w-4 h-4 text-muted-foreground" />
+          <IndianRupee className="w-4 h-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{campaign.spent}</div>
-          <p className="text-xs text-muted-foreground">
-            of {campaign.budget}
-          </p>
+          <p className="text-xs text-muted-foreground">of {campaign.budget}</p>
         </CardContent>
       </Card>
 
@@ -39,9 +36,7 @@ const CampaignStats = ({ campaign }: CampaignStatsProps) => {
           <Users className="w-4 h-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">
-            {campaign.creatorsContacted}
-          </div>
+          <div className="text-2xl font-bold">{campaign.creatorsContacted}</div>
           <p className="text-xs text-muted-foreground">
             {campaign.creatorsResponded} responded
           </p>
@@ -71,9 +66,7 @@ const CampaignStats = ({ campaign }: CampaignStatsProps) => {
           <Target className="w-4 h-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">
-            {campaign.contentDelivered}
-          </div>
+          <div className="text-2xl font-bold">{campaign.contentDelivered}</div>
           <p className="text-xs text-muted-foreground">
             of {campaign.contractsSigned} contracts
           </p>

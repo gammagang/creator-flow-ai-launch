@@ -97,7 +97,7 @@ const AgentCall = () => {
           <div className="grid grid-cols-1 gap-4 text-sm">
             <div>
               <div className="flex items-center gap-1 text-gray-500 mb-1">
-                <DollarSign className="w-4 h-4" />
+                <IndianRupee className="w-4 h-4" />
                 <span>Budget</span>
               </div>
               <p className="font-medium text-lg">

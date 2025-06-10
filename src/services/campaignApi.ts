@@ -10,7 +10,8 @@ export type CampaignResponse = {
       start_date: string;
       end_date: string;
       state: string;
-      meta: string | null;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      meta: Record<string, any>;
     }>;
     pagination: {
       total: number;

@@ -14,7 +14,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { campaignAPI } from "@/services/campaignApi";
 import { useMutation } from "@tanstack/react-query";
-import { DollarSign, Target, Users } from "lucide-react";
+import { DollarSign, IndianRupee, Target, Users } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -277,7 +277,7 @@ const CampaignCreate = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <DollarSign className="w-5 h-5" />
+                <IndianRupee className="w-5 h-5" />
                 Budget
               </CardTitle>
             </CardHeader>

@@ -7,6 +7,7 @@ import { AxiosError } from "axios";
 import {
   Calendar,
   DollarSign,
+  IndianRupee,
   Loader2,
   MoreHorizontal,
   Plus,
@@ -35,11 +36,11 @@ const CampaignList = () => {
 
   // Format API data to match the expected UI structure
   const campaigns = apiCampaigns.map((apiCampaign) => {
-    let budget = "₹0";
+    let budget = apiCampaign.meta?.budget?.total || "0";
     let deliverables = ["Posts"];
     try {
       if (apiCampaign.meta) {
-        const metaData = JSON.parse(apiCampaign.meta);
+        const metaData = apiCampaign.meta;
         // Extract total budget from the nested structure
         const totalBudget = metaData.budget?.total;
         if (totalBudget) budget = `${parseInt(totalBudget).toLocaleString()}`;
@@ -199,7 +200,7 @@ const CampaignList = () => {
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <div className="flex items-center gap-1 text-gray-500">
-                  <DollarSign className="w-3 h-3" />
+                  <IndianRupee className="w-3 h-3" />
                   <span>Budget</span>
                 </div>
                 <p className="font-medium">{campaign.budget}</p>
