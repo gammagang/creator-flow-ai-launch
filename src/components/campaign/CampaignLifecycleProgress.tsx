@@ -101,7 +101,9 @@ const OutreachPreviewDialog: React.FC<{
         <div className="mt-4 space-y-4">
           {/* New Receiver Email Input */}
           <div>
-            <label className="text-sm font-medium mb-1 block">Receiver Email</label>
+            <label className="text-sm font-medium mb-1 block">
+              Receiver Email
+            </label>
             <input
               type="email"
               value={receiverEmail}
@@ -314,7 +316,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                   )}
                   {stage.key === "outreached" && (
                     <Button size="sm" disabled className="cursor-not-allowed">
-                      No Action
+                      Negotiation underway
                     </Button>
                   )}
                   {stage.key === "call complete" && (

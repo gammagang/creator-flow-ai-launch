@@ -35,16 +35,15 @@ const CampaignList = () => {
 
   // Format API data to match the expected UI structure
   const campaigns = apiCampaigns.map((apiCampaign) => {
-    let budget = "$0";
+    let budget = "₹0";
     let deliverables = ["Posts"];
     try {
       if (apiCampaign.meta) {
         const metaData = JSON.parse(apiCampaign.meta);
         // Extract total budget from the nested structure
         const totalBudget = metaData.budget?.total;
-        if (totalBudget) {
-          budget = `$${parseInt(totalBudget).toLocaleString()}`;
-        }
+        if (totalBudget) budget = `${parseInt(totalBudget).toLocaleString()}`;
+
         // Get deliverables from meta if available
         if (metaData.deliverables?.length > 0) {
           deliverables = metaData.deliverables;

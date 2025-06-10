@@ -83,7 +83,6 @@ export type CampaignCreatorMapping = {
     budget: {
       total: string;
       perCreator: string;
-      paymentModel: string;
     };
     deliverables: Array<{
       type: string;
@@ -103,7 +102,7 @@ export type CampaignCreatorMapping = {
       followerRange: string;
       minEngagement: string;
     };
-    contentGuidelines: string;
+    contentDeliverables: string;
   };
   creator_id: string;
   creator_name: string;
