@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { campaignCreatorAPI } from "@/services/campaignCreatorApi";
 import { useQuery } from "@tanstack/react-query";
-import { Calendar, DollarSign } from "lucide-react";
+import { Calendar, IndianRupee } from "lucide-react";
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 
@@ -97,11 +97,11 @@ const AgentCall = () => {
           <div className="grid grid-cols-1 gap-4 text-sm">
             <div>
               <div className="flex items-center gap-1 text-gray-500 mb-1">
-                <DollarSign className="w-4 h-4" />
+                <IndianRupee className="w-4 h-4" />
                 <span>Budget</span>
               </div>
               <p className="font-medium text-lg">
-                ${campaignData.campaignCreator.assignedBudget || "TBD"}
+                ₹{campaignData.campaignCreator.assignedBudget || "TBD"}
               </p>
             </div>
           </div>
@@ -120,17 +120,7 @@ const AgentCall = () => {
           <div>
             <p className="text-sm text-gray-500 mb-2">Deliverables</p>
             <div className="flex flex-wrap gap-2">
-              {campaignData.campaignCreator.agreedDeliverables.map(
-                (deliverable) => (
-                  <Badge
-                    key={deliverable}
-                    variant="outline"
-                    className="text-sm"
-                  >
-                    {deliverable}
-                  </Badge>
-                )
-              )}
+              {campaignData.campaignCreator.contentDeliverables}
             </div>
           </div>
 
@@ -141,8 +131,7 @@ const AgentCall = () => {
                 campaign_creator_id: campaignCreatorId,
                 campaign_name: campaignData.campaign.name,
                 budget: campaignData.campaignCreator.assignedBudget,
-                deliverables:
-                  campaignData.campaignCreator.agreedDeliverables.join(", "),
+                deliverables: campaignData.campaignCreator.contentDeliverables,
                 timeline: `${new Date(
                   campaignData.campaign.startDate
                 ).toLocaleDateString()} - ${new Date(

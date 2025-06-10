@@ -10,7 +10,8 @@ export type CampaignResponse = {
       start_date: string;
       end_date: string;
       state: string;
-      meta: string | null;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      meta: Record<string, any>;
     }>;
     pagination: {
       total: number;
@@ -41,7 +42,6 @@ interface CampaignMeta {
   budget: {
     total: string;
     perCreator: string;
-    paymentModel: string;
   };
   deliverables: string[];
   targetAudience: {
@@ -54,7 +54,7 @@ interface CampaignMeta {
     followerRange: string;
     minEngagement: string;
   };
-  contentGuidelines: string;
+  contentDeliverables: string;
 }
 
 // Single campaign response type
@@ -94,10 +94,8 @@ export const campaignAPI = {
     gender?: string;
     interests?: string[];
     deliverables?: string[];
-    contentGuidelines?: string;
+    contentDeliverables?: string;
     totalBudget?: string;
-    budgetPerCreator?: string;
-    paymentModel?: string;
     followerRange?: string;
     minEngagement?: string;
     location?: string;
@@ -115,7 +113,10 @@ export const campaignAPI = {
         createdAt: string;
         updatedAt: string;
       };
-    }>("/campaign", campaignData);
+    }>("/campaign", {
+      ...campaignData,
+      totalBudget: parseFloat(campaignData.totalBudget),
+    });
   },
 
   // GET Creators in Campaign by ID

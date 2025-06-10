@@ -14,7 +14,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { campaignAPI } from "@/services/campaignApi";
 import { useMutation } from "@tanstack/react-query";
-import { DollarSign, Target, Users } from "lucide-react";
+import { IndianRupee, Target, Users } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -29,10 +29,8 @@ interface CampaignFormData {
   gender: string;
   interests: string[];
   deliverables: string[];
-  contentGuidelines: string;
+  contentDeliverables: string;
   totalBudget: string;
-  budgetPerCreator: string;
-  paymentModel: string;
   followerRange: string;
   minEngagement: string;
   location: string;
@@ -50,10 +48,8 @@ const CampaignCreate = () => {
     gender: "",
     interests: [],
     deliverables: [],
-    contentGuidelines: "",
-    totalBudget: "",
-    budgetPerCreator: "",
-    paymentModel: "",
+    contentDeliverables: "Instagram posts, Stories, Reels",
+    totalBudget: "10000",
     followerRange: "",
     minEngagement: "",
     location: "",
@@ -258,33 +254,14 @@ const CampaignCreate = () => {
               <CardTitle>Content Deliverables</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-3">
-                {["posts", "stories", "reels", "igtv"].map((deliverable) => (
-                  <div
-                    key={deliverable}
-                    className="flex items-center space-x-2"
-                  >
-                    <Checkbox
-                      id={deliverable}
-                      checked={formData.deliverables.includes(deliverable)}
-                      onCheckedChange={(checked) =>
-                        handleCheckboxChange(deliverable, checked as boolean)
-                      }
-                    />
-                    <Label htmlFor={deliverable}>
-                      Instagram{" "}
-                      {deliverable.charAt(0).toUpperCase() +
-                        deliverable.slice(1)}
-                    </Label>
-                  </div>
-                ))}
-              </div>
               <div>
-                <Label htmlFor="contentGuidelines">Content Guidelines</Label>
+                <Label htmlFor="contentDeliverables">
+                  Specify deliverables
+                </Label>
                 <Textarea
-                  id="contentGuidelines"
-                  name="contentGuidelines"
-                  value={formData.contentGuidelines}
+                  id="contentDeliverables"
+                  name="contentDeliverables"
+                  value={formData.contentDeliverables}
                   onChange={handleInputChange}
                   placeholder="Specific requirements for creator content..."
                   rows={3}
@@ -300,7 +277,7 @@ const CampaignCreate = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <DollarSign className="w-5 h-5" />
+                <IndianRupee className="w-5 h-5" />
                 Budget
               </CardTitle>
             </CardHeader>
@@ -312,38 +289,8 @@ const CampaignCreate = () => {
                   name="totalBudget"
                   value={formData.totalBudget}
                   onChange={handleInputChange}
-                  placeholder="$10,000"
+                  placeholder="₹10,000"
                 />
-              </div>
-              <div>
-                <Label htmlFor="budgetPerCreator">Budget Per Creator</Label>
-                <Input
-                  id="budgetPerCreator"
-                  name="budgetPerCreator"
-                  value={formData.budgetPerCreator}
-                  onChange={handleInputChange}
-                  placeholder="$500 - $2,000"
-                />
-              </div>
-              <div>
-                <Label htmlFor="paymentModel">Payment Model</Label>
-                <Select
-                  value={formData.paymentModel}
-                  onValueChange={(value) =>
-                    handleSelectChange("paymentModel", value)
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select model" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="flat">Flat Fee</SelectItem>
-                    <SelectItem value="performance">
-                      Performance Based
-                    </SelectItem>
-                    <SelectItem value="milestone">Milestone Based</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
             </CardContent>
           </Card>

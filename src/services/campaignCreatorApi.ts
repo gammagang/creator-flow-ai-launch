@@ -8,7 +8,7 @@ export type CampaignCreator = {
   lastStateChangeAt: string;
   assignedBudget: number;
   notes: string;
-  agreedDeliverables: string[];
+  contentDeliverables: string;
   contractId: string | null;
 };
 
@@ -33,8 +33,8 @@ export type CampaignCreatorLink = {
   campaignId: string;
   creatorId: string;
   status: string;
-  agreedDeliverables: string[];
   negotiatedRate: number;
+  contentDeliverables: string;
   contractId: string | null;
   notes: string;
   createdAt: string;
@@ -83,7 +83,6 @@ export type CampaignCreatorMapping = {
     budget: {
       total: string;
       perCreator: string;
-      paymentModel: string;
     };
     deliverables: Array<{
       type: string;
@@ -103,7 +102,7 @@ export type CampaignCreatorMapping = {
       followerRange: string;
       minEngagement: string;
     };
-    contentGuidelines: string;
+    contentDeliverables: string;
   };
   creator_id: string;
   creator_name: string;
@@ -168,7 +167,7 @@ export const campaignCreatorAPI = {
   getCampaignCreatorDetails: async (linkId: string) => {
     const response = await publicAxiosInstance.get<{
       data: CampaignCreatorDetailsResponse;
-    }>(`/public/campaign_creator_details/${linkId}`);
+    }>(`/public/campaign-creator-details/${linkId}`);
 
     return response.data;
   },
@@ -199,7 +198,6 @@ export const campaignCreatorAPI = {
     campaignId: string;
     creatorId: string;
     status?: string;
-    agreedDeliverables?: string[];
     negotiatedRate?: number;
     notes?: string;
   }) => {
@@ -211,7 +209,6 @@ export const campaignCreatorAPI = {
     linkId: string,
     data: Partial<{
       status: string;
-      agreedDeliverables: string[];
       negotiatedRate: number;
       notes: string;
     }>

@@ -1,8 +1,7 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CreditCard, DollarSign, Calendar, User, Plus } from "lucide-react";
+import { CreditCard, IndianRupee, Calendar, User, Plus } from "lucide-react";
 
 const Payments = () => {
   // TODO: Replace with real payment data
@@ -15,7 +14,7 @@ const Payments = () => {
       type: "milestone",
       status: "completed",
       date: "2024-01-16",
-      method: "Bank Transfer"
+      method: "Bank Transfer",
     },
     {
       id: 2,
@@ -25,7 +24,7 @@ const Payments = () => {
       type: "upfront",
       status: "pending",
       date: "2024-01-15",
-      method: "PayPal"
+      method: "PayPal",
     },
     {
       id: 3,
@@ -35,26 +34,35 @@ const Payments = () => {
       type: "completion",
       status: "scheduled",
       date: "2024-01-20",
-      method: "Stripe"
-    }
+      method: "Stripe",
+    },
   ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "completed": return "bg-green-100 text-green-800";
-      case "pending": return "bg-yellow-100 text-yellow-800";
-      case "scheduled": return "bg-blue-100 text-blue-800";
-      case "failed": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "completed":
+        return "bg-green-100 text-green-800";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "scheduled":
+        return "bg-blue-100 text-blue-800";
+      case "failed":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case "upfront": return "bg-purple-100 text-purple-800";
-      case "milestone": return "bg-orange-100 text-orange-800";
-      case "completion": return "bg-cyan-100 text-cyan-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "upfront":
+        return "bg-purple-100 text-purple-800";
+      case "milestone":
+        return "bg-orange-100 text-orange-800";
+      case "completion":
+        return "bg-cyan-100 text-cyan-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -63,7 +71,9 @@ const Payments = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Payments</h1>
-          <p className="text-gray-600 mt-1">Manage creator payments and billing</p>
+          <p className="text-gray-600 mt-1">
+            Manage creator payments and billing
+          </p>
         </div>
         <Button className="bg-blue-600 hover:bg-blue-700">
           <Plus className="w-4 h-4 mr-2" />
@@ -76,7 +86,7 @@ const Payments = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Paid</CardTitle>
-            <DollarSign className="w-4 h-4 text-muted-foreground" />
+            <IndianRupee className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">$24,580</div>
@@ -86,7 +96,9 @@ const Payments = () => {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Payments</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Pending Payments
+            </CardTitle>
             <Calendar className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -108,7 +120,9 @@ const Payments = () => {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Creators</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Active Creators
+            </CardTitle>
             <User className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -126,7 +140,10 @@ const Payments = () => {
         <CardContent>
           <div className="space-y-4">
             {payments.map((payment) => (
-              <div key={payment.id} className="flex items-center justify-between p-4 border rounded-lg">
+              <div
+                key={payment.id}
+                className="flex items-center justify-between p-4 border rounded-lg"
+              >
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                     <CreditCard className="w-5 h-5 text-blue-600" />
@@ -137,7 +154,10 @@ const Payments = () => {
                       <Badge className={getStatusColor(payment.status)}>
                         {payment.status}
                       </Badge>
-                      <Badge variant="outline" className={getTypeColor(payment.type)}>
+                      <Badge
+                        variant="outline"
+                        className={getTypeColor(payment.type)}
+                      >
                         {payment.type}
                       </Badge>
                     </div>
@@ -153,8 +173,11 @@ const Payments = () => {
                 <div className="text-right">
                   <div className="text-lg font-semibold">{payment.amount}</div>
                   <div className="flex gap-2 mt-2">
-                    {payment.status === 'pending' && (
-                      <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                    {payment.status === "pending" && (
+                      <Button
+                        size="sm"
+                        className="bg-blue-600 hover:bg-blue-700"
+                      >
                         Process Now
                       </Button>
                     )}
@@ -179,7 +202,9 @@ const Payments = () => {
             <div className="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer">
               <CreditCard className="w-8 h-8 text-blue-600 mb-2" />
               <h3 className="font-medium mb-1">Stripe</h3>
-              <p className="text-sm text-gray-500">Credit cards, bank transfers</p>
+              <p className="text-sm text-gray-500">
+                Credit cards, bank transfers
+              </p>
             </div>
             <div className="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer">
               <CreditCard className="w-8 h-8 text-purple-600 mb-2" />

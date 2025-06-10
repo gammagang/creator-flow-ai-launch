@@ -1,9 +1,15 @@
-
 import { useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Download, Mail, Calendar, DollarSign, CheckCircle } from "lucide-react";
+import {
+  FileText,
+  Download,
+  Mail,
+  Calendar,
+  IndianRupee,
+  CheckCircle,
+} from "lucide-react";
 
 const ContractDetails = () => {
   const { id } = useParams();
@@ -19,7 +25,7 @@ const ContractDetails = () => {
     signedDate: "2024-01-16",
     deliverables: ["2 Posts", "4 Stories"],
     timeline: "2 weeks from signing",
-    paymentTerms: "50% upfront, 50% on completion"
+    paymentTerms: "50% upfront, 50% on completion",
   };
 
   return (
@@ -28,7 +34,9 @@ const ContractDetails = () => {
       <div className="flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Contract Details</h1>
-          <p className="text-gray-600 mt-1">{contract.creator} - {contract.campaign}</p>
+          <p className="text-gray-600 mt-1">
+            {contract.creator} - {contract.campaign}
+          </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline">
@@ -51,8 +59,12 @@ const ContractDetails = () => {
                 <FileText className="w-6 h-6 text-blue-600" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold">Influencer Collaboration Agreement</h2>
-                <Badge className="bg-green-100 text-green-800 mt-1">Fully Executed</Badge>
+                <h2 className="text-xl font-semibold">
+                  Influencer Collaboration Agreement
+                </h2>
+                <Badge className="bg-green-100 text-green-800 mt-1">
+                  Fully Executed
+                </Badge>
               </div>
             </div>
             <div className="text-right">
@@ -71,7 +83,7 @@ const ContractDetails = () => {
             </div>
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <DollarSign className="w-4 h-4 text-gray-400" />
+                <IndianRupee className="w-4 h-4 text-gray-400" />
                 <span className="text-sm font-medium">Payment Terms</span>
               </div>
               <p className="text-gray-700">{contract.paymentTerms}</p>
@@ -81,7 +93,9 @@ const ContractDetails = () => {
                 <CheckCircle className="w-4 h-4 text-gray-400" />
                 <span className="text-sm font-medium">Status</span>
               </div>
-              <p className="text-green-600 font-medium">Signed by both parties</p>
+              <p className="text-green-600 font-medium">
+                Signed by both parties
+              </p>
             </div>
           </div>
         </CardContent>
@@ -135,15 +149,21 @@ const ContractDetails = () => {
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span className="text-sm">Contract signed by {contract.creator} - {contract.signedDate}</span>
+              <span className="text-sm">
+                Contract signed by {contract.creator} - {contract.signedDate}
+              </span>
             </div>
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              <span className="text-sm">Contract sent for signature - {contract.createdDate}</span>
+              <span className="text-sm">
+                Contract sent for signature - {contract.createdDate}
+              </span>
             </div>
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-              <span className="text-sm">Contract generated from negotiation - {contract.createdDate}</span>
+              <span className="text-sm">
+                Contract generated from negotiation - {contract.createdDate}
+              </span>
             </div>
           </div>
         </CardContent>

@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import {
   Calendar,
-  DollarSign,
+  IndianRupee,
   Loader2,
   MoreHorizontal,
   Plus,
@@ -35,24 +35,9 @@ const CampaignList = () => {
 
   // Format API data to match the expected UI structure
   const campaigns = apiCampaigns.map((apiCampaign) => {
-    let budget = "$0";
-    let deliverables = ["Posts"];
-    try {
-      if (apiCampaign.meta) {
-        const metaData = JSON.parse(apiCampaign.meta);
-        // Extract total budget from the nested structure
-        const totalBudget = metaData.budget?.total;
-        if (totalBudget) {
-          budget = `$${parseInt(totalBudget).toLocaleString()}`;
-        }
-        // Get deliverables from meta if available
-        if (metaData.deliverables?.length > 0) {
-          deliverables = metaData.deliverables;
-        }
-      }
-    } catch (e) {
-      console.error("Error parsing campaign meta data:", e);
-    }
+    const budget = apiCampaign.meta?.budget?.total || "0";
+    const contentDeliverables = (apiCampaign.meta?.contentDeliverables ||
+      "Social Media Content") as string;
 
     return {
       id: apiCampaign.id,
@@ -63,7 +48,7 @@ const CampaignList = () => {
       creatorsResponded: 0,
       startDate: apiCampaign.start_date,
       endDate: apiCampaign.end_date,
-      deliverables,
+      contentDeliverables,
     };
   });
 
@@ -200,7 +185,7 @@ const CampaignList = () => {
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <div className="flex items-center gap-1 text-gray-500">
-                  <DollarSign className="w-3 h-3" />
+                  <IndianRupee className="w-3 h-3" />
                   <span>Budget</span>
                 </div>
                 <p className="font-medium">{campaign.budget}</p>
@@ -235,15 +220,9 @@ const CampaignList = () => {
             <div>
               <p className="text-sm text-gray-500 mb-2">Deliverables</p>
               <div className="flex flex-wrap gap-1">
-                {campaign.deliverables.map((deliverable) => (
-                  <Badge
-                    key={deliverable}
-                    variant="outline"
-                    className="text-xs"
-                  >
-                    {deliverable}
-                  </Badge>
-                ))}
+                <p className="text-sm max-w-md">
+                  {campaign.contentDeliverables || " "}
+                </p>
               </div>
             </div>
 
