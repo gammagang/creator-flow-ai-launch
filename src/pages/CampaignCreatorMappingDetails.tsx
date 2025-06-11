@@ -51,7 +51,6 @@ const CampaignCreatorMappingDetails = () => {
         const response = await campaignCreatorAPI.getCampaignCreatorMapping(
           mappingId
         );
-        // Note: the API response shape is { data: CampaignCreatorMapping }
         setMappingData(response.data);
       } catch (err: unknown) {
         console.error("Error fetching mapping data:", err);

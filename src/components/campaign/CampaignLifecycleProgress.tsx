@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Mail, FileText, CheckCircle, Send } from "lucide-react";
+import { Mail, FileText, CheckCircle, Send, Save } from "lucide-react";
 import ContractDialog from "@/components/ContractDialog";
 import ContractSigningDialog from "@/components/ContractSigningDialog";
 import {
@@ -166,6 +166,8 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
   const navigate = useNavigate();
   const [showOutreachPreview, setShowOutreachPreview] = useState(false);
   const [outreachEmailContent, setOutreachEmailContent] = useState("");
+  const [contentDeliverables, setContentDeliverables] = useState("");
+  const [isSavingDeliverables, setIsSavingDeliverables] = useState(false);
 
   const [creatorState, setCreatorState] = useState({
     currentStage: "",
@@ -175,6 +177,47 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
     contractSigned: false,
     contractData: null as ContractData | null,
   });
+
+  // Initialize contentDeliverables from mappingData
+  useEffect(() => {
+    if (mappingData) {
+      const deliverables = (mappingData.campaign_creator_meta
+        ?.contentDeliverables ||
+        mappingData.campaign_meta?.contentDeliverables ||
+        "") as string;
+      setContentDeliverables(deliverables);
+    }
+  }, [mappingData]);
+
+  const updateDeliverablessMutation = useMutation({
+    mutationFn: async () => {
+      if (!mappingId) throw new Error("Mapping ID is required");
+      // Convert contentDeliverables string to array by splitting on new lines
+      const deliverableArray = contentDeliverables
+        .split("\n")
+        .filter((line) => line.trim());
+      return await campaignCreatorAPI.updateCampaignCreatorLink(mappingId, {
+        contentDeliverables,
+      });
+    },
+    onSuccess: () => {
+      toast.success("Content deliverables updated successfully!");
+      // Refresh the page to get updated data
+      window.location.reload();
+    },
+    onError: (error: unknown) => {
+      toast.error("Failed to update content deliverables. Please try again.");
+      console.error("Error updating deliverables:", error);
+    },
+    onSettled: () => {
+      setIsSavingDeliverables(false);
+    },
+  });
+
+  const handleSaveDeliverables = () => {
+    setIsSavingDeliverables(true);
+    updateDeliverablessMutation.mutate();
+  };
 
   const sendOutreachMutation = useMutation({
     mutationFn: () => campaignCreatorAPI.getOutreachPreview(mappingId!),
@@ -271,6 +314,40 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
           Refresh
         </Button>
       </div>
+
+      {/* Content Deliverables Section */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center">
+            <FileText className="w-5 h-5 mr-2 text-blue-500" />
+            Content Deliverables
+          </CardTitle>
+          <p className="text-sm text-gray-500 mt-1">
+            Define what the creator will deliver as part of this campaign
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <Textarea
+              value={contentDeliverables}
+              onChange={(e) => setContentDeliverables(e.target.value)}
+              className="min-h-[120px] w-full font-mono text-sm"
+              placeholder="Enter content deliverables (e.g., 2 Instagram posts, 3 Stories, 1 Reel)"
+            />
+            <div className="flex justify-end">
+              <Button
+                onClick={handleSaveDeliverables}
+                disabled={isSavingDeliverables}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                {isSavingDeliverables ? "Saving..." : "Save Deliverables"}
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <div>

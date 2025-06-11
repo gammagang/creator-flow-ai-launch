@@ -211,6 +211,7 @@ export const campaignCreatorAPI = {
       status: string;
       negotiatedRate: number;
       notes: string;
+      contentDeliverables: string;
     }>
   ) => {
     return apiService.put<CampaignCreatorResponse>(
