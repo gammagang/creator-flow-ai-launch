@@ -1,4 +1,5 @@
 import CampaignLifecycleProgress from "@/components/campaign/CampaignLifecycleProgress";
+import ContentDeliverablesCard from "@/components/campaign/ContentDeliverablesCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,6 +10,7 @@ import {
 import { ArrowLeft, Eye, Heart, MessageCircle, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 interface Stage {
   key: string;
@@ -31,6 +33,7 @@ const CampaignCreatorMappingDetails = () => {
   );
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [contentDeliverables, setContentDeliverables] = useState("");
 
   // Lifecycle state management for the creator
   const [creatorState, setCreatorState] = useState({
@@ -80,6 +83,17 @@ const CampaignCreatorMappingDetails = () => {
           mappingData.campaign_creator_current_state
         ),
       }));
+    }
+  }, [mappingData]);
+
+  // Initialize contentDeliverables from mappingData
+  useEffect(() => {
+    if (mappingData) {
+      const deliverables = (mappingData.campaign_creator_meta
+        ?.contentDeliverables ||
+        mappingData.campaign_meta?.contentDeliverables ||
+        "") as string;
+      setContentDeliverables(deliverables);
     }
   }, [mappingData]);
 
@@ -161,6 +175,24 @@ const CampaignCreatorMappingDetails = () => {
       contractSigned: true,
       currentStage: "onboarded",
     }));
+  };
+
+  // Refresh mapping data from API
+  const refreshMappingData = async () => {
+    if (!mappingId) return;
+    try {
+      setLoading(true);
+      const response = await campaignCreatorAPI.getCampaignCreatorMapping(
+        mappingId
+      );
+      setMappingData(response.data);
+      toast.success("Data refreshed successfully");
+    } catch (err: unknown) {
+      console.error("Error refreshing mapping data:", err);
+      toast.error("Failed to refresh data");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading) {
@@ -289,12 +321,22 @@ const CampaignCreatorMappingDetails = () => {
       {/* Tab Content */}
       <div className="min-h-[400px]">
         {getActiveTab() === "overview" && (
-          <CampaignLifecycleProgress
-            mappingData={mappingData}
-            campaignId={campaignId}
-            creatorId={creatorId}
-            mappingId={mappingId}
-          />
+          <>
+            {/* Content Deliverables Card */}
+            <ContentDeliverablesCard
+              mappingId={mappingId}
+              initialContentDeliverables={contentDeliverables}
+              onDeliverablesUpdated={refreshMappingData}
+            />
+
+            {/* Campaign Lifecycle Progress */}
+            <CampaignLifecycleProgress
+              mappingData={mappingData}
+              campaignId={campaignId}
+              creatorId={creatorId}
+              mappingId={mappingId}
+            />
+          </>
         )}
         <Outlet />
       </div>

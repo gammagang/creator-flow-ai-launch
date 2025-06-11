@@ -7,11 +7,20 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 
+interface ContractData {
+  campaignName: string;
+  creatorName: string;
+  agreedBudget: string;
+  deliverables: string;
+  timeline: string;
+  additionalTerms: string;
+}
+
 interface ContractDialogProps {
   trigger: React.ReactNode;
   creatorName: string;
   campaignName: string;
-  onContractGenerated: (contractData: any) => void;
+  onContractGenerated: (contractData: ContractData) => void;
 }
 
 const ContractDialog = ({ trigger, creatorName, campaignName, onContractGenerated }: ContractDialogProps) => {
@@ -26,7 +35,13 @@ const ContractDialog = ({ trigger, creatorName, campaignName, onContractGenerate
   });
 
   const handleSave = () => {
+    // Only call the callback when the user explicitly saves the contract
     onContractGenerated(contractData);
+    setOpen(false);
+  };
+  
+  const handleCancel = () => {
+    // Just close the dialog without saving or triggering any state changes
     setOpen(false);
   };
 
@@ -112,7 +127,7 @@ const ContractDialog = ({ trigger, creatorName, campaignName, onContractGenerate
           </Card>
 
           <div className="flex gap-2 justify-end">
-            <Button variant="outline" onClick={() => setOpen(false)}>
+            <Button variant="outline" onClick={handleCancel}>
               Cancel
             </Button>
             <Button onClick={handleSave}>

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Mail, FileText, CheckCircle, Send, Save } from "lucide-react";
+import { Mail, FileText, CheckCircle, Send } from "lucide-react";
 import ContractDialog from "@/components/ContractDialog";
 import ContractSigningDialog from "@/components/ContractSigningDialog";
 import {
@@ -75,6 +75,7 @@ const OutreachPreviewDialog: React.FC<{
     },
     onSuccess: () => {
       toast.success("Outreach email sent successfully!");
+      // Only call onEmailSent to update the state when email is actually sent
       onEmailSent();
       onClose();
     },
@@ -140,7 +141,14 @@ const OutreachPreviewDialog: React.FC<{
           </div>
         </div>
         <DialogFooter className="mt-4">
-          <Button variant="outline" onClick={onClose} disabled={isSending}>
+          <Button 
+            variant="outline" 
+            onClick={() => {
+              // Just close the dialog without updating any state
+              onClose();
+            }} 
+            disabled={isSending}
+          >
             Cancel
           </Button>
           <Button
@@ -166,8 +174,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
   const navigate = useNavigate();
   const [showOutreachPreview, setShowOutreachPreview] = useState(false);
   const [outreachEmailContent, setOutreachEmailContent] = useState("");
-  const [contentDeliverables, setContentDeliverables] = useState("");
-  const [isSavingDeliverables, setIsSavingDeliverables] = useState(false);
+  const [isUpdatingState, setIsUpdatingState] = useState(false);
 
   const [creatorState, setCreatorState] = useState({
     currentStage: "",
@@ -178,64 +185,78 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
     contractData: null as ContractData | null,
   });
 
-  // Initialize contentDeliverables from mappingData
-  useEffect(() => {
-    if (mappingData) {
-      const deliverables = (mappingData.campaign_creator_meta
-        ?.contentDeliverables ||
-        mappingData.campaign_meta?.contentDeliverables ||
-        "") as string;
-      setContentDeliverables(deliverables);
+  const refreshMappingData = () => {
+    if (mappingId) {
+      setIsUpdatingState(true);
+      fetchMappingData.mutate();
     }
-  }, [mappingData]);
-
-  const updateDeliverablessMutation = useMutation({
-    mutationFn: async () => {
-      if (!mappingId) throw new Error("Mapping ID is required");
-      // Convert contentDeliverables string to array by splitting on new lines
-      const deliverableArray = contentDeliverables
-        .split("\n")
-        .filter((line) => line.trim());
-      return await campaignCreatorAPI.updateCampaignCreatorLink(mappingId, {
-        contentDeliverables,
-      });
-    },
-    onSuccess: () => {
-      toast.success("Content deliverables updated successfully!");
-      // Refresh the page to get updated data
-      window.location.reload();
-    },
-    onError: (error: unknown) => {
-      toast.error("Failed to update content deliverables. Please try again.");
-      console.error("Error updating deliverables:", error);
-    },
-    onSettled: () => {
-      setIsSavingDeliverables(false);
-    },
-  });
-
-  const handleSaveDeliverables = () => {
-    setIsSavingDeliverables(true);
-    updateDeliverablessMutation.mutate();
   };
 
   const sendOutreachMutation = useMutation({
     mutationFn: () => campaignCreatorAPI.getOutreachPreview(mappingId!),
     onSuccess: (response: OutreachPreviewResponse) => {
-      setCreatorState((prev) => ({
-        ...prev,
-        outreachSent: true,
-        currentStage: "outreached",
-      }));
+      // Only set the email content and show the preview dialog
+      // Don't change the state yet - it will be changed only after email is actually sent
       setOutreachEmailContent(
         `${response.data.subject}\n\n${response.data.body}`
       );
       setShowOutreachPreview(true);
+      setIsUpdatingState(false); // Reset loading state
     },
     onError: (error: unknown) => {
-      console.error("Error sending outreach:", error);
+      toast.error("Failed to generate outreach email preview.");
+      console.error("Error generating outreach preview:", error);
+      setIsUpdatingState(false); // Reset loading state on error
     },
   });
+
+  // Function to fetch the latest mapping data
+  const fetchMappingData = useMutation({
+    mutationFn: async () => {
+      if (!mappingId) throw new Error("Mapping ID is required");
+      return await campaignCreatorAPI.getCampaignCreatorMapping(mappingId);
+    },
+    onSuccess: (response) => {
+      // Update the parent component with the latest mapping data
+      // This will trigger a re-render with the latest state
+      if (response?.data) {
+        setCreatorState((prev) => ({
+          ...prev,
+          currentStage: response.data.campaign_creator_current_state,
+          outreachSent: response.data.campaign_creator_current_state !== "discovered",
+          contractSent: [
+            "waiting for signature",
+            "onboarded",
+            "fulfilled",
+          ].includes(response.data.campaign_creator_current_state),
+          contractSigned: ["onboarded", "fulfilled"].includes(
+            response.data.campaign_creator_current_state
+          ),
+        }));
+        
+        // Only show toast when manually refreshing, not on initial load
+        if (isUpdatingState) {
+          toast.success("Data refreshed successfully");
+        }
+      }
+    },
+    onError: (error: unknown) => {
+      toast.error("Failed to refresh data. Please try again.");
+      console.error("Error refreshing mapping data:", error);
+    },
+    onSettled: () => {
+      setIsUpdatingState(false);
+    }
+  });
+
+  // Refresh mapping data when component mounts
+  useEffect(() => {
+    if (mappingId) {
+      // Only call this once when component mounts
+      fetchMappingData.mutate();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mappingId]);
 
   useEffect(() => {
     if (mappingData) {
@@ -276,77 +297,81 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
 
   const handlePreviewOutreach = () => {
     if (!mappingId) return;
+    setIsUpdatingState(true);
     sendOutreachMutation.mutate();
   };
 
+  // Update campaign creator state mutation
+  const updateCampaignCreatorStateMutation = useMutation({
+    mutationFn: async (newState: string) => {
+      if (!mappingId) throw new Error("Mapping ID is required");
+      return await campaignCreatorAPI.updateCampaignCreatorState(mappingId, newState);
+    },
+    onSuccess: () => {
+      // Refresh mapping data to get the latest state
+      fetchMappingData.mutate();
+      toast.success("Campaign status updated successfully");
+      // Reset loading state
+      setIsUpdatingState(false);
+    },
+    onError: (error: unknown) => {
+      toast.error("Failed to update campaign state. Please try again.");
+      console.error("Error updating campaign state:", error);
+      // Reset loading state
+      setIsUpdatingState(false);
+    },
+  });
+
   const handleSendContract = () => {
-    setCreatorState((prev) => ({
-      ...prev,
-      contractSent: true,
-      currentStage: "waiting for signature",
-    }));
+    // Show loading state
+    setIsUpdatingState(true);
+    // Update the state to "waiting for signature" when sending contract
+    updateCampaignCreatorStateMutation.mutate("waiting for signature");
   };
 
   const handleContractSigned = () => {
-    setCreatorState((prev) => ({
-      ...prev,
-      contractSigned: true,
-      currentStage: "onboarded",
-    }));
+    // Show loading state
+    setIsUpdatingState(true);
+    // Update the state to "onboarded" when contract is signed
+    updateCampaignCreatorStateMutation.mutate("onboarded");
   };
 
   const handleEmailSent = () => {
-    setCreatorState((prev) => ({
-      ...prev,
-      outreachSent: true,
-      currentStage: "outreached",
-    }));
+    // Show loading state
+    setIsUpdatingState(true);
+    // Update the state to "outreached" when email is sent successfully
+    updateCampaignCreatorStateMutation.mutate("outreached");
   };
 
   return (
-    <div>
+    <div className="relative">
+      {/* Loading overlay */}
+      {(updateCampaignCreatorStateMutation.isPending || isUpdatingState) && (
+        <div className="absolute inset-0 bg-white/60 z-10 flex items-center justify-center">
+          <div className="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center">
+            <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mb-2"></div>
+            <p className="text-gray-700 font-medium">Updating campaign status...</p>
+          </div>
+        </div>
+      )}
+      
       <div className="flex justify-end mb-4">
         <Button
           size="sm"
           className="bg-blue-600 hover:bg-blue-700"
-          onClick={() => window.location.reload()}
+          onClick={refreshMappingData}
+          disabled={fetchMappingData.isPending || isUpdatingState}
         >
-          Refresh
+          {fetchMappingData.isPending || isUpdatingState ? (
+            <span className="flex items-center">
+              <span className="animate-spin mr-2 w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
+              Refreshing...
+            </span>
+          ) : (
+            "Refresh"
+          )}
         </Button>
       </div>
-
-      {/* Content Deliverables Section */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center">
-            <FileText className="w-5 h-5 mr-2 text-blue-500" />
-            Content Deliverables
-          </CardTitle>
-          <p className="text-sm text-gray-500 mt-1">
-            Define what the creator will deliver as part of this campaign
-          </p>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <Textarea
-              value={contentDeliverables}
-              onChange={(e) => setContentDeliverables(e.target.value)}
-              className="min-h-[120px] w-full font-mono text-sm"
-              placeholder="Enter content deliverables (e.g., 2 Instagram posts, 3 Stories, 1 Reel)"
-            />
-            <div className="flex justify-end">
-              <Button
-                onClick={handleSaveDeliverables}
-                disabled={isSavingDeliverables}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                <Save className="w-4 h-4 mr-2" />
-                {isSavingDeliverables ? "Saving..." : "Save Deliverables"}
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
       <Card>
         <CardHeader>
@@ -384,11 +409,20 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                     <Button
                       size="sm"
                       onClick={handlePreviewOutreach}
-                      disabled={creatorState.currentStage !== "discovered"}
+                      disabled={creatorState.currentStage !== "discovered" || sendOutreachMutation.isPending || isUpdatingState}
                       className="bg-blue-600 hover:bg-blue-700"
                     >
-                      <Mail className="w-3 h-3 mr-1" />
-                      Preview Outreach E-mail
+                      {sendOutreachMutation.isPending || isUpdatingState ? (
+                        <span className="flex items-center">
+                          <span className="animate-spin mr-2 w-3 h-3 border-2 border-white border-t-transparent rounded-full"></span>
+                          Loading...
+                        </span>
+                      ) : (
+                        <>
+                          <Mail className="w-3 h-3 mr-1" />
+                          Preview Outreach E-mail
+                        </>
+                      )}
                     </Button>
                   )}
                   {stage.key === "outreached" && (
@@ -415,6 +449,8 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                         creatorName={mappingData.creator_name || ""}
                         campaignName={mappingData.campaign_name || ""}
                         onContractGenerated={(data: ContractData) => {
+                          // Only update the local state when contract is actually generated
+                          // This doesn't change the backend state yet
                           setCreatorState((prev) => ({
                             ...prev,
                             contractGenerated: true,
@@ -426,13 +462,24 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                         size="sm"
                         disabled={
                           creatorState.currentStage !== "call complete" ||
-                          callCompleteAction !== "send"
+                          callCompleteAction !== "send" ||
+                          updateCampaignCreatorStateMutation.isPending ||
+                          isUpdatingState
                         }
                         onClick={handleSendContract}
                         className="bg-blue-600 hover:bg-blue-700"
                       >
-                        <Mail className="w-3 h-3 mr-1" />
-                        Send Contract
+                        {updateCampaignCreatorStateMutation.isPending || isUpdatingState ? (
+                          <span className="flex items-center">
+                            <span className="animate-spin mr-2 w-3 h-3 border-2 border-white border-t-transparent rounded-full"></span>
+                            Sending...
+                          </span>
+                        ) : (
+                          <>
+                            <Mail className="w-3 h-3 mr-1" />
+                            Send Contract
+                          </>
+                        )}
                       </Button>
                       <Button
                         size="sm"
@@ -454,20 +501,30 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                   )}
                   {stage.key === "waiting for signature" && (
                     <ContractSigningDialog
-                      trigger={
-                        <Button
+                      trigger={                          <Button
                           size="sm"
                           disabled={
-                            creatorState.currentStage !==
-                            "waiting for signature"
+                            creatorState.currentStage !== "waiting for signature" ||
+                            updateCampaignCreatorStateMutation.isPending ||
+                            isUpdatingState
                           }
                           className="bg-purple-600 hover:bg-purple-700"
                         >
-                          <CheckCircle className="w-3 h-3 mr-1" />
-                          E-Sign Contract
+                          {updateCampaignCreatorStateMutation.isPending || isUpdatingState ? (
+                            <span className="flex items-center">
+                              <span className="animate-spin mr-2 w-3 h-3 border-2 border-white border-t-transparent rounded-full"></span>
+                              Processing...
+                            </span>
+                          ) : (
+                            <>
+                              <CheckCircle className="w-3 h-3 mr-1" />
+                              E-Sign Contract
+                            </>
+                          )}
                         </Button>
                       }
                       contractData={creatorState.contractData}
+                      // This will call handleContractSigned which uses the API to update state
                       onContractSigned={handleContractSigned}
                     />
                   )}

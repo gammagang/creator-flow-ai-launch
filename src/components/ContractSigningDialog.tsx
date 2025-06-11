@@ -6,9 +6,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Check } from "lucide-react";
 
+interface ContractData {
+  campaignName: string;
+  creatorName: string;
+  agreedBudget: string;
+  deliverables: string;
+  timeline: string;
+  additionalTerms: string;
+}
+
 interface ContractSigningDialogProps {
   trigger: React.ReactNode;
-  contractData: any;
+  contractData: ContractData | null;
   onContractSigned: () => void;
 }
 
@@ -73,7 +82,10 @@ const ContractSigningDialog = ({ trigger, contractData, onContractSigned }: Cont
           </div>
 
           <div className="flex gap-2 justify-end">
-            <Button variant="outline" onClick={() => setOpen(false)}>
+            <Button variant="outline" onClick={() => {
+              // Just close without calling any state update function
+              setOpen(false);
+            }}>
               Cancel
             </Button>
             <Button 
