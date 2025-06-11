@@ -221,10 +221,7 @@ export const campaignCreatorAPI = {
   },
 
   // Update campaign-creator state specifically
-  updateCampaignCreatorState: async (
-    linkId: string,
-    newState: string
-  ) => {
+  updateCampaignCreatorState: async (linkId: string, newState: string) => {
     return apiService.put<CampaignCreatorResponse>(
       `/campaign-creator/${linkId}`,
       { status: newState }

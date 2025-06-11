@@ -18,9 +18,11 @@ const ContentDeliverablesCard = ({
   initialContentDeliverables,
   onDeliverablesUpdated,
 }: ContentDeliverablesCardProps) => {
-  const [contentDeliverables, setContentDeliverables] = useState(initialContentDeliverables);
+  const [contentDeliverables, setContentDeliverables] = useState(
+    initialContentDeliverables
+  );
   const [isSavingDeliverables, setIsSavingDeliverables] = useState(false);
-  
+
   // Update state when initialContentDeliverables prop changes
   useEffect(() => {
     setContentDeliverables(initialContentDeliverables);
@@ -35,7 +37,7 @@ const ContentDeliverablesCard = ({
     },
     onSuccess: () => {
       toast.success("Content deliverables updated successfully!");
-      
+
       // Call the callback to notify parent instead of full page reload
       if (onDeliverablesUpdated) {
         onDeliverablesUpdated();

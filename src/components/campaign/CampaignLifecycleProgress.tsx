@@ -141,12 +141,12 @@ const OutreachPreviewDialog: React.FC<{
           </div>
         </div>
         <DialogFooter className="mt-4">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => {
               // Just close the dialog without updating any state
               onClose();
-            }} 
+            }}
             disabled={isSending}
           >
             Cancel
@@ -223,7 +223,8 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
         setCreatorState((prev) => ({
           ...prev,
           currentStage: response.data.campaign_creator_current_state,
-          outreachSent: response.data.campaign_creator_current_state !== "discovered",
+          outreachSent:
+            response.data.campaign_creator_current_state !== "discovered",
           contractSent: [
             "waiting for signature",
             "onboarded",
@@ -233,7 +234,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
             response.data.campaign_creator_current_state
           ),
         }));
-        
+
         // Only show toast when manually refreshing, not on initial load
         if (isUpdatingState) {
           toast.success("Data refreshed successfully");
@@ -246,7 +247,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
     },
     onSettled: () => {
       setIsUpdatingState(false);
-    }
+    },
   });
 
   // Refresh mapping data when component mounts
@@ -305,7 +306,10 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
   const updateCampaignCreatorStateMutation = useMutation({
     mutationFn: async (newState: string) => {
       if (!mappingId) throw new Error("Mapping ID is required");
-      return await campaignCreatorAPI.updateCampaignCreatorState(mappingId, newState);
+      return await campaignCreatorAPI.updateCampaignCreatorState(
+        mappingId,
+        newState
+      );
     },
     onSuccess: () => {
       // Refresh mapping data to get the latest state
@@ -350,11 +354,13 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
         <div className="absolute inset-0 bg-white/60 z-10 flex items-center justify-center">
           <div className="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center">
             <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mb-2"></div>
-            <p className="text-gray-700 font-medium">Updating campaign status...</p>
+            <p className="text-gray-700 font-medium">
+              Updating campaign status...
+            </p>
           </div>
         </div>
       )}
-      
+
       <div className="flex justify-end mb-4">
         <Button
           size="sm"
@@ -409,7 +415,11 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                     <Button
                       size="sm"
                       onClick={handlePreviewOutreach}
-                      disabled={creatorState.currentStage !== "discovered" || sendOutreachMutation.isPending || isUpdatingState}
+                      disabled={
+                        creatorState.currentStage !== "discovered" ||
+                        sendOutreachMutation.isPending ||
+                        isUpdatingState
+                      }
                       className="bg-blue-600 hover:bg-blue-700"
                     >
                       {sendOutreachMutation.isPending || isUpdatingState ? (
@@ -469,7 +479,8 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                         onClick={handleSendContract}
                         className="bg-blue-600 hover:bg-blue-700"
                       >
-                        {updateCampaignCreatorStateMutation.isPending || isUpdatingState ? (
+                        {updateCampaignCreatorStateMutation.isPending ||
+                        isUpdatingState ? (
                           <span className="flex items-center">
                             <span className="animate-spin mr-2 w-3 h-3 border-2 border-white border-t-transparent rounded-full"></span>
                             Sending...
@@ -501,16 +512,19 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                   )}
                   {stage.key === "waiting for signature" && (
                     <ContractSigningDialog
-                      trigger={                          <Button
+                      trigger={
+                        <Button
                           size="sm"
                           disabled={
-                            creatorState.currentStage !== "waiting for signature" ||
+                            creatorState.currentStage !==
+                              "waiting for signature" ||
                             updateCampaignCreatorStateMutation.isPending ||
                             isUpdatingState
                           }
                           className="bg-purple-600 hover:bg-purple-700"
                         >
-                          {updateCampaignCreatorStateMutation.isPending || isUpdatingState ? (
+                          {updateCampaignCreatorStateMutation.isPending ||
+                          isUpdatingState ? (
                             <span className="flex items-center">
                               <span className="animate-spin mr-2 w-3 h-3 border-2 border-white border-t-transparent rounded-full"></span>
                               Processing...

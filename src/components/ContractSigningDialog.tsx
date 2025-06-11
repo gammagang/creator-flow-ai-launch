@@ -1,6 +1,11 @@
-
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,7 +26,11 @@ interface ContractSigningDialogProps {
   onContractSigned: () => void;
 }
 
-const ContractSigningDialog = ({ trigger, contractData, onContractSigned }: ContractSigningDialogProps) => {
+const ContractSigningDialog = ({
+  trigger,
+  contractData,
+  onContractSigned,
+}: ContractSigningDialogProps) => {
   const [open, setOpen] = useState(false);
   const [brandSigned, setBrandSigned] = useState(false);
 
@@ -38,9 +47,7 @@ const ContractSigningDialog = ({ trigger, contractData, onContractSigned }: Cont
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {trigger}
-      </DialogTrigger>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Contract Signing</DialogTitle>
@@ -50,12 +57,24 @@ const ContractSigningDialog = ({ trigger, contractData, onContractSigned }: Cont
             <CardContent className="p-4">
               <h4 className="font-medium mb-2">Contract Details</h4>
               <div className="text-sm space-y-2">
-                <p><strong>Campaign:</strong> {contractData?.campaignName}</p>
-                <p><strong>Creator:</strong> {contractData?.creatorName}</p>
-                <p><strong>Budget:</strong> {contractData?.agreedBudget}</p>
-                <p><strong>Deliverables:</strong> {contractData?.deliverables}</p>
-                <p><strong>Timeline:</strong> {contractData?.timeline}</p>
-                <p><strong>Terms:</strong> {contractData?.additionalTerms}</p>
+                <p>
+                  <strong>Campaign:</strong> {contractData?.campaignName}
+                </p>
+                <p>
+                  <strong>Creator:</strong> {contractData?.creatorName}
+                </p>
+                <p>
+                  <strong>Budget:</strong> {contractData?.agreedBudget}
+                </p>
+                <p>
+                  <strong>Deliverables:</strong> {contractData?.deliverables}
+                </p>
+                <p>
+                  <strong>Timeline:</strong> {contractData?.timeline}
+                </p>
+                <p>
+                  <strong>Terms:</strong> {contractData?.additionalTerms}
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -64,7 +83,9 @@ const ContractSigningDialog = ({ trigger, contractData, onContractSigned }: Cont
             <div className="flex items-center justify-between p-4 border rounded-lg">
               <div>
                 <h4 className="font-medium">Brand Signature</h4>
-                <p className="text-sm text-gray-600">Brand representative signature required</p>
+                <p className="text-sm text-gray-600">
+                  Brand representative signature required
+                </p>
               </div>
               <div className="flex items-center gap-2">
                 {brandSigned ? (
@@ -82,13 +103,16 @@ const ContractSigningDialog = ({ trigger, contractData, onContractSigned }: Cont
           </div>
 
           <div className="flex gap-2 justify-end">
-            <Button variant="outline" onClick={() => {
-              // Just close without calling any state update function
-              setOpen(false);
-            }}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                // Just close without calling any state update function
+                setOpen(false);
+              }}
+            >
               Cancel
             </Button>
-            <Button 
+            <Button
               onClick={handleComplete}
               disabled={!brandSigned}
               className="bg-green-600 hover:bg-green-700"
