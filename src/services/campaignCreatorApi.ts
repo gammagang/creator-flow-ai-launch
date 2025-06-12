@@ -4,7 +4,13 @@ export type CampaignCreator = {
   id: string;
   campaignId: string;
   creatorId: string;
-  currentState: string;
+  currentState:
+    | "discovered"
+    | "outreached"
+    | "call complete"
+    | "waiting for contract"
+    | "waiting for signature"
+    | "fulfilled";
   lastStateChangeAt: string;
   assignedBudget: number;
   notes: string;
