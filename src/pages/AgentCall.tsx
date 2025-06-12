@@ -1,5 +1,5 @@
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import StatusTag from "@/components/StatusTag";
 import { campaignCreatorAPI } from "@/services/campaignCreatorApi";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -59,22 +59,7 @@ const AgentCall = () => {
     };
   }, [campaignCreatorData]);
 
-  const RenderStatusBadge = (status: string) => {
-    const statusConfig = {
-      discovered: { label: "Discovered", color: "bg-green-100 text-green-800" },
-      pending: { label: "Pending", color: "bg-yellow-100 text-yellow-800" },
-      rejected: { label: "Rejected", color: "bg-red-100 text-red-800" },
-      accepted: { label: "Accepted", color: "bg-blue-100 text-blue-800" },
-      completed: { label: "Completed", color: "bg-purple-100 text-purple-800" },
-    };
-
-    const config = statusConfig[status.toLowerCase()] || {
-      label: status,
-      color: "bg-gray-100 text-gray-800",
-    };
-
-    return <Badge className={`${config.color}`}>{config.label}</Badge>;
-  };
+  // Using the reusable StatusTag component instead of inline function
 
   if (isLoading) {
     return (
@@ -115,7 +100,9 @@ const AgentCall = () => {
         {/* Creator Info Card */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-xl">Creator Details</CardTitle>
+            <div className="flex justify-between items-start">
+              <CardTitle className="text-xl">Creator Details</CardTitle>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center gap-2">
@@ -207,10 +194,9 @@ const AgentCall = () => {
                 </CardTitle>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-500">Status:</span>
-                {RenderStatusBadge(
-                  campaignCreatorData.campaignCreator.currentState
-                )}
+                <StatusTag
+                  status={campaignCreatorData.campaignCreator.currentState}
+                />
               </div>
             </div>
           </CardHeader>

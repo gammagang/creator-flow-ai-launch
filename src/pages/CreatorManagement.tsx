@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom"; // <-- Import useNavigate
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import StatusTag from "@/components/StatusTag";
 import {
   Table,
   TableBody,
@@ -78,18 +79,7 @@ const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
     }
   }, [campaignId]);
 
-  const getStateColor = (state: string) => {
-    switch (state) {
-      case "discovered":
-      case "outreached":
-      case "call complete":
-      case "waiting for contract":
-      case "waiting for signature":
-      case "fulfilled":
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
+  // No longer need the getStateColor function since StatusTag handles this
 
   const formatCurrency = (amount?: number) => {
     if (!amount) return "N/A";
@@ -240,9 +230,7 @@ const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
                       <Badge variant="outline">{creator.platform}</Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge className={getStateColor(creator.current_state)}>
-                        {creator.current_state}
-                      </Badge>
+                      <StatusTag status={creator.current_state} />
                     </TableCell>
                     <TableCell>
                       {creator.engagement_rate

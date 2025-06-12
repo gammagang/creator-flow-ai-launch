@@ -1,5 +1,6 @@
 import CampaignLifecycleProgress from "@/components/campaign/CampaignLifecycleProgress";
 import ContentDeliverablesCard from "@/components/campaign/ContentDeliverablesCard";
+import StatusTag from "@/components/StatusTag";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -234,9 +235,12 @@ const CampaignCreatorMappingDetails = () => {
           <ArrowLeft className="w-4 h-4" />
         </Button>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
-            {mappingData.creator_name}
-          </h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-3xl font-bold text-gray-900">
+              {mappingData.creator_name}
+            </h1>
+            <StatusTag status={mappingData.campaign_creator_current_state} />
+          </div>
           <p className="text-gray-600">
             {mappingData.creator_platform} Creator
           </p>

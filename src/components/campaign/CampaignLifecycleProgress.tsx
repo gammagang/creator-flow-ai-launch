@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import StatusTag from "@/components/StatusTag";
 import { Button } from "@/components/ui/button";
 import { Mail, FileText, CheckCircle, Send } from "lucide-react";
 import ContractDialog from "@/components/ContractDialog";
@@ -386,7 +387,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
             <div className="text-sm text-gray-600">
               Current stage:{" "}
               <span className="ml-2 inline-block">
-                <Badge>{creatorState.currentStage}</Badge>
+                <StatusTag status={creatorState.currentStage} />
               </span>
             </div>
           </div>
