@@ -155,7 +155,7 @@ const AgentCall = () => {
             </div>
           </div>
 
-          {campaignData.campaignCreator.currentState === "discovered" && (
+          {campaignData.campaignCreator.currentState === "outreached" && (
             <div className="mt-6">
               <elevenlabs-convai
                 agent-id={AGENT_ID}
