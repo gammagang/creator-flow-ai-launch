@@ -29,9 +29,45 @@ export type Campaign = {
   meta: string;
 };
 
+export type CreatorMeta = {
+  handle: string;
+  source: string;
+  status: string;
+  quality: {
+    profile_quality_score: number;
+    profile_quality_rating: number;
+  };
+  audience: null;
+  ylyticId: string;
+  postsCount: number;
+  profileUrl: string;
+  averageViews: number;
+  inMyCreators: boolean;
+  qualityScore: number;
+  followersCount: number;
+  profileImageUrl: string;
+};
+
+export type Creator = {
+  id: string;
+  name: string;
+  platform: string;
+  category: string;
+  age: number;
+  gender: string;
+  location: string | null;
+  tier: string;
+  engagementRate: string;
+  email: string | null;
+  phone: string | null;
+  language: string;
+  meta: CreatorMeta;
+};
+
 export type CampaignCreatorDetailsResponse = {
   campaignCreator: CampaignCreator;
   campaign: Campaign;
+  creator: Creator;
 };
 
 export type CampaignCreatorLink = {

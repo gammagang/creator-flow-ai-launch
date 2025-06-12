@@ -2,7 +2,15 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { campaignCreatorAPI } from "@/services/campaignCreatorApi";
 import { useQuery } from "@tanstack/react-query";
-import { Calendar, IndianRupee, Info } from "lucide-react";
+import {
+  Calendar,
+  IndianRupee,
+  Info,
+  User,
+  Hash,
+  MapPin,
+  BarChart,
+} from "lucide-react";
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 
@@ -13,7 +21,7 @@ const AgentCall = () => {
   const campaignCreatorId = searchParams.get("id");
 
   const {
-    data: campaignData,
+    data: campaignCreatorData,
     isLoading,
     error,
   } = useQuery({
@@ -31,8 +39,8 @@ const AgentCall = () => {
   useEffect(() => {
     // Only load the widget if currentState is "discovered"
     if (
-      !campaignData ||
-      campaignData.campaignCreator.currentState !== "outreached"
+      !campaignCreatorData ||
+      campaignCreatorData.campaignCreator.currentState !== "outreached"
     ) {
       return;
     }
@@ -49,7 +57,7 @@ const AgentCall = () => {
         document.body.removeChild(script);
       }
     };
-  }, [campaignData]);
+  }, [campaignCreatorData]);
 
   const RenderStatusBadge = (status: string) => {
     const statusConfig = {
@@ -86,7 +94,7 @@ const AgentCall = () => {
     );
   }
 
-  if (!campaignData) {
+  if (!campaignCreatorData) {
     return (
       <div className="container mx-auto p-6">
         <div className="text-center">No campaign data found</div>
@@ -103,79 +111,177 @@ const AgentCall = () => {
         </p>
       </div>
 
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex justify-between items-start">
-            <div>
-              <CardTitle className="text-xl">
-                {campaignData.campaign.name}
-              </CardTitle>
-            </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        {/* Creator Info Card */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-xl">Creator Details</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">Status:</span>
-              {RenderStatusBadge(campaignData.campaignCreator.currentState)}
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div>
-            <p className="text-sm text-gray-500 mb-2">Description</p>
-            <p className="text-gray-700 text-lg">
-              {campaignData.campaign.description}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 text-sm">
-            <div>
-              <div className="flex items-center gap-1 text-gray-500 mb-1">
-                <IndianRupee className="w-4 h-4" />
-                <span>Budget</span>
+              <User className="w-5 h-5 text-gray-500" />
+              <div>
+                <p className="font-medium text-lg">
+                  {campaignCreatorData.creator.name}
+                </p>
+                <p className="text-sm text-gray-500">
+                  {campaignCreatorData.creator.platform}
+                </p>
               </div>
-              <p className="font-medium text-lg">
-                ₹{campaignData.campaignCreator.assignedBudget || "TBD"}
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <div className="flex items-center gap-1 text-gray-500 mb-1">
+                  <Hash className="w-4 h-4" />
+                  <span>Category</span>
+                </div>
+                <p className="font-medium">
+                  {campaignCreatorData.creator.category}
+                </p>
+              </div>
+
+              <div>
+                <div className="flex items-center gap-1 text-gray-500 mb-1">
+                  <BarChart className="w-4 h-4" />
+                  <span>Engagement</span>
+                </div>
+                <p className="font-medium">
+                  {campaignCreatorData.creator.engagementRate}%
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <div className="flex items-center gap-1 text-gray-500 mb-1">
+                  <MapPin className="w-4 h-4" />
+                  <span>Location</span>
+                </div>
+                <p className="font-medium">
+                  {campaignCreatorData.creator.location || "Not specified"}
+                </p>
+              </div>
+
+              <div>
+                <div className="flex items-center gap-1 text-gray-500 mb-1">
+                  <Info className="w-4 h-4" />
+                  <span>Tier</span>
+                </div>
+                <p className="font-medium">
+                  {campaignCreatorData.creator.tier}
+                </p>
+              </div>
+            </div>
+
+            {typeof campaignCreatorData.creator.meta?.handle === "string" && (
+              <div className="text-sm">
+                <span className="text-gray-500">Handle: </span>
+                <span className="font-medium">
+                  @{campaignCreatorData.creator.meta.handle as string}
+                </span>
+              </div>
+            )}
+
+            {typeof campaignCreatorData.creator.meta?.followersCount ===
+              "number" && (
+              <div className="text-sm">
+                <span className="text-gray-500">Followers: </span>
+                <span className="font-medium">
+                  {new Intl.NumberFormat().format(
+                    campaignCreatorData.creator.meta.followersCount as number
+                  )}
+                </span>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Campaign Info Card */}
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex justify-between items-start">
+              <div>
+                <CardTitle className="text-xl">
+                  {campaignCreatorData.campaign.name}
+                </CardTitle>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-500">Status:</span>
+                {RenderStatusBadge(
+                  campaignCreatorData.campaignCreator.currentState
+                )}
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <p className="text-sm text-gray-500 mb-2">Description</p>
+              <p className="text-gray-700">
+                {campaignCreatorData.campaign.description}
               </p>
             </div>
-          </div>
 
-          <div className="text-sm">
-            <div className="flex items-center gap-1 text-gray-500 mb-1">
-              <Calendar className="w-4 h-4" />
-              <span>Timeline</span>
+            <div className="grid grid-cols-1 gap-4 text-sm">
+              <div>
+                <div className="flex items-center gap-1 text-gray-500 mb-1">
+                  <IndianRupee className="w-4 h-4" />
+                  <span>Budget</span>
+                </div>
+                <p className="font-medium text-lg">
+                  ₹{campaignCreatorData.campaignCreator.assignedBudget || "TBD"}
+                </p>
+              </div>
             </div>
-            <p className="text-gray-700 text-lg">
-              {new Date(campaignData.campaign.startDate).toLocaleDateString()} -{" "}
-              {new Date(campaignData.campaign.endDate).toLocaleDateString()}
-            </p>
-          </div>
 
-          <div>
-            <p className="text-sm text-gray-500 mb-2">Deliverables</p>
-            <div className="flex flex-wrap gap-2">
-              {campaignData.campaignCreator.contentDeliverables}
+            <div className="text-sm">
+              <div className="flex items-center gap-1 text-gray-500 mb-1">
+                <Calendar className="w-4 h-4" />
+                <span>Timeline</span>
+              </div>
+              <p className="text-gray-700">
+                {new Date(
+                  campaignCreatorData.campaign.startDate
+                ).toLocaleDateString()}{" "}
+                -{" "}
+                {new Date(
+                  campaignCreatorData.campaign.endDate
+                ).toLocaleDateString()}
+              </p>
             </div>
-          </div>
 
-          {campaignData.campaignCreator.currentState === "outreached" && (
-            <div className="mt-6">
-              <elevenlabs-convai
-                agent-id={AGENT_ID}
-                dynamic-variables={JSON.stringify({
-                  campaign_creator_id: campaignCreatorId,
-                  campaign_name: campaignData.campaign.name,
-                  budget: campaignData.campaignCreator.assignedBudget,
-                  deliverables:
-                    campaignData.campaignCreator.contentDeliverables,
-                  timeline: `${new Date(
-                    campaignData.campaign.startDate
-                  ).toLocaleDateString()} - ${new Date(
-                    campaignData.campaign.endDate
-                  ).toLocaleDateString()}`,
-                })}
-              />
+            <div>
+              <p className="text-sm text-gray-500 mb-2">Deliverables</p>
+              <div className="flex flex-wrap gap-2">
+                {campaignCreatorData.campaignCreator.contentDeliverables}
+              </div>
             </div>
-          )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
+
+      {campaignCreatorData.campaignCreator.currentState === "outreached" && (
+        <Card>
+          <CardContent className="pt-6">
+            <elevenlabs-convai
+              agent-id={AGENT_ID}
+              dynamic-variables={JSON.stringify({
+                campaign_creator_id: campaignCreatorId,
+                campaign_name: campaignCreatorData.campaign.name,
+                creator_name: campaignCreatorData.creator.name,
+                budget: campaignCreatorData.campaignCreator.assignedBudget,
+                deliverables:
+                  campaignCreatorData.campaignCreator.contentDeliverables,
+                timeline: `${new Date(
+                  campaignCreatorData.campaign.startDate
+                ).toLocaleDateString()} - ${new Date(
+                  campaignCreatorData.campaign.endDate
+                ).toLocaleDateString()}`,
+              })}
+            />
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
