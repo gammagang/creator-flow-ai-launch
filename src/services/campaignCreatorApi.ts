@@ -4,7 +4,13 @@ export type CampaignCreator = {
   id: string;
   campaignId: string;
   creatorId: string;
-  currentState: string;
+  currentState:
+    | "discovered"
+    | "outreached"
+    | "call complete"
+    | "waiting for contract"
+    | "waiting for signature"
+    | "fulfilled";
   lastStateChangeAt: string;
   assignedBudget: number;
   notes: string;
@@ -217,6 +223,14 @@ export const campaignCreatorAPI = {
     return apiService.put<CampaignCreatorResponse>(
       `/campaign-creator/${linkId}`,
       data
+    );
+  },
+
+  // Update campaign-creator state specifically
+  updateCampaignCreatorState: async (linkId: string, newState: string) => {
+    return apiService.put<CampaignCreatorResponse>(
+      `/campaign-creator/${linkId}`,
+      { status: newState }
     );
   },
 

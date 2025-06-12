@@ -1,20 +1,39 @@
-
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 
+interface ContractData {
+  campaignName: string;
+  creatorName: string;
+  agreedBudget: string;
+  deliverables: string;
+  timeline: string;
+  additionalTerms: string;
+}
+
 interface ContractDialogProps {
   trigger: React.ReactNode;
   creatorName: string;
   campaignName: string;
-  onContractGenerated: (contractData: any) => void;
+  onContractGenerated: (contractData: ContractData) => void;
 }
 
-const ContractDialog = ({ trigger, creatorName, campaignName, onContractGenerated }: ContractDialogProps) => {
+const ContractDialog = ({
+  trigger,
+  creatorName,
+  campaignName,
+  onContractGenerated,
+}: ContractDialogProps) => {
   const [open, setOpen] = useState(false);
   const [contractData, setContractData] = useState({
     campaignName: campaignName,
@@ -22,19 +41,23 @@ const ContractDialog = ({ trigger, creatorName, campaignName, onContractGenerate
     agreedBudget: "$5,000",
     deliverables: "2 Instagram posts, 3 Instagram stories",
     timeline: "Content delivery within 2 weeks",
-    additionalTerms: "Brand approval required before posting"
+    additionalTerms: "Brand approval required before posting",
   });
 
   const handleSave = () => {
+    // Only call the callback when the user explicitly saves the contract
     onContractGenerated(contractData);
+    setOpen(false);
+  };
+
+  const handleCancel = () => {
+    // Just close the dialog without saving or triggering any state changes
     setOpen(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {trigger}
-      </DialogTrigger>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Generate Contract</DialogTitle>
@@ -46,7 +69,12 @@ const ContractDialog = ({ trigger, creatorName, campaignName, onContractGenerate
               <Input
                 id="campaignName"
                 value={contractData.campaignName}
-                onChange={(e) => setContractData({...contractData, campaignName: e.target.value})}
+                onChange={(e) =>
+                  setContractData({
+                    ...contractData,
+                    campaignName: e.target.value,
+                  })
+                }
               />
             </div>
             <div>
@@ -54,17 +82,27 @@ const ContractDialog = ({ trigger, creatorName, campaignName, onContractGenerate
               <Input
                 id="creatorName"
                 value={contractData.creatorName}
-                onChange={(e) => setContractData({...contractData, creatorName: e.target.value})}
+                onChange={(e) =>
+                  setContractData({
+                    ...contractData,
+                    creatorName: e.target.value,
+                  })
+                }
               />
             </div>
           </div>
-          
+
           <div>
             <Label htmlFor="agreedBudget">Agreed Budget</Label>
             <Input
               id="agreedBudget"
               value={contractData.agreedBudget}
-              onChange={(e) => setContractData({...contractData, agreedBudget: e.target.value})}
+              onChange={(e) =>
+                setContractData({
+                  ...contractData,
+                  agreedBudget: e.target.value,
+                })
+              }
             />
           </div>
 
@@ -73,7 +111,12 @@ const ContractDialog = ({ trigger, creatorName, campaignName, onContractGenerate
             <Textarea
               id="deliverables"
               value={contractData.deliverables}
-              onChange={(e) => setContractData({...contractData, deliverables: e.target.value})}
+              onChange={(e) =>
+                setContractData({
+                  ...contractData,
+                  deliverables: e.target.value,
+                })
+              }
               rows={3}
             />
           </div>
@@ -83,7 +126,9 @@ const ContractDialog = ({ trigger, creatorName, campaignName, onContractGenerate
             <Input
               id="timeline"
               value={contractData.timeline}
-              onChange={(e) => setContractData({...contractData, timeline: e.target.value})}
+              onChange={(e) =>
+                setContractData({ ...contractData, timeline: e.target.value })
+              }
             />
           </div>
 
@@ -92,7 +137,12 @@ const ContractDialog = ({ trigger, creatorName, campaignName, onContractGenerate
             <Textarea
               id="additionalTerms"
               value={contractData.additionalTerms}
-              onChange={(e) => setContractData({...contractData, additionalTerms: e.target.value})}
+              onChange={(e) =>
+                setContractData({
+                  ...contractData,
+                  additionalTerms: e.target.value,
+                })
+              }
               rows={3}
             />
           </div>
@@ -101,23 +151,33 @@ const ContractDialog = ({ trigger, creatorName, campaignName, onContractGenerate
             <CardContent className="p-4">
               <h4 className="font-medium mb-2">Contract Preview</h4>
               <div className="text-sm space-y-2">
-                <p><strong>Campaign:</strong> {contractData.campaignName}</p>
-                <p><strong>Creator:</strong> {contractData.creatorName}</p>
-                <p><strong>Budget:</strong> {contractData.agreedBudget}</p>
-                <p><strong>Deliverables:</strong> {contractData.deliverables}</p>
-                <p><strong>Timeline:</strong> {contractData.timeline}</p>
-                <p><strong>Terms:</strong> {contractData.additionalTerms}</p>
+                <p>
+                  <strong>Campaign:</strong> {contractData.campaignName}
+                </p>
+                <p>
+                  <strong>Creator:</strong> {contractData.creatorName}
+                </p>
+                <p>
+                  <strong>Budget:</strong> {contractData.agreedBudget}
+                </p>
+                <p>
+                  <strong>Deliverables:</strong> {contractData.deliverables}
+                </p>
+                <p>
+                  <strong>Timeline:</strong> {contractData.timeline}
+                </p>
+                <p>
+                  <strong>Terms:</strong> {contractData.additionalTerms}
+                </p>
               </div>
             </CardContent>
           </Card>
 
           <div className="flex gap-2 justify-end">
-            <Button variant="outline" onClick={() => setOpen(false)}>
+            <Button variant="outline" onClick={handleCancel}>
               Cancel
             </Button>
-            <Button onClick={handleSave}>
-              Save Contract
-            </Button>
+            <Button onClick={handleSave}>Save Contract</Button>
           </div>
         </div>
       </DialogContent>

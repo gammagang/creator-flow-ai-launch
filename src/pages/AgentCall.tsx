@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { campaignCreatorAPI } from "@/services/campaignCreatorApi";
 import { useQuery } from "@tanstack/react-query";
-import { Calendar, IndianRupee } from "lucide-react";
+import { Calendar, IndianRupee, Info } from "lucide-react";
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 
@@ -11,19 +11,6 @@ const AGENT_ID = import.meta.env.VITE_AGENT_ID;
 const AgentCall = () => {
   const [searchParams] = useSearchParams();
   const campaignCreatorId = searchParams.get("id");
-
-  useEffect(() => {
-    // Load the widget script
-    const script = document.createElement("script");
-    script.src = "https://unpkg.com/@elevenlabs/convai-widget-embed";
-    script.async = true;
-    document.body.appendChild(script);
-
-    // Cleanup on unmount
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
 
   const {
     data: campaignData,
@@ -40,6 +27,46 @@ const AgentCall = () => {
     },
     enabled: !!campaignCreatorId,
   });
+
+  useEffect(() => {
+    // Only load the widget if currentState is "discovered"
+    if (
+      !campaignData ||
+      campaignData.campaignCreator.currentState !== "outreached"
+    ) {
+      return;
+    }
+
+    // Load the widget script
+    const script = document.createElement("script");
+    script.src = "https://unpkg.com/@elevenlabs/convai-widget-embed";
+    script.async = true;
+    document.body.appendChild(script);
+
+    // Cleanup on unmount
+    return () => {
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
+  }, [campaignData]);
+
+  const RenderStatusBadge = (status: string) => {
+    const statusConfig = {
+      discovered: { label: "Discovered", color: "bg-green-100 text-green-800" },
+      pending: { label: "Pending", color: "bg-yellow-100 text-yellow-800" },
+      rejected: { label: "Rejected", color: "bg-red-100 text-red-800" },
+      accepted: { label: "Accepted", color: "bg-blue-100 text-blue-800" },
+      completed: { label: "Completed", color: "bg-purple-100 text-purple-800" },
+    };
+
+    const config = statusConfig[status.toLowerCase()] || {
+      label: status,
+      color: "bg-gray-100 text-gray-800",
+    };
+
+    return <Badge className={`${config.color}`}>{config.label}</Badge>;
+  };
 
   if (isLoading) {
     return (
@@ -84,6 +111,10 @@ const AgentCall = () => {
                 {campaignData.campaign.name}
               </CardTitle>
             </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-500">Status:</span>
+              {RenderStatusBadge(campaignData.campaignCreator.currentState)}
+            </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -124,22 +155,25 @@ const AgentCall = () => {
             </div>
           </div>
 
-          <div className="mt-6">
-            <elevenlabs-convai
-              agent-id={AGENT_ID}
-              dynamic-variables={JSON.stringify({
-                campaign_creator_id: campaignCreatorId,
-                campaign_name: campaignData.campaign.name,
-                budget: campaignData.campaignCreator.assignedBudget,
-                deliverables: campaignData.campaignCreator.contentDeliverables,
-                timeline: `${new Date(
-                  campaignData.campaign.startDate
-                ).toLocaleDateString()} - ${new Date(
-                  campaignData.campaign.endDate
-                ).toLocaleDateString()}`,
-              })}
-            />
-          </div>
+          {campaignData.campaignCreator.currentState === "discovered" && (
+            <div className="mt-6">
+              <elevenlabs-convai
+                agent-id={AGENT_ID}
+                dynamic-variables={JSON.stringify({
+                  campaign_creator_id: campaignCreatorId,
+                  campaign_name: campaignData.campaign.name,
+                  budget: campaignData.campaignCreator.assignedBudget,
+                  deliverables:
+                    campaignData.campaignCreator.contentDeliverables,
+                  timeline: `${new Date(
+                    campaignData.campaign.startDate
+                  ).toLocaleDateString()} - ${new Date(
+                    campaignData.campaign.endDate
+                  ).toLocaleDateString()}`,
+                })}
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
