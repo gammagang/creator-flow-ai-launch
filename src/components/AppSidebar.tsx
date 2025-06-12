@@ -1,4 +1,3 @@
-
 import { NavLink, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -7,7 +6,7 @@ import {
   Megaphone,
   BarChart3,
   Settings,
-  Zap
+  Zap,
 } from "lucide-react";
 
 import {
@@ -27,45 +26,51 @@ const navigationItems = [
     title: "Dashboard",
     url: "/dashboard",
     icon: LayoutDashboard,
-    group: "main"
+    group: "main",
   },
   {
     title: "Brand Profile",
-    url: "/brand-profile", 
+    url: "/brand-profile",
     icon: Building,
-    group: "main"
+    group: "main",
   },
   {
     title: "Campaigns",
     url: "/campaigns",
     icon: Megaphone,
-    group: "main"
+    group: "main",
   },
   {
     title: "Creator Discovery",
     url: "/creators",
     icon: Users,
-    group: "main"
+    group: "main",
   },
   {
     title: "Analytics",
     url: "/analytics",
     icon: BarChart3,
-    group: "insights"
+    group: "insights",
   },
   {
     title: "Settings",
     url: "/settings",
     icon: Settings,
-    group: "account"
-  }
+    group: "account",
+  },
+  {
+    title: "Agentic Manager",
+    url: "/agentic-manager",
+    icon: Zap,
+    group: "main",
+  },
 ];
 
 const groupLabels = {
   main: "Main",
   campaigns: "Campaigns",
   insights: "Insights",
-  account: "Account"
+  account: "Account",
 };
 
 export function AppSidebar() {
@@ -78,8 +83,8 @@ export function AppSidebar() {
   };
 
   const getNavClass = (path: string) =>
-    isActive(path) 
-      ? "bg-blue-100 text-blue-700 hover:bg-blue-100" 
+    isActive(path)
+      ? "bg-blue-100 text-blue-700 hover:bg-blue-100"
       : "text-gray-700 hover:bg-gray-100";
 
   const groupedItems = navigationItems.reduce((acc, item) => {
@@ -113,9 +118,11 @@ export function AppSidebar() {
                 {items.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
-                      <NavLink 
-                        to={item.url} 
-                        className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${getNavClass(item.url)}`}
+                      <NavLink
+                        to={item.url}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${getNavClass(
+                          item.url
+                        )}`}
                       >
                         <item.icon className="w-5 h-5 flex-shrink-0" />
                         <span className="font-medium">{item.title}</span>

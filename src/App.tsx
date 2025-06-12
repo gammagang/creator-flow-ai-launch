@@ -27,6 +27,7 @@ import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import AgentCall from "./pages/AgentCall";
+import AgenticManager from "./pages/AgenticManager";
 
 // Creator Details Tab Components
 import CreatorManagementTab from "./components/creator-details/CreatorManagementTab";
@@ -87,6 +88,7 @@ const App = () => (
               <Route path="payments" element={<Payments />} />
               <Route path="analytics" element={<Analytics />} />
               <Route path="settings" element={<Settings />} />
+              <Route path="agentic-manager" element={<AgenticManager />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

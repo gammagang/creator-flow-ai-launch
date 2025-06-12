@@ -136,5 +136,3 @@ export const apiService = {
 export const isAuthenticated = (): boolean => {
   return getAccessToken() !== null;
 };
-
-export default apiService;

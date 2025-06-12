@@ -1,5 +1,5 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import apiService from "./api";
+import { useMutation } from "@tanstack/react-query";
+import { apiService } from "./api";
 
 interface CreatorData {
   name: string;
@@ -137,7 +137,7 @@ export const useDiscoverCreators = () => {
 
 // Export types for use in components
 export type {
-  DiscoveredCreator,
   DiscoverCreatorsRequest,
   DiscoverCreatorsResponse,
+  DiscoveredCreator,
 };
