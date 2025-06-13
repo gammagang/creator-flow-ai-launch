@@ -18,7 +18,6 @@ import CampaignCreatorMappingDetails from "./pages/CampaignCreatorMappingDetails
 import CampaignDetails from "./pages/CampaignDetails";
 import CampaignList from "./pages/CampaignList";
 import ContractDetails from "./pages/ContractDetails";
-import Contracts from "./pages/Contracts";
 import CreatorDiscovery from "./pages/CreatorDiscovery";
 import CreatorProfile from "./pages/CreatorProfile";
 import Dashboard from "./pages/Dashboard";
@@ -91,7 +90,6 @@ const App = () => (
               </Route>
               <Route path="outreach" element={<Outreach />} />
               <Route path="negotiation" element={<Negotiation />} />
-              <Route path="contracts" element={<Contracts />} />
               <Route path="contracts/:id" element={<ContractDetails />} />
               <Route path="payments" element={<Payments />} />
               <Route path="analytics" element={<Analytics />} />

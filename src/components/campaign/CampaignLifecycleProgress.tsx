@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import StatusTag from "@/components/StatusTag";
 import { Button } from "@/components/ui/button";
 import { Mail, FileText, CheckCircle, Send } from "lucide-react";
-import ContractDialog from "@/components/ContractDialog";
+import ContractDialog from "@/components/contract/ContractDialog";
 import ContractSigningDialog from "@/components/ContractSigningDialog";
 import {
   CampaignCreatorMapping,
@@ -444,6 +444,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                   {stage.key === "call complete" && (
                     <>
                       <ContractDialog
+                        mappingId={mappingId}
                         trigger={
                           <Button
                             size="sm"
