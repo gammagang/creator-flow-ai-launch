@@ -2,6 +2,7 @@ import ToolCallResultCard from "@/components/ToolCallResultCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAgenticChat } from "@/hooks/useAgenticChat";
+import { RefreshCw, Trash2 } from "lucide-react";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 
@@ -93,21 +94,29 @@ const AgenticManager = () => {
           <p className="text-gray-600 mt-1">
             AI-powered assistant for campaign management and creator discovery
           </p>
-        </div>
-        <div className="flex gap-2">
+        </div>{" "}
+        <div className="flex items-center gap-4">
           <Button
             onClick={refreshConversation}
-            variant="outline"
+            variant="ghost"
+            size="sm"
             className="text-gray-600 hover:text-gray-800"
             disabled={isLoadingHistory}
           >
+            <RefreshCw
+              className={`h-4 w-4 mr-2 ${
+                isLoadingHistory ? "animate-spin" : ""
+              }`}
+            />
             {isLoadingHistory ? "Loading..." : "Refresh"}
           </Button>
           <Button
             onClick={clearChat}
             variant="outline"
-            className="text-gray-600 hover:text-gray-800"
+            size="sm"
+            className="text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
           >
+            <Trash2 className="h-4 w-4 mr-2" />
             Clear Chat
           </Button>
         </div>
