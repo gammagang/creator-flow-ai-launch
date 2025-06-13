@@ -1,38 +1,37 @@
-import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./contexts/AuthContext";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { AuthProvider } from "./contexts/AuthContext";
 
 // Pages
-import Dashboard from "./pages/Dashboard";
-import BrandProfile from "./pages/BrandProfile";
-import CreatorDiscovery from "./pages/CreatorDiscovery";
-import CreatorProfile from "./pages/CreatorProfile";
-import CampaignCreatorMappingDetails from "./pages/CampaignCreatorMappingDetails";
-import CampaignCreate from "./pages/CampaignCreate";
-import CampaignList from "./pages/CampaignList";
-import CampaignDetails from "./pages/CampaignDetails";
-import CreatorManagement from "./pages/CreatorManagement";
-import Outreach from "./pages/Outreach";
-import Negotiation from "./pages/Negotiation";
-import Contracts from "./pages/Contracts";
-import ContractDetails from "./pages/ContractDetails";
-import Payments from "./pages/Payments";
-import Analytics from "./pages/Analytics";
-import Settings from "./pages/Settings";
-import NotFound from "./pages/NotFound";
-import Auth from "./pages/Auth";
 import AgentCall from "./pages/AgentCall";
 import AgenticManager from "./pages/AgenticManager";
+import Analytics from "./pages/Analytics";
+import Auth from "./pages/Auth";
+import BrandProfile from "./pages/BrandProfile";
+import CampaignCreate from "./pages/CampaignCreate";
+import CampaignCreatorMappingDetails from "./pages/CampaignCreatorMappingDetails";
+import CampaignDetails from "./pages/CampaignDetails";
+import CampaignList from "./pages/CampaignList";
+import ContractDetails from "./pages/ContractDetails";
+import Contracts from "./pages/Contracts";
+import CreatorDiscovery from "./pages/CreatorDiscovery";
+import CreatorProfile from "./pages/CreatorProfile";
+import Dashboard from "./pages/Dashboard";
+import Negotiation from "./pages/Negotiation";
+import NotFound from "./pages/NotFound";
+import Outreach from "./pages/Outreach";
+import Payments from "./pages/Payments";
+import Settings from "./pages/Settings";
 
 // Creator Details Tab Components
-import CreatorManagementTab from "./components/creator-details/CreatorManagementTab";
-import ContentManagementTab from "./components/creator-details/ContentManagementTab";
 import AnalyticsTab from "./components/creator-details/AnalyticsTab";
+import ContentManagementTab from "./components/creator-details/ContentManagementTab";
+import CreatorManagementTab from "./components/creator-details/CreatorManagementTab";
 
 const queryClient = new QueryClient({
   defaultOptions: {

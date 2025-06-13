@@ -183,9 +183,21 @@ const ToolCallResultCard: React.FC<ToolCallResultCardProps> = ({
       </Card>
     );
   }
-
   // Custom rendering for add_creators_to_campaign tool call
   if (functionName === "add_creators_to_campaign") {
+    return (
+      <Card className={cardClass}>
+        <div className={headerClass}>
+          <span className={badgeClass}>Tool Call</span>
+          <span className={titleClass}>{functionName}</span>
+        </div>
+        {/* No card content for this tool call */}
+      </Card>
+    );
+  }
+
+  // Custom rendering for bulk_outreach tool call
+  if (functionName === "bulk_outreach") {
     return (
       <Card className={cardClass}>
         <div className={headerClass}>

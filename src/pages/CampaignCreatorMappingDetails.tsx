@@ -5,13 +5,32 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   campaignCreatorAPI,
   CampaignCreatorMapping,
 } from "@/services/campaignCreatorApi";
-import { ArrowLeft, Eye, Heart, MessageCircle, Users } from "lucide-react";
+import {
+  ArrowLeft,
+  Eye,
+  Heart,
+  MessageCircle,
+  Users,
+  Trash2,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
 
 interface Stage {
   key: string;
@@ -196,6 +215,26 @@ const CampaignCreatorMappingDetails = () => {
     }
   };
 
+  // Delete creator from campaign mutation
+  const deleteCreatorMutation = useMutation({
+    mutationFn: async (linkId: string) => {
+      return await campaignCreatorAPI.deleteCampaignCreatorLink(linkId);
+    },
+    onSuccess: () => {
+      toast.success("Creator removed from campaign successfully");
+      // Navigate back to campaign page
+      navigate(`/campaigns/${campaignId}`);
+    },
+    onError: (error: unknown) => {
+      console.error("Error removing creator:", error);
+      toast.error("Failed to remove creator from campaign");
+    },
+  });
+  const handleRemoveCreator = () => {
+    if (!mappingId) return;
+    deleteCreatorMutation.mutate(mappingId);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -225,28 +264,66 @@ const CampaignCreatorMappingDetails = () => {
 
   return (
     <div className="space-y-6">
+      {" "}
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button
-          variant="outline"
-          onClick={() => navigate(`/campaigns/${campaignId}`)}
-          className="flex items-center gap-2"
-        >
-          <ArrowLeft className="w-4 h-4" />
-        </Button>
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-3xl font-bold text-gray-900">
-              {mappingData.creator_name}
-            </h1>
-            <StatusTag status={mappingData.campaign_creator_current_state} />
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="outline"
+            onClick={() => navigate(`/campaigns/${campaignId}`)}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+          </Button>
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-3xl font-bold text-gray-900">
+                {mappingData.creator_name}
+              </h1>
+              <StatusTag status={mappingData.campaign_creator_current_state} />
+            </div>
+            <p className="text-gray-600">
+              {mappingData.creator_platform} Creator
+            </p>
           </div>
-          <p className="text-gray-600">
-            {mappingData.creator_platform} Creator
-          </p>
         </div>
+        {/* Remove Creator Button */}
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="destructive"
+              disabled={deleteCreatorMutation.isPending}
+              className="flex items-center gap-2"
+            >
+              <Trash2 className="w-4 h-4" />
+              {deleteCreatorMutation.isPending
+                ? "Removing..."
+                : "Remove Creator"}
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Remove Creator from Campaign</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to remove{" "}
+                <strong>{mappingData.creator_name}</strong> from this campaign?
+                This action cannot be undone and will permanently delete all
+                associated data including outreach history, contracts, and
+                payments.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleRemoveCreator}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Remove Creator
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
-
       {/* Creator Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
@@ -305,7 +382,6 @@ const CampaignCreatorMappingDetails = () => {
           </CardContent>
         </Card>
       </div>
-
       {/* Navigation Tabs */}
       <Card>
         <CardHeader>
@@ -321,7 +397,6 @@ const CampaignCreatorMappingDetails = () => {
           </Tabs>
         </CardHeader>
       </Card>
-
       {/* Tab Content */}
       <div className="min-h-[400px]">
         {getActiveTab() === "overview" && (

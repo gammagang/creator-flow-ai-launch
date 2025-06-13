@@ -1,8 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom"; // <-- Import useNavigate
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import StatusTag from "@/components/StatusTag";
 import {
   Table,
@@ -12,8 +24,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Users, Building } from "lucide-react";
+import { Users, Building, Trash2 } from "lucide-react";
 import { apiService } from "@/services/api";
+import { campaignCreatorAPI } from "@/services/campaignCreatorApi";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export interface Creator {
   id: number;
@@ -53,33 +68,51 @@ interface Company {
 
 const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
   const navigate = useNavigate(); // <-- Initialize navigate
+  const queryClient = useQueryClient();
   const [company, setCompany] = useState<Company | null>(null);
   const [creators, setCreators] = useState<CampaignCreator[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const creatorsResponse = await apiService.get<{
-          data: CampaignCreator[];
-        }>(`/campaign/${campaignId}/creator`);
-        setCreators(creatorsResponse.data);
-      } catch (err) {
-        console.error("Error fetching data:", err);
-        setError(err.response?.data?.message || "Failed to fetch data");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (campaignId) {
+  // Delete creator from campaign mutation
+  const deleteCreatorMutation = useMutation({
+    mutationFn: async (linkId: string) => {
+      return await campaignCreatorAPI.deleteCampaignCreatorLink(linkId);
+    },
+    onSuccess: () => {
+      toast.success("Creator removed from campaign successfully");
+      // Refetch creators data
       fetchData();
+    },
+    onError: (error: unknown) => {
+      console.error("Error removing creator:", error);
+      toast.error("Failed to remove creator from campaign");
+    },
+  });
+  const handleRemoveCreator = (creator: CampaignCreator) => {
+    deleteCreatorMutation.mutate(creator.campaign_creator_id.toString());
+  };
+
+  const fetchData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const creatorsResponse = await apiService.get<{
+        data: CampaignCreator[];
+      }>(`/campaign/${campaignId}/creator`);
+      setCreators(creatorsResponse.data);
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      setError(err.response?.data?.message || "Failed to fetch data");
+    } finally {
+      setLoading(false);
     }
   }, [campaignId]);
 
-  // No longer need the getStateColor function since StatusTag handles this
+  useEffect(() => {
+    if (campaignId) {
+      fetchData();
+    }
+  }, [campaignId, fetchData]);
 
   const formatCurrency = (amount?: number) => {
     if (!amount) return "N/A";
@@ -203,6 +236,7 @@ const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
                   <TableHead>Engagement Rate</TableHead>
                   <TableHead>Assigned Budget</TableHead>
                   <TableHead>Last Updated</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -242,6 +276,39 @@ const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
                     </TableCell>
                     <TableCell>
                       {formatDate(creator.last_state_change_at)}
+                    </TableCell>{" "}
+                    <TableCell className="text-right">
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="destructive" size="icon">
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Remove Creator from Campaign
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to remove{" "}
+                                <strong>{creator.name}</strong> from this
+                                campaign? This action cannot be undone and will
+                                permanently delete all associated data.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleRemoveCreator(creator)}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                Remove Creator
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
