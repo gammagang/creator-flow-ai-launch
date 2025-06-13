@@ -204,7 +204,21 @@ export function useAgenticChat() {
         message,
         toolCalls,
         conversationId: responseConversationId,
+        isError,
       } = response.data;
+
+      // Handle error responses
+      if (isError) {
+        toast.error(
+          message || "An error occurred while processing your request."
+        );
+        // Still add the error message to the chat so user can see it
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: message || "An error occurred." },
+        ]);
+        return;
+      }
 
       const newMessages: Message[] = [];
 

@@ -6,6 +6,7 @@ export interface ChatApiResponse {
     message: string;
     toolCalls: ToolCallResult[];
     conversationId: string;
+    isError?: boolean;
   };
 }
 
