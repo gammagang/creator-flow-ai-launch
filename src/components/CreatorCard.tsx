@@ -1,48 +1,16 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Users, Heart, MessageCircle, Eye, Plus } from "lucide-react";
-
-interface DiscoveredCreator {
-  id: string;
-  name: string;
-  platform: string;
-  category?: string;
-  age?: number;
-  gender?: string;
-  location?: string | null;
-  tier: string;
-  engagement_rate: number;
-  email?: string;
-  phone?: string;
-  language?: string;
-  followersCount: number;
-  postsCount: number;
-  averageViews?: number;
-  handle: string;
-  profileImageUrl?: string;
-  profileUrl?: string;
-  insightsUrl?: string;
-  interests?: string[];
-  country?: string;
-  state?: string;
-  qualityScore?: number;
-  effectiveFollowerRate?: number;
-  createdAt: string;
-  updatedAt: string;
-  meta: Record<string, unknown>;
-}
-
-interface Campaign {
-  id: string;
-  name: string;
-}
+import type { DiscoveredCreator } from "@/services/creatorApi";
+import type { Campaign } from "@/types/shared";
+import { formatFollowerCount, formatNumber } from "@/utils/formatters";
+import { Eye, Heart, MessageCircle, Plus, Users } from "lucide-react";
 
 interface CreatorCardProps {
   creator: DiscoveredCreator;
@@ -55,26 +23,6 @@ const CreatorCard = ({
   campaigns,
   onAddToCampaign,
 }: CreatorCardProps) => {
-  // Helper functions to format data
-  const formatFollowerCount = (count: number): string => {
-    if (count >= 1000000) {
-      return `${(count / 1000000).toFixed(1)}M`;
-    } else if (count >= 1000) {
-      return `${(count / 1000).toFixed(1)}K`;
-    }
-    return count.toString();
-  };
-
-  const formatNumber = (num?: number): string => {
-    if (!num) return "N/A";
-    if (num >= 1000000) {
-      return `${(num / 1000000).toFixed(1)}M`;
-    } else if (num >= 1000) {
-      return `${(num / 1000).toFixed(1)}K`;
-    }
-    return num.toString();
-  };
-
   const username = creator.handle.startsWith("@")
     ? creator.handle
     : `@${creator.handle}`;
@@ -85,11 +33,17 @@ const CreatorCard = ({
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3 flex-1">
-            <img
-              src={creator.profileImageUrl || "/placeholder.svg"}
-              alt={creator.name}
-              className="w-12 h-12 rounded-full bg-gray-200"
-            />
+            {creator.profileImageUrl ? (
+              <img
+                src={creator.profileImageUrl}
+                alt={creator.name}
+                className="w-12 h-12 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
+                ?
+              </div>
+            )}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <h3 className="font-semibold truncate">{creator.name}</h3>
@@ -142,7 +96,6 @@ const CreatorCard = ({
           </div>
           <Badge variant="outline">{creator.category || "General"}</Badge>
         </div>
-
         <div className="grid grid-cols-3 gap-2 text-center">
           <div>
             <div className="flex items-center justify-center gap-1">
@@ -169,12 +122,18 @@ const CreatorCard = ({
             </div>
             <p className="text-xs text-gray-500">Engagement</p>
           </div>
-        </div>
-
+        </div>{" "}
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="flex-1">
-            View Profile
-          </Button>
+          {creator.profileUrl && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1"
+              onClick={() => window.open(creator.profileUrl, "_blank")}
+            >
+              View Profile
+            </Button>
+          )}
           <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700">
             Contact
           </Button>
