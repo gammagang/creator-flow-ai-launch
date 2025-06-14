@@ -32,7 +32,7 @@ const CreatorCard = ({
     <Card className="hover:shadow-lg transition-shadow cursor-pointer relative">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 min-w-0">
             {creator.profileImageUrl ? (
               <img
                 src={creator.profileImageUrl}
@@ -60,7 +60,9 @@ const CreatorCard = ({
             )}
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-semibold truncate">{creator.name}</h3>
+                <h3 className="font-semibold truncate min-w-0 max-w-[120px]">
+                  {creator.name}
+                </h3>
                 {verified && (
                   <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
                     <div className="w-2 h-2 bg-white rounded-full"></div>
