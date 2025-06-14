@@ -189,7 +189,20 @@ const ToolCallResultCard: React.FC<ToolCallResultCardProps> = ({
         {/* No card content for this tool call */}
       </Card>
     );
-  } // Custom rendering for bulk_outreach tool call
+  }
+  // Custom rendering for delete_campaign tool call
+  if (functionName === "delete_campaign") {
+    return (
+      <Card className={cardClass}>
+        <div className={headerClass}>
+          <span className={badgeClass}>Tool Call</span>
+          <span className={titleClass}>{functionName}</span>
+        </div>
+        {/* No card content for this tool call */}
+      </Card>
+    );
+  }
+  // Custom rendering for bulk_outreach tool call
   if (functionName === "bulk_outreach") {
     const bulkData = result.data as BulkOutreachResult;
 
