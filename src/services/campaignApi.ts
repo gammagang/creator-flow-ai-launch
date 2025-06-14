@@ -125,4 +125,9 @@ export const campaignAPI = {
       data: Array<{ id: string; name: string; platform: string }>;
     }>(`/campaign/${campaignId}/creators`);
   },
+
+  // DELETE campaign by ID
+  deleteCampaign: async (campaignId: string) => {
+    return apiService.delete<{ message: string }>(`/campaign/${campaignId}`);
+  },
 };

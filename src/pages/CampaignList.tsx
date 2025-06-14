@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { campaignAPI, CampaignResponse } from "@/services/campaignApi";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import {
   Calendar,
@@ -11,8 +11,29 @@ import {
   MoreHorizontal,
   Plus,
   Users,
+  Trash2,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
 
 const CampaignList = () => {
   // Fetch campaigns using React Query
@@ -62,6 +83,46 @@ const CampaignList = () => {
         return "bg-blue-100 text-blue-800";
       default:
         return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [selectedCampaign, setSelectedCampaign] = useState<null | {
+    id: string;
+    name: string;
+  }>(null);
+  const queryClient = useQueryClient();
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => campaignAPI.deleteCampaign(id),
+    onSuccess: (_, id) => {
+      toast.success("Campaign deleted successfully");
+      setDeletingId(null);
+      setConfirmOpen(false);
+      setSelectedCampaign(null);
+      queryClient.invalidateQueries({ queryKey: ["campaigns"] });
+    },
+    onError: (error: unknown) => {
+      const errMsg = error as AxiosError<{ message?: string }>;
+      toast.error(
+        errMsg?.response?.data?.message || "Failed to delete campaign"
+      );
+      setDeletingId(null);
+      setConfirmOpen(false);
+      setSelectedCampaign(null);
+    },
+  });
+
+  const handleDeleteClick = (campaign: { id: string; name: string }) => {
+    setSelectedCampaign(campaign);
+    setConfirmOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (selectedCampaign) {
+      setDeletingId(selectedCampaign.id);
+      deleteMutation.mutate(selectedCampaign.id);
     }
   };
 
@@ -176,9 +237,28 @@ const CampaignList = () => {
                     campaign.status.slice(1)}
                 </Badge>
               </div>
-              <Button variant="ghost" size="sm">
-                <MoreHorizontal className="w-4 h-4" />
-              </Button>
+              <div className="relative">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                      <MoreHorizontal className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      className="text-red-600 focus:text-red-700"
+                      onClick={() =>
+                        handleDeleteClick({
+                          id: campaign.id,
+                          name: campaign.name,
+                        })
+                      }
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" /> Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -238,6 +318,33 @@ const CampaignList = () => {
           </CardContent>
         </Card>
       ))}
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Campaign</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete{" "}
+              <span className="font-bold">{selectedCampaign?.name}</span>? This
+              action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleteMutation.isPending}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-600 hover:bg-red-700"
+              onClick={confirmDelete}
+              disabled={deleteMutation.isPending}
+            >
+              {deleteMutation.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : null}
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   ) : (
     <div className="col-span-1 lg:col-span-2 xl:col-span-3 flex flex-col items-center justify-center text-center py-16 px-4 border border-dashed border-gray-300 rounded-lg bg-gray-50">
