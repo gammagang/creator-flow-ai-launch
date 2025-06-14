@@ -44,6 +44,27 @@ const ToolCallResultCard: React.FC<ToolCallResultCardProps> = ({
     "bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-0.5 rounded uppercase tracking-wide";
   const titleClass = "text-xs font-bold text-blue-800 mr-2";
 
+  // Sustainable approach: Check for explicit step type
+  const isIntermediaryStep =
+    result.success &&
+    result.data &&
+    typeof result.data === "object" &&
+    result.data !== null &&
+    (result.data as { stepType?: string }).stepType === "intermediary";
+
+  // Show minimal card for intermediary steps
+  if (isIntermediaryStep) {
+    return (
+      <Card className={cardClass}>
+        <div className={headerClass}>
+          <span className={badgeClass}>Tool Call</span>
+          <span className={titleClass}>{functionName}</span>
+        </div>
+        {/* No card content for intermediary steps */}
+      </Card>
+    );
+  }
+
   if (!result.success) {
     return (
       <Card className={cardClass + " border-red-300"}>
