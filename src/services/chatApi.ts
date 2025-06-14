@@ -31,17 +31,19 @@ export interface ConversationHistoryResponse {
 }
 
 export const chatAPI = {
-  sendMessage: async (data: { message: string; conversationId?: string }) => {
+  sendMessage: async (data: { message: string }) => {
     return apiService.post<ChatApiResponse>("/chat/message", data);
   },
 
-  getConversationHistory: async (conversationId: string) => {
+  // Get user's conversation (no conversation ID needed - server uses user from JWT)
+  getUserConversation: async () => {
     return apiService.get<ConversationHistoryResponse>(
-      `/chat/conversation/${conversationId}`
+      "/chat/user/conversation"
     );
   },
 
-  clearConversation: async (conversationId: string) => {
-    return apiService.delete(`/chat/conversation/${conversationId}`);
+  // Delete user's conversation
+  clearUserConversation: async () => {
+    return apiService.delete("/chat/user/conversation");
   },
 };
