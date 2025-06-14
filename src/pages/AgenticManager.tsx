@@ -33,9 +33,26 @@ const AgenticManager = () => {
     historyError,
   } = useAgenticChat();
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
   React.useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // Always focus input after any message is added
+  React.useEffect(() => {
+    inputRef.current?.focus();
+  }, [messages]);
+
+  // Wrap handleSend to refocus input after sending
+  const handleSendWithFocus = (e: React.FormEvent | React.KeyboardEvent) => {
+    handleSend(e);
+    // Refocus input after sending
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
+  };
+
   const renderMessage = (msg: Message, idx: number) => {
     // Handle tool call messages
     if (msg.toolCall) {
@@ -149,10 +166,11 @@ const AgenticManager = () => {
               <div ref={messagesEndRef} />
             </div>
             <form
-              onSubmit={handleSend}
+              onSubmit={handleSendWithFocus}
               className="flex gap-2 p-4 border-t bg-background flex-shrink-0"
             >
               <Input
+                ref={inputRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type your message..."
@@ -160,7 +178,7 @@ const AgenticManager = () => {
                 className="flex-1"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
-                    handleSend(e);
+                    handleSendWithFocus(e);
                   }
                 }}
               />

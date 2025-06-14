@@ -1,3 +1,5 @@
+import type { DiscoveredCreator } from "@/services/creatorApi";
+
 export interface Campaign {
   id: string;
   name: string;
@@ -47,4 +49,18 @@ export interface ToolCallResult {
     data?: unknown;
     error?: string;
   };
+}
+
+// Extends DiscoveredCreator with campaign-specific status
+export type CampaignCreator = DiscoveredCreator & { currentState: string };
+
+export interface CampaignCreatorDetailsResult {
+  creators: CampaignCreator[];
+  campaignId: string;
+  campaignName: string;
+  totalCreators: number;
+  filteredCount: number;
+  appliedFilters: unknown[];
+  statusSummary: Record<string, number>;
+  lastUpdated?: string;
 }

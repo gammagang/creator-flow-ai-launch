@@ -1,7 +1,11 @@
 import CreatorCard from "@/components/CreatorCard";
 import { Card, CardContent } from "@/components/ui/card";
 import type { DiscoveredCreator } from "@/services/creatorApi";
-import type { Campaign, ToolCallResult } from "@/types/shared";
+import type {
+  Campaign,
+  CampaignCreatorDetailsResult,
+  ToolCallResult,
+} from "@/types/shared";
 
 interface ToolCallResultCardProps {
   toolCall: ToolCallResult;
@@ -205,6 +209,136 @@ const ToolCallResultCard: React.FC<ToolCallResultCardProps> = ({
           <span className={titleClass}>{functionName}</span>
         </div>
         {/* No card content for this tool call */}
+      </Card>
+    );
+  }
+
+  // Custom rendering for get_campaign_creator_details tool call
+  if (
+    functionName === "get_campaign_creator_details" &&
+    result.data &&
+    typeof result.data === "object" &&
+    result.data !== null &&
+    "creators" in result.data &&
+    Array.isArray((result.data as { creators?: unknown }).creators)
+  ) {
+    const detailsData = result.data as CampaignCreatorDetailsResult;
+    const { creators, campaignName, statusSummary, lastUpdated } = detailsData;
+
+    return (
+      <Card className={cardClass}>
+        <div className={headerClass}>
+          <span className={badgeClass}>Tool Call</span>
+          <span className={titleClass}>{functionName}</span>
+        </div>
+        <CardContent className="py-2 px-3">
+          <div className="mb-2">
+            <div className="font-semibold text-base">{campaignName}</div>
+            {statusSummary && (
+              <div className="text-xs text-gray-500 mb-1">
+                {Object.entries(statusSummary).map(([status, count]) => (
+                  <span key={status} className="mr-2">
+                    <span className="font-medium">{count}</span> {status}
+                  </span>
+                ))}
+              </div>
+            )}
+            {lastUpdated && (
+              <div className="text-xs text-gray-400">
+                Last updated: {new Date(lastUpdated).toLocaleString()}
+              </div>
+            )}
+          </div>
+          {creators.length > 0 ? (
+            <div className="space-y-2">
+              {creators.map((creator) => (
+                <div
+                  key={creator.id}
+                  className="flex items-center gap-2 border-b last:border-b-0 py-1"
+                >
+                  <span className="font-medium text-blue-900">
+                    {creator.name}
+                  </span>
+                  <span className="text-xs text-gray-500">
+                    @{creator.handle}
+                  </span>
+                  <span className="ml-auto bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-0.5 rounded">
+                    {creator.currentState}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-4 text-gray-500 text-xs">
+              No creators found for this campaign.
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Custom rendering for smart_campaign_status tool call
+  if (
+    functionName === "smart_campaign_status" &&
+    result.data &&
+    typeof result.data === "object" &&
+    result.data !== null &&
+    "campaign" in result.data &&
+    "status" in result.data
+  ) {
+    const { campaign, status } = result.data as {
+      campaign: Campaign;
+      status: {
+        campaignId: string;
+        campaignName: string;
+        totalCreators: number;
+        statusCounts: Record<string, number>;
+        statusBreakdown: { stage: string; count: number; percentage: number }[];
+        lastUpdated: string;
+      };
+    };
+
+    return (
+      <Card className={cardClass}>
+        <div className={headerClass}>
+          <span className={badgeClass}>Tool Call</span>
+          <span className={titleClass}>{functionName}</span>
+        </div>
+        <CardContent className="py-2 px-3">
+          <div className="mb-2">
+            <div className="font-semibold text-base">{campaign.name}</div>
+            <div className="text-xs text-gray-600">{campaign.description}</div>
+            <div className="text-xs text-gray-500">
+              {campaign.startDate && campaign.endDate && (
+                <span>
+                  {new Date(campaign.startDate).toLocaleDateString()} -{" "}
+                  {new Date(campaign.endDate).toLocaleDateString()}
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="mb-2">
+            <div className="text-xs text-gray-700">
+              <span className="font-medium">{status.totalCreators}</span>{" "}
+              creators
+            </div>
+            <div className="space-y-1 mt-1">
+              {status.statusBreakdown.map((stage) => (
+                <div key={stage.stage} className="flex items-center text-xs">
+                  <span className="w-32 capitalize">{stage.stage}:</span>
+                  <span className="font-medium ml-2">{stage.count}</span>
+                  <span className="ml-2 text-gray-400">
+                    ({stage.percentage}%)
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="text-xs text-gray-400">
+            Last updated: {new Date(status.lastUpdated).toLocaleString()}
+          </div>
+        </CardContent>
       </Card>
     );
   }
