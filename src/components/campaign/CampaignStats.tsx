@@ -19,57 +19,41 @@ const CampaignStats = ({ campaign }: CampaignStatsProps) => {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Budget Spent</CardTitle>
+          <CardTitle className="text-sm font-medium">Spent</CardTitle>
           <IndianRupee className="w-4 h-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{campaign.spent}</div>
-          <p className="text-xs text-muted-foreground">of {campaign.budget}</p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
-            Creators Contacted
-          </CardTitle>
+          <CardTitle className="text-sm font-medium">Contacted</CardTitle>
           <Users className="w-4 h-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{campaign.creatorsContacted}</div>
-          <p className="text-xs text-muted-foreground">
-            {campaign.creatorsResponded} responded
-          </p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
-            Contracts Signed
-          </CardTitle>
+          <CardTitle className="text-sm font-medium">Signed</CardTitle>
           <FileText className="w-4 h-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{campaign.contractsSigned}</div>
-          <p className="text-xs text-muted-foreground">
-            of {campaign.creatorsResponded} responses
-          </p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
-            Content Delivered
-          </CardTitle>
+          <CardTitle className="text-sm font-medium">Delivered</CardTitle>
           <Target className="w-4 h-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{campaign.contentDelivered}</div>
-          <p className="text-xs text-muted-foreground">
-            of {campaign.contractsSigned} contracts
-          </p>
         </CardContent>
       </Card>
     </div>

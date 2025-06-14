@@ -1,9 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // <-- Import useNavigate
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import StatusTag from "@/components/StatusTag";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,7 +11,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import StatusTag from "@/components/StatusTag";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -24,10 +22,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Users, Building, Trash2 } from "lucide-react";
 import { apiService } from "@/services/api";
 import { campaignCreatorAPI } from "@/services/campaignCreatorApi";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { Building, Trash2, Users } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // <-- Import useNavigate
 import { toast } from "sonner";
 
 export interface Creator {
@@ -67,8 +67,7 @@ interface Company {
 }
 
 const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
-  const navigate = useNavigate(); // <-- Initialize navigate
-  const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [company, setCompany] = useState<Company | null>(null);
   const [creators, setCreators] = useState<CampaignCreator[]>([]);
   const [loading, setLoading] = useState(true);
@@ -157,7 +156,7 @@ const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-gray-900">
             Creator Management
           </h1>
         </div>
@@ -170,47 +169,30 @@ const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
       </div>
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Creators
-            </CardTitle>
-            <Users className="w-4 h-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{creators.length}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Fulfilled</CardTitle>
-            <Users className="w-4 h-4 text-green-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {creators.filter((c) => c.current_state === "fulfilled").length}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Budget</CardTitle>
-            <Users className="w-4 h-4 text-blue-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {formatCurrency(
-                creators.reduce(
-                  (sum, creator) => sum + (creator.assigned_budget || 0),
-                  0
-                )
-              )}
-            </div>
-          </CardContent>
-        </Card>
+      <div className="flex items-center justify-between bg-white rounded-lg p-4 border">
+        <div className="flex-1 text-center">
+          <div className="text-xl font-bold">{creators.length}</div>
+          <div className="text-xs text-gray-500">Total Creators</div>
+        </div>
+        <div className="w-px h-8 bg-gray-200 mx-4" />
+        <div className="flex-1 text-center">
+          <div className="text-xl font-bold">
+            {creators.filter((c) => c.current_state === "fulfilled").length}
+          </div>
+          <div className="text-xs text-gray-500">Fulfilled</div>
+        </div>
+        <div className="w-px h-8 bg-gray-200 mx-4" />
+        <div className="flex-1 text-center">
+          <div className="text-xl font-bold">
+            {formatCurrency(
+              creators.reduce(
+                (sum, creator) => sum + (creator.assigned_budget || 0),
+                0
+              )
+            )}
+          </div>
+          <div className="text-xs text-gray-500">Total Budget</div>
+        </div>
       </div>
 
       {/* Creators Table */}
@@ -281,8 +263,8 @@ const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
                       <div onClick={(e) => e.stopPropagation()}>
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
-                            <Button variant="destructive" size="icon">
-                              <Trash2 className="w-4 h-4" />
+                            <Button variant="ghost" size="icon">
+                              <Trash2 className="w-4 h-4 text-red-500" />
                             </Button>
                           </AlertDialogTrigger>
                           <AlertDialogContent>
