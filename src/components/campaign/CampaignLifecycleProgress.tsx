@@ -393,10 +393,14 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
           </div>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col space-y-8">
-            {lifecycleStages.map((stage, index) => (
-              <div key={stage.key} className="flex flex-col">
-                <div className="flex items-center">
+          <div className="relative flex">
+            {/* Vertical dashed line (full height, behind circles) */}
+            <div className="absolute left-4 top-8 bottom-10 w-px border-l-2 border-dashed border-gray-300 z-0"></div>
+
+            <div className="flex flex-col space-y-8 z-10">
+              {lifecycleStages.map((stage, index) => (
+                <div key={stage.key} className="flex">
+                  {/* Step circle */}
                   <div
                     className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-medium 
                       ${
@@ -404,157 +408,175 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                           ? "bg-green-500 text-white border-green-500"
                           : "bg-gray-200 text-gray-500 border-gray-300"
                       }`}
+                    style={{ zIndex: 1 }}
                   >
                     {index + 1}
                   </div>
-                  <div className="ml-4">
+                  {/* Content */}
+                  <div className="ml-4 flex-1">
                     <div className="font-medium text-lg">{stage.label}</div>
-                  </div>
-                </div>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {stage.key === "discovered" && (
-                    <Button
-                      size="sm"
-                      onClick={handlePreviewOutreach}
-                      disabled={
-                        creatorState.currentStage !== "discovered" ||
-                        sendOutreachMutation.isPending ||
-                        isUpdatingState
-                      }
-                      className="bg-blue-600 hover:bg-blue-700"
-                    >
-                      {sendOutreachMutation.isPending || isUpdatingState ? (
-                        <span className="flex items-center">
-                          <span className="animate-spin mr-2 w-3 h-3 border-2 border-white border-t-transparent rounded-full"></span>
-                          Loading...
-                        </span>
-                      ) : (
-                        <>
-                          <Mail className="w-3 h-3 mr-1" />
-                          Preview Outreach E-mail
-                        </>
-                      )}
-                    </Button>
-                  )}
-                  {stage.key === "outreached" && (
-                    <Button size="sm" disabled className="cursor-not-allowed">
-                      Negotiation underway
-                    </Button>
-                  )}
-                  {stage.key === "call complete" && (
-                    <>
-                      <ContractDialog
-                        mappingId={mappingId}
-                        trigger={
-                          <Button
-                            size="sm"
-                            disabled={
-                              creatorState.currentStage !== "call complete" ||
-                              callCompleteAction !== "generate"
-                            }
-                            className="bg-green-600 hover:bg-green-700"
-                          >
-                            <FileText className="w-3 h-3 mr-1" />
-                            Generate Contract
-                          </Button>
-                        }
-                        creatorName={mappingData.creator_name || ""}
-                        campaignName={mappingData.campaign_name || ""}
-                        onContractGenerated={(data: ContractData) => {
-                          // Only update the local state when contract is actually generated
-                          // This doesn't change the backend state yet
-                          setCreatorState((prev) => ({
-                            ...prev,
-                            contractGenerated: true,
-                            contractData: data,
-                          }));
-                        }}
-                      />
-                      <Button
-                        size="sm"
-                        disabled={
-                          creatorState.currentStage !== "call complete" ||
-                          callCompleteAction !== "send" ||
-                          updateCampaignCreatorStateMutation.isPending ||
-                          isUpdatingState
-                        }
-                        onClick={handleSendContract}
-                        className="bg-blue-600 hover:bg-blue-700"
-                      >
-                        {updateCampaignCreatorStateMutation.isPending ||
-                        isUpdatingState ? (
-                          <span className="flex items-center">
-                            <span className="animate-spin mr-2 w-3 h-3 border-2 border-white border-t-transparent rounded-full"></span>
-                            Sending...
-                          </span>
-                        ) : (
-                          <>
-                            <Mail className="w-3 h-3 mr-1" />
-                            Send Contract
-                          </>
-                        )}
-                      </Button>
-                      <Button
-                        size="sm"
-                        disabled={
-                          creatorState.currentStage !== "call complete" ||
-                          callCompleteAction !== "view"
-                        }
-                        className="border border-gray-400 cursor-not-allowed"
-                      >
-                        <FileText className="w-3 h-3 mr-1" />
-                        View Contract
-                      </Button>
-                    </>
-                  )}
-                  {stage.key === "waiting for contract" && (
-                    <Button size="sm" disabled className="cursor-not-allowed">
-                      No Action
-                    </Button>
-                  )}
-                  {stage.key === "waiting for signature" && (
-                    <ContractSigningDialog
-                      trigger={
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {/* Action buttons go here */}
+                      {stage.key === "discovered" && (
                         <Button
                           size="sm"
+                          variant="default"
+                          onClick={handlePreviewOutreach}
                           disabled={
-                            creatorState.currentStage !==
-                              "waiting for signature" ||
-                            updateCampaignCreatorStateMutation.isPending ||
+                            creatorState.currentStage !== "discovered" ||
+                            sendOutreachMutation.isPending ||
                             isUpdatingState
                           }
-                          className="bg-purple-600 hover:bg-purple-700"
+                          className="font-semibold bg-blue-600 hover:bg-blue-700 text-white"
                         >
-                          {updateCampaignCreatorStateMutation.isPending ||
-                          isUpdatingState ? (
-                            <span className="flex items-center">
+                          {sendOutreachMutation.isPending || isUpdatingState ? (
+                            <>
                               <span className="animate-spin mr-2 w-3 h-3 border-2 border-white border-t-transparent rounded-full"></span>
-                              Processing...
-                            </span>
+                              Loading...
+                            </>
                           ) : (
                             <>
-                              <CheckCircle className="w-3 h-3 mr-1" />
-                              E-Sign Contract
+                              <Mail className="w-4 h-4 mr-2" />
+                              Preview Outreach E-mail
                             </>
                           )}
                         </Button>
-                      }
-                      contractData={creatorState.contractData}
-                      // This will call handleContractSigned which uses the API to update state
-                      onContractSigned={handleContractSigned}
-                    />
-                  )}
-                  {stage.key === "fulfilled" && (
-                    <Button size="sm" disabled className="cursor-not-allowed">
-                      No Action
-                    </Button>
-                  )}
+                      )}
+                      {stage.key === "outreached" && (
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          disabled
+                          className="opacity-60 cursor-not-allowed"
+                        >
+                          Negotiation underway
+                        </Button>
+                      )}
+                      {stage.key === "call complete" && (
+                        <>
+                          <ContractDialog
+                            mappingId={mappingId}
+                            trigger={
+                              <Button
+                                size="sm"
+                                variant="default"
+                                disabled={
+                                  creatorState.currentStage !==
+                                    "call complete" ||
+                                  callCompleteAction !== "generate"
+                                }
+                                className="font-semibold bg-blue-600 hover:bg-blue-700 text-white"
+                              >
+                                <FileText className="w-4 h-4 mr-2" />
+                                Generate Contract
+                              </Button>
+                            }
+                            creatorName={mappingData.creator_name || ""}
+                            campaignName={mappingData.campaign_name || ""}
+                            onContractGenerated={(data: ContractData) => {
+                              setCreatorState((prev) => ({
+                                ...prev,
+                                contractGenerated: true,
+                                contractData: data,
+                              }));
+                            }}
+                          />
+                          <Button
+                            size="sm"
+                            variant="default"
+                            disabled={
+                              creatorState.currentStage !== "call complete" ||
+                              callCompleteAction !== "send" ||
+                              updateCampaignCreatorStateMutation.isPending ||
+                              isUpdatingState
+                            }
+                            onClick={handleSendContract}
+                            className="font-semibold bg-blue-600 hover:bg-blue-700 text-white"
+                          >
+                            {updateCampaignCreatorStateMutation.isPending ||
+                            isUpdatingState ? (
+                              <>
+                                <span className="animate-spin mr-2 w-3 h-3 border-2 border-white border-t-transparent rounded-full"></span>
+                                Sending...
+                              </>
+                            ) : (
+                              <>
+                                <Mail className="w-4 h-4 mr-2" />
+                                Send Contract
+                              </>
+                            )}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            disabled={
+                              creatorState.currentStage !== "call complete" ||
+                              callCompleteAction !== "view"
+                            }
+                            className="border-gray-400 opacity-60 cursor-not-allowed"
+                          >
+                            <FileText className="w-4 h-4 mr-2" />
+                            View Contract
+                          </Button>
+                        </>
+                      )}
+                      {stage.key === "waiting for contract" && (
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          disabled
+                          className="opacity-60 cursor-not-allowed"
+                        >
+                          No Action
+                        </Button>
+                      )}
+                      {stage.key === "waiting for signature" && (
+                        <ContractSigningDialog
+                          trigger={
+                            <Button
+                              size="sm"
+                              variant="default"
+                              disabled={
+                                creatorState.currentStage !==
+                                  "waiting for signature" ||
+                                updateCampaignCreatorStateMutation.isPending ||
+                                isUpdatingState
+                              }
+                              className="font-semibold bg-blue-600 hover:bg-blue-700 text-white"
+                            >
+                              {updateCampaignCreatorStateMutation.isPending ||
+                              isUpdatingState ? (
+                                <>
+                                  <span className="animate-spin mr-2 w-3 h-3 border-2 border-white border-t-transparent rounded-full"></span>
+                                  Processing...
+                                </>
+                              ) : (
+                                <>
+                                  <CheckCircle className="w-4 h-4 mr-2" />
+                                  E-Sign Contract
+                                </>
+                              )}
+                            </Button>
+                          }
+                          contractData={creatorState.contractData}
+                          onContractSigned={handleContractSigned}
+                        />
+                      )}
+                      {stage.key === "fulfilled" && (
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          disabled
+                          className="opacity-60 cursor-not-allowed"
+                        >
+                          No Action
+                        </Button>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                {index < lifecycleStages.length - 1 && (
-                  <div className="ml-4 border-l-2 border-dashed border-gray-300 h-8"></div>
-                )}
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </CardContent>
       </Card>
