@@ -278,27 +278,23 @@ const ToolCallResultCard: React.FC<ToolCallResultCardProps> = ({
     );
   }
 
-  // Custom rendering for smart_campaign_status tool call
+  // Custom rendering for smart_campaign_status tool call (multiple campaigns)
   if (
     functionName === "smart_campaign_status" &&
     result.data &&
     typeof result.data === "object" &&
     result.data !== null &&
-    "campaign" in result.data &&
-    "status" in result.data
+    (result.data as { type?: string }).type === "multiple_campaigns" &&
+    Array.isArray((result.data as { campaigns?: Campaign[] }).campaigns)
   ) {
-    const { campaign, status } = result.data as {
-      campaign: Campaign;
-      status: {
-        campaignId: string;
-        campaignName: string;
-        totalCreators: number;
-        statusCounts: Record<string, number>;
-        statusBreakdown: { stage: string; count: number; percentage: number }[];
-        lastUpdated: string;
-      };
+    type MultipleCampaignsResult = {
+      type: "multiple_campaigns";
+      message: string;
+      campaigns: Campaign[];
+      totalCampaigns: number;
     };
-
+    const { message, campaigns, totalCampaigns } =
+      result.data as MultipleCampaignsResult;
     return (
       <Card className={cardClass}>
         <div className={headerClass}>
@@ -306,37 +302,48 @@ const ToolCallResultCard: React.FC<ToolCallResultCardProps> = ({
           <span className={titleClass}>{functionName}</span>
         </div>
         <CardContent className="py-2 px-3">
-          <div className="mb-2">
-            <div className="font-semibold text-base">{campaign.name}</div>
-            <div className="text-xs text-gray-600">{campaign.description}</div>
-            <div className="text-xs text-gray-500">
-              {campaign.startDate && campaign.endDate && (
-                <span>
-                  {new Date(campaign.startDate).toLocaleDateString()} -{" "}
-                  {new Date(campaign.endDate).toLocaleDateString()}
-                </span>
-              )}
-            </div>
+          <div className="mb-2 text-sm text-blue-900 font-semibold">
+            {message}
           </div>
-          <div className="mb-2">
-            <div className="text-xs text-gray-700">
-              <span className="font-medium">{status.totalCreators}</span>{" "}
-              creators
-            </div>
-            <div className="space-y-1 mt-1">
-              {status.statusBreakdown.map((stage) => (
-                <div key={stage.stage} className="flex items-center text-xs">
-                  <span className="w-32 capitalize">{stage.stage}:</span>
-                  <span className="font-medium ml-2">{stage.count}</span>
-                  <span className="ml-2 text-gray-400">
-                    ({stage.percentage}%)
-                  </span>
+          <div className="mb-2 text-xs text-gray-500">
+            Total campaigns: {totalCampaigns}
+          </div>
+          <div className="space-y-3">
+            {campaigns.map((campaign: Campaign) => (
+              <div
+                key={campaign.id}
+                className="border-b last:border-b-0 pb-2 mb-2 last:pb-0 last:mb-0"
+              >
+                <div className="font-semibold text-base">{campaign.name}</div>
+                <div className="text-xs text-gray-600">
+                  {campaign.description}
                 </div>
-              ))}
-            </div>
-          </div>
-          <div className="text-xs text-gray-400">
-            Last updated: {new Date(status.lastUpdated).toLocaleString()}
+                <div className="text-xs text-gray-500">
+                  {campaign.startDate && campaign.endDate && (
+                    <span>
+                      {new Date(campaign.startDate).toLocaleDateString()} -{" "}
+                      {new Date(campaign.endDate).toLocaleDateString()}
+                    </span>
+                  )}
+                </div>
+                <div className="text-xs text-gray-700">
+                  Deliverables: {campaign.deliverables?.join(", ") || "-"}
+                </div>
+                <div className="text-xs text-gray-700">
+                  Status: <span className="font-medium">{campaign.status}</span>
+                </div>
+                {campaign.totalBudget !== undefined &&
+                  campaign.totalBudget !== null && (
+                    <div className="text-xs text-gray-700">
+                      Budget:{" "}
+                      <span className="font-medium">
+                        ${campaign.totalBudget}
+                      </span>
+                    </div>
+                  )}
+                <div className="text-xs text-gray-400">ID: {campaign.id}</div>
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>
