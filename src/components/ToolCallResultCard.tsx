@@ -1,5 +1,6 @@
 import DiscoverCreatorCard from "@/components/DiscoverCreatorCard";
 import CampaignCard from "@/components/campaign/CampaignCard";
+import StatusTag from "@/components/StatusTag";
 import { Card, CardContent } from "@/components/ui/card";
 import type { DiscoveredCreator } from "@/services/creatorApi";
 import type {
@@ -7,6 +8,23 @@ import type {
   CampaignCreatorDetailsResult,
   ToolCallResult,
 } from "@/types/shared";
+
+// Type for bulk outreach tool result
+interface BulkOutreachResult {
+  templatePreview?: boolean;
+  campaignName?: string;
+  eligibleCreatorsCount?: number;
+  sampleEmail?: {
+    subject: string;
+    body: string;
+  };
+  eligibleCreators?: Array<{
+    id: string;
+    name: string;
+    handle: string;
+    currentState: string;
+  }>;
+}
 
 interface ToolCallResultCardProps {
   toolCall: ToolCallResult;
@@ -171,17 +189,57 @@ const ToolCallResultCard: React.FC<ToolCallResultCardProps> = ({
         {/* No card content for this tool call */}
       </Card>
     );
-  }
-
-  // Custom rendering for bulk_outreach tool call
+  } // Custom rendering for bulk_outreach tool call
   if (functionName === "bulk_outreach") {
+    const bulkData = result.data as BulkOutreachResult;
+
     return (
       <Card className={cardClass}>
         <div className={headerClass}>
           <span className={badgeClass}>Tool Call</span>
           <span className={titleClass}>{functionName}</span>
         </div>
-        {/* No card content for this tool call */}
+        {bulkData && (
+          <CardContent className="py-2 px-3">
+            {bulkData.templatePreview && (
+              <div className="space-y-3">
+                <div>
+                  <h4 className="font-semibold text-sm mb-2">
+                    Email Template Preview
+                  </h4>
+                  {bulkData.sampleEmail && (
+                    <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+                      <div>
+                        <span className="font-medium text-xs text-gray-600">
+                          Subject:
+                        </span>
+                        <div className="text-sm">
+                          {bulkData.sampleEmail.subject}
+                        </div>
+                      </div>
+                      <div>
+                        <span className="font-medium text-xs text-gray-600">
+                          Message:
+                        </span>
+                        <div className="text-sm whitespace-pre-line">
+                          {bulkData.sampleEmail.body}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {bulkData.eligibleCreators && (
+                  <div>
+                    <h4 className="font-semibold text-sm mb-2">
+                      Eligible Creators ({bulkData.eligibleCreatorsCount})
+                    </h4>
+                  </div>
+                )}
+              </div>
+            )}
+          </CardContent>
+        )}
       </Card>
     );
   }
