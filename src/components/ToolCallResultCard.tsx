@@ -1,4 +1,5 @@
-import CreatorCard from "@/components/CreatorCard";
+import DiscoverCreatorCard from "@/components/DiscoverCreatorCard";
+import CampaignCard from "@/components/campaign/CampaignCard";
 import { Card, CardContent } from "@/components/ui/card";
 import type { DiscoveredCreator } from "@/services/creatorApi";
 import type {
@@ -78,7 +79,6 @@ const ToolCallResultCard: React.FC<ToolCallResultCardProps> = ({
             <div className="text-xs text-gray-700">
               Status: <span className="font-medium">{campaign.status}</span>
             </div>
-            <div className="text-xs text-gray-400">ID: {campaign.id}</div>
           </div>
         </CardContent>
       </Card>
@@ -112,11 +112,16 @@ const ToolCallResultCard: React.FC<ToolCallResultCardProps> = ({
         </div>{" "}
         <CardContent className="py-2 px-3">
           {creators.length > 0 ? (
-            <div className="grid grid-cols-1 gap-3 max-h-96 overflow-y-auto">
+            <div className="space-y-2 max-h-96 overflow-y-auto">
               {creators.map((creator) => (
-                <div key={creator.id} className="transform scale-90 origin-top">
-                  <CreatorCard creator={creator} onAddToCampaign={() => {}} />
-                </div>
+                <DiscoverCreatorCard
+                  key={creator.id}
+                  creator={creator}
+                  onViewProfile={() => {
+                    // TODO: Implement view profile functionality
+                    console.log("View profile for creator:", creator.id);
+                  }}
+                />
               ))}
             </div>
           ) : (
@@ -148,39 +153,7 @@ const ToolCallResultCard: React.FC<ToolCallResultCardProps> = ({
         <CardContent className="py-2 px-3">
           <div className="space-y-3">
             {campaigns.map((campaign) => (
-              <div
-                key={campaign.id}
-                className="border-b last:border-b-0 pb-2 mb-2 last:pb-0 last:mb-0"
-              >
-                <div className="font-semibold text-base">{campaign.name}</div>
-                <div className="text-xs text-gray-600">
-                  {campaign.description}
-                </div>
-                <div className="text-xs text-gray-500">
-                  {campaign.startDate && campaign.endDate && (
-                    <span>
-                      {new Date(campaign.startDate).toLocaleDateString()} -{" "}
-                      {new Date(campaign.endDate).toLocaleDateString()}
-                    </span>
-                  )}
-                </div>
-                <div className="text-xs text-gray-700">
-                  Deliverables: {campaign.deliverables?.join(", ") || "-"}
-                </div>
-                <div className="text-xs text-gray-700">
-                  Status: <span className="font-medium">{campaign.status}</span>
-                </div>
-                {campaign.totalBudget !== undefined &&
-                  campaign.totalBudget !== null && (
-                    <div className="text-xs text-gray-700">
-                      Budget:{" "}
-                      <span className="font-medium">
-                        ${campaign.totalBudget}
-                      </span>
-                    </div>
-                  )}
-                <div className="text-xs text-gray-400">ID: {campaign.id}</div>
-              </div>
+              <CampaignCard key={campaign.id} campaign={campaign} />
             ))}
           </div>
         </CardContent>
@@ -341,7 +314,6 @@ const ToolCallResultCard: React.FC<ToolCallResultCardProps> = ({
                       </span>
                     </div>
                   )}
-                <div className="text-xs text-gray-400">ID: {campaign.id}</div>
               </div>
             ))}
           </div>
