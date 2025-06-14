@@ -163,6 +163,17 @@ const AgenticManager = () => {
                 </div>
               )}
               {messages.map(renderMessage).filter(Boolean)}
+              {loading &&
+                messages.length > 0 &&
+                messages[messages.length - 1].role === "user" && (
+                  <div className="flex justify-start">
+                    <div className="rounded-lg px-4 py-2 max-w-[75%] bg-gray-100 text-gray-900">
+                      <span className="shimmer-text block relative">
+                        Assistant is thinking...
+                      </span>
+                    </div>
+                  </div>
+                )}
               <div ref={messagesEndRef} />
             </div>
             <form
@@ -198,3 +209,34 @@ const AgenticManager = () => {
 };
 
 export default AgenticManager;
+
+// Add custom CSS for the shimmer effect on text
+if (typeof window !== "undefined") {
+  const style = document.createElement("style");
+  style.innerHTML = `
+    .shimmer-text {
+      position: relative;
+      display: inline-block;
+      color: #444;
+      background: linear-gradient(90deg, #444 0%, #bbb 50%, #444 100%);
+      background-size: 200% 100%;
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer-text 1.5s infinite linear;
+    }
+    @keyframes shimmer-text {
+      0% {
+        background-position: -100% 0;
+      }
+      100% {
+        background-position: 100% 0;
+      }
+    }
+  `;
+  if (!document.head.querySelector("style[data-agentic-shimmer-text]")) {
+    style.setAttribute("data-agentic-shimmer-text", "true");
+    document.head.appendChild(style);
+  }
+}
