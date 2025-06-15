@@ -204,9 +204,15 @@ const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
           {creators.length === 0 ? (
             <div className="text-center py-8">
               <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500">
+              <p className="text-gray-500 mb-4">
                 No creators found for this campaign.
               </p>
+              <Button
+                onClick={() => navigate("/creators")}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                Discover Creators
+              </Button>
             </div>
           ) : (
             <Table>
