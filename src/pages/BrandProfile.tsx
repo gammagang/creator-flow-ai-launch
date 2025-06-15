@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { apiService } from "@/services/api";
+import { companyApi, Company } from "@/services/companyApi";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Building, Globe, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -31,6 +32,30 @@ const BrandProfile = () => {
     industry: "",
     targetAudience: "",
   });
+
+  // React Query hook for fetching company profile
+  const { data: companyData, isLoading: isLoadingCompany } = useQuery({
+    queryKey: ["companyProfile"],
+    queryFn: async () => {
+      const response = await companyApi.getMyCompany();
+      return response.data;
+    },
+  });
+
+  // Update form when company data is loaded
+  useEffect(() => {
+    if (companyData) {
+      setFormData({
+        brandName: companyData.name || "",
+        websiteUrl: companyData.website || "",
+        contactName: companyData.owner_name || "",
+        phone: companyData.meta?.phone || "",
+        description: companyData.description || "",
+        industry: companyData.category || "",
+        targetAudience: "", // Not available in company data
+      });
+    }
+  }, [companyData]);
 
   // React Query hook for website analysis
   const {
@@ -73,15 +98,15 @@ const BrandProfile = () => {
   // Update form data when analysis results are received
   useEffect(() => {
     if (analysisData) {
-      setFormData({
-        brandName: analysisData.brandName || formData.brandName,
-        websiteUrl: analysisData.websiteUrl || formData.websiteUrl,
-        contactName: analysisData.contactName || formData.contactName,
-        phone: analysisData.phone || formData.phone,
-        description: analysisData.description || formData.description,
-        industry: analysisData.industry || formData.industry,
-        targetAudience: analysisData.targetAudience || formData.targetAudience,
-      });
+      setFormData((prev) => ({
+        brandName: analysisData.brandName || prev.brandName,
+        websiteUrl: analysisData.websiteUrl || prev.websiteUrl,
+        contactName: analysisData.contactName || prev.contactName,
+        phone: analysisData.phone || prev.phone,
+        description: analysisData.description || prev.description,
+        industry: analysisData.industry || prev.industry,
+        targetAudience: analysisData.targetAudience || prev.targetAudience,
+      }));
       toast.success("Website analysis completed!");
     }
   }, [analysisData]);
@@ -137,6 +162,13 @@ const BrandProfile = () => {
           </p>
         </div>
       </div>
+
+      {isLoadingCompany && (
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="w-6 h-6 mr-2 animate-spin text-blue-600" />
+          <span>Loading your brand profile...</span>
+        </div>
+      )}
 
       <Card>
         <CardHeader>
