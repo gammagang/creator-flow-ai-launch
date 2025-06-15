@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import {
   Dialog,
@@ -11,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { apiService } from "@/services/api";
-import { Loader2, CheckCircle2 } from "lucide-react";
+import { Loader2, CheckCircle2, Copy, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 
 /**
@@ -30,24 +31,37 @@ interface ContractData {
  * Type definition for DocuSeal submission response
  */
 interface DocuSealSubmitter {
-  email: string;
+  id: number;
+  slug: string;
+  uuid: string;
   name: string;
+  email: string;
+  phone: string | null;
+  completed_at: string | null;
+  declined_at: string | null;
+  external_id: string | null;
+  submission_id: number;
+  metadata: Record<string, unknown>;
+  opened_at: string | null;
+  sent_at: string | null;
+  created_at: string;
+  updated_at: string;
+  status: string;
+  application_key: string | null;
+  values: any[];
+  preferences: {
+    send_email: boolean;
+    send_sms: boolean;
+  };
   role: string;
-  completed: boolean;
-  fields?: string[];
-  send_email?: boolean;
+  embed_src: string;
 }
 
 interface DocuSealSubmission {
-  id: string;
+  id: number;
   submitters: DocuSealSubmitter[];
-  status: string;
-  template_id: number;
-  template_name: string;
+  expire_at: string | null;
   created_at: string;
-  updated_at: string;
-  metadata?: Record<string, unknown>;
-  document_url?: string;
 }
 
 interface ContractDialogProps {
@@ -97,12 +111,12 @@ const ContractDialog = ({
       setIsSubmitting(true);
 
       // Call the API to send the contract via DocuSeal
-      const response = await apiService.post<DocuSealSubmission>(
+      const response = await apiService.post<{ data: DocuSealSubmission }>(
         `/campaign-creator/${mappingId}/send-contract`
       );
 
       // Store the submission data for displaying results
-      setSubmissionData(response);
+      setSubmissionData(response.data);
 
       toast.success("Contract sent successfully", {
         description: "The contract has been sent to all parties for signing.",
@@ -145,6 +159,21 @@ const ContractDialog = ({
     }
   };
 
+  /**
+   * Copies the URL to clipboard
+   */
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        toast.success("Link copied to clipboard");
+      })
+      .catch((error) => {
+        console.error("Error copying text: ", error);
+        toast.error("Failed to copy link");
+      });
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
@@ -185,21 +214,9 @@ const ContractDialog = ({
                       <p className="font-medium">{submissionData.id}</p>
                     </div>
                     <div>
-                      <p className="text-gray-500">Template</p>
-                      <p className="font-medium">
-                        {submissionData.template_name}
-                      </p>
-                    </div>
-                    <div>
                       <p className="text-gray-500">Created</p>
                       <p className="font-medium">
                         {formatDate(submissionData.created_at)}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Status</p>
-                      <p className="font-medium capitalize">
-                        {submissionData.status}
                       </p>
                     </div>
                   </div>
@@ -209,25 +226,54 @@ const ContractDialog = ({
                   <h4 className="font-medium mb-2">Recipients</h4>
                   <div className="divide-y">
                     {submissionData.submitters.map((submitter, index) => (
-                      <div key={index} className="py-2 text-sm">
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <p className="font-medium">{submitter.name}</p>
-                            <p className="text-gray-500">{submitter.email}</p>
+                      <div key={index} className="py-3 text-sm">
+                        <div className="flex flex-col space-y-2">
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <p className="font-medium">{submitter.name}</p>
+                              <p className="text-gray-500">{submitter.email}</p>
+                            </div>
+                            <div className="flex items-center">
+                              <span className="text-xs font-medium uppercase px-2 py-1 rounded bg-gray-100">
+                                {submitter.role}
+                              </span>
+                              {submitter.completed_at ? (
+                                <span className="ml-2 text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">
+                                  Signed
+                                </span>
+                              ) : (
+                                <span className="ml-2 text-xs font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded">
+                                  {submitter.status}
+                                </span>
+                              )}
+                            </div>
                           </div>
-                          <div className="flex items-center">
-                            <span className="text-xs font-medium uppercase px-2 py-1 rounded bg-gray-100">
-                              {submitter.role}
-                            </span>
-                            {submitter.completed ? (
-                              <span className="ml-2 text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">
-                                Signed
-                              </span>
-                            ) : (
-                              <span className="ml-2 text-xs font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded">
-                                Pending
-                              </span>
-                            )}
+                          <div>
+                            <p className="text-gray-500 text-xs mb-1">
+                              Signing Link:
+                            </p>
+                            <div className="flex items-center">
+                              <a
+                                href={submitter.embed_src}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:text-blue-800 break-all text-sm flex items-center mr-2 flex-1"
+                              >
+                                {submitter.embed_src}
+                                <ExternalLink className="h-3 w-3 ml-1 flex-shrink-0" />
+                              </a>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="flex-shrink-0 h-7 px-2"
+                                onClick={() =>
+                                  copyToClipboard(submitter.embed_src)
+                                }
+                              >
+                                <Copy className="h-3 w-3 mr-1" />
+                                Copy
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       </div>
