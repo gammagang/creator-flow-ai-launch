@@ -206,9 +206,9 @@ const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
               <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-500 mb-4">
                 No creators found for this campaign.
-              </p>
+              </p>{" "}
               <Button
-                onClick={() => navigate("/creators")}
+                onClick={() => navigate("/dashboard/creators")}
                 className="bg-blue-600 hover:bg-blue-700 text-white"
               >
                 Discover Creators
@@ -233,7 +233,7 @@ const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
                     key={creator.campaign_creator_id}
                     onClick={() =>
                       navigate(
-                        `/campaigns/${campaignId}/creators/${creator.id}/mapping/${creator.campaign_creator_id}`
+                        `/dashboard/campaigns/${campaignId}/creators/${creator.id}/mapping/${creator.campaign_creator_id}`
                       )
                     }
                     className="cursor-pointer hover:bg-gray-50"

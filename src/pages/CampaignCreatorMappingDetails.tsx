@@ -125,9 +125,8 @@ const CampaignCreatorMappingDetails = () => {
     if (path.includes("/analytics")) return "analytics";
     return "overview";
   };
-
   const handleTabChange = (value: string) => {
-    const basePath = `/campaigns/${campaignId}/creators/${creatorId}`;
+    const basePath = `/dashboard/campaigns/${campaignId}/creators/${creatorId}/mapping/${mappingId}`;
     switch (value) {
       case "overview":
         navigate(basePath);
@@ -223,7 +222,7 @@ const CampaignCreatorMappingDetails = () => {
     onSuccess: () => {
       toast.success("Creator removed from campaign successfully");
       // Navigate back to campaign page
-      navigate(`/campaigns/${campaignId}`);
+      navigate(`/dashboard/campaigns/${campaignId}`);
     },
     onError: (error: unknown) => {
       console.error("Error removing creator:", error);
@@ -250,10 +249,10 @@ const CampaignCreatorMappingDetails = () => {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <p className="text-red-600">{error || "Creator details not found"}</p>
+          <p className="text-red-600">{error || "Creator details not found"}</p>{" "}
           <Button
             variant="outline"
-            onClick={() => navigate(`/campaigns/${campaignId}`)}
+            onClick={() => navigate(`/dashboard/campaigns/${campaignId}`)}
           >
             <ArrowLeft className="w-4 h-4 mr-1" />
           </Button>
@@ -268,9 +267,10 @@ const CampaignCreatorMappingDetails = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
+          {" "}
           <Button
             variant="outline"
-            onClick={() => navigate(`/campaigns/${campaignId}`)}
+            onClick={() => navigate(`/dashboard/campaigns/${campaignId}`)}
             className="flex items-center gap-2"
           >
             <ArrowLeft className="w-4 h-4" />

@@ -49,8 +49,8 @@ const Dashboard = () => {
           <p className="text-gray-600 mt-1">
             Welcome back, {name}! Here's what's happening with your campaigns.
           </p>
-        </div>
-        <Link to="/campaigns/create">
+        </div>{" "}
+        <Link to="/dashboard/campaigns/create">
           <Button className="bg-blue-600 hover:bg-blue-700">
             <Plus className="w-4 h-4 mr-2" />
             New Campaign
@@ -81,21 +81,21 @@ const Dashboard = () => {
         <Card>
           <CardHeader>
             <CardTitle>Quick Actions</CardTitle>
-          </CardHeader>
+          </CardHeader>{" "}
           <CardContent className="space-y-3">
-            <Link to="/creators" className="block">
+            <Link to="/dashboard/creators" className="block">
               <Button variant="outline" className="w-full justify-start">
                 <Users className="w-4 h-4 mr-2" />
                 Discover New Creators
               </Button>
             </Link>
-            <Link to="/outreach" className="block">
+            <Link to="/dashboard/outreach" className="block">
               <Button variant="outline" className="w-full justify-start">
                 <Mail className="w-4 h-4 mr-2" />
                 Send AI Outreach
               </Button>
             </Link>
-            <Link to="/contracts" className="block">
+            <Link to="/dashboard/contracts" className="block">
               <Button variant="outline" className="w-full justify-start">
                 <Plus className="w-4 h-4 mr-2" />
                 Generate Contract

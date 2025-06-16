@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +15,7 @@ interface Creator {
   creatorName: string;
   campaignName: string;
   lifecycleStage: string;
+  campaign_creator_id: string;
 }
 
 interface CampaignCreatorsProps {
@@ -24,11 +24,16 @@ interface CampaignCreatorsProps {
   getLifecycleStageColor: (stage: string) => string;
 }
 
-const CampaignCreators = ({ creators, campaignId, getLifecycleStageColor }: CampaignCreatorsProps) => {
+const CampaignCreators = ({
+  creators,
+  campaignId,
+  getLifecycleStageColor,
+}: CampaignCreatorsProps) => {
   const navigate = useNavigate();
-
-  const handleCreatorRowClick = (creatorId: number) => {
-    navigate(`/campaigns/${campaignId}/creators/${creatorId}`);
+  const handleCreatorRowClick = (creator: Creator) => {
+    navigate(
+      `/dashboard/campaigns/${campaignId}/creators/${creator.id}/mapping/${creator.campaign_creator_id}`
+    );
   };
 
   return (
@@ -50,7 +55,7 @@ const CampaignCreators = ({ creators, campaignId, getLifecycleStageColor }: Camp
               <TableRow
                 key={creator.id}
                 className="cursor-pointer hover:bg-gray-50"
-                onClick={() => handleCreatorRowClick(creator.id)}
+                onClick={() => handleCreatorRowClick(creator)}
               >
                 <TableCell className="font-medium">
                   {creator.creatorName}

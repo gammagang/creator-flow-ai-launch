@@ -7,6 +7,9 @@ import {
   BarChart3,
   Settings,
   Zap,
+  Mail,
+  Handshake,
+  CreditCard,
 } from "lucide-react";
 
 import {
@@ -24,7 +27,7 @@ import {
 const navigationItems = [
   {
     title: "Agentic Manager",
-    url: "/agentic-manager",
+    url: "/dashboard/agentic-manager",
     icon: Zap,
     group: "main",
   },
@@ -36,31 +39,49 @@ const navigationItems = [
   },
   {
     title: "Brand Profile",
-    url: "/brand-profile",
+    url: "/dashboard/brand-profile",
     icon: Building,
     group: "main",
   },
   {
     title: "Campaigns",
-    url: "/campaigns",
+    url: "/dashboard/campaigns",
     icon: Megaphone,
     group: "main",
   },
   {
     title: "Creator Discovery",
-    url: "/creators",
+    url: "/dashboard/creators",
     icon: Users,
     group: "main",
   },
+  // {
+  //   title: "Outreach",
+  //   url: "/dashboard/outreach",
+  //   icon: Mail,
+  //   group: "campaign-tools",
+  // },
+  // {
+  //   title: "Negotiation",
+  //   url: "/dashboard/negotiation",
+  //   icon: Handshake,
+  //   group: "campaign-tools",
+  // },
+  // {
+  //   title: "Payments",
+  //   url: "/dashboard/payments",
+  //   icon: CreditCard,
+  //   group: "campaign-tools",
+  // },
   {
     title: "Analytics",
-    url: "/analytics",
+    url: "/dashboard/analytics",
     icon: BarChart3,
     group: "insights",
   },
   {
     title: "Settings",
-    url: "/settings",
+    url: "/dashboard/settings",
     icon: Settings,
     group: "account",
   },
@@ -68,6 +89,7 @@ const navigationItems = [
 
 const groupLabels = {
   main: "Main",
+  "campaign-tools": "Campaign Tools",
   campaigns: "Campaigns",
   insights: "Insights",
   account: "Account",
@@ -76,9 +98,13 @@ const groupLabels = {
 export function AppSidebar() {
   const location = useLocation();
   const currentPath = location.pathname;
-
   const isActive = (path: string) => {
-    if (path === "/dashboard" && currentPath === "/") return true;
+    if (path === "/dashboard") {
+      return (
+        currentPath === "/dashboard" ||
+        (currentPath === "/" && path === "/dashboard")
+      );
+    }
     return currentPath === path || currentPath.startsWith(path + "/");
   };
 

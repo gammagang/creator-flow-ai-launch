@@ -137,9 +137,9 @@ const CampaignList = () => {
             <h1 className="text-3xl font-bold text-gray-900">Campaigns</h1>
             <p className="text-gray-600 mt-1">
               Manage your influencer marketing campaigns
-            </p>
+            </p>{" "}
           </div>
-          <Link to="/campaigns/create">
+          <Link to="/dashboard/campaigns/create">
             <Button className="bg-blue-600 hover:bg-blue-700">
               <Plus className="w-4 h-4 mr-2" />
               New Campaign
@@ -171,7 +171,7 @@ const CampaignList = () => {
                 Manage your influencer marketing campaigns
               </p>
             </div>
-            <Link to="/campaigns/create">
+            <Link to="/dashboard/campaigns/create">
               <Button
                 className="bg-blue-600 hover:bg-blue-700"
                 disabled={isNoCompanyError}
@@ -185,8 +185,8 @@ const CampaignList = () => {
             <p className="text-gray-600 mb-4">No brand found</p>
             <p className="text-gray-500 text-sm mb-6">
               Create a brand first to start managing campaigns
-            </p>
-            <Link to="/brand-profile">
+            </p>{" "}
+            <Link to="/dashboard/brand-profile">
               <Button className="bg-blue-600 hover:bg-blue-700">
                 <Plus className="w-4 h-4 mr-2" />
                 Create Brand
@@ -199,6 +199,7 @@ const CampaignList = () => {
 
     return (
       <div className="space-y-6">
+        {" "}
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Campaigns</h1>
@@ -206,7 +207,7 @@ const CampaignList = () => {
               Manage your influencer marketing campaigns
             </p>
           </div>
-          <Link to="/campaigns/create">
+          <Link to="/dashboard/campaigns/create">
             <Button
               className="bg-blue-600 hover:bg-blue-700"
               disabled={isNoCompanyError}
@@ -312,7 +313,7 @@ const CampaignList = () => {
               <Button
                 size="sm"
                 className="bg-blue-600 hover:bg-blue-700 w-full"
-                onClick={() => navigate(`/campaigns/${campaign.id}`)}
+                onClick={() => navigate(`/dashboard/campaigns/${campaign.id}`)}
               >
                 Manage
               </Button>
@@ -359,8 +360,8 @@ const CampaignList = () => {
       <p className="text-gray-500 max-w-md mb-6">
         Get started by creating your first campaign to connect with creators and
         launch your influencer marketing strategy.
-      </p>
-      <Link to="/campaigns/create">
+      </p>{" "}
+      <Link to="/dashboard/campaigns/create">
         <Button className="bg-blue-600 hover:bg-blue-700">
           <Plus className="w-4 h-4 mr-2" />
           Create Your First Campaign
@@ -376,9 +377,9 @@ const CampaignList = () => {
           <h1 className="text-3xl font-bold text-gray-900">Campaigns</h1>
           <p className="text-gray-600 mt-1">
             Manage your influencer marketing campaigns
-          </p>
+          </p>{" "}
         </div>
-        <Link to="/campaigns/create">
+        <Link to="/dashboard/campaigns/create">
           <Button
             className="bg-blue-600 hover:bg-blue-700"
             disabled={isNoCompanyError}

@@ -59,7 +59,7 @@ const CampaignCreate = () => {
     mutationFn: (data: CampaignFormData) => campaignAPI.createCampaign(data),
     onSuccess: () => {
       toast.success("Campaign created successfully!");
-      navigate("/campaigns");
+      navigate("/dashboard/campaigns");
     },
     onError: (error) => {
       toast.error("Failed to create campaign. Please try again.");
@@ -358,7 +358,7 @@ const CampaignCreate = () => {
               type="button"
               variant="outline"
               className="w-full"
-              onClick={() => navigate("/campaigns")}
+              onClick={() => navigate("/dashboard/campaigns")}
             >
               Cancel
             </Button>

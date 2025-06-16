@@ -21,6 +21,7 @@ import ContractDetails from "./pages/ContractDetails";
 import CreatorDiscovery from "./pages/CreatorDiscovery";
 import CreatorProfile from "./pages/CreatorProfile";
 import Dashboard from "./pages/Dashboard";
+import Landing from "./pages/Landing";
 import Negotiation from "./pages/Negotiation";
 import NotFound from "./pages/NotFound";
 import Outreach from "./pages/Outreach";
@@ -51,10 +52,11 @@ const App = () => (
       <AuthProvider>
         <BrowserRouter>
           <Routes>
+            <Route path="/" element={<Landing />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/agent-call" element={<AgentCall />} />
             <Route
-              path="/"
+              path="/dashboard"
               element={
                 <ProtectedRoute>
                   <Layout />
@@ -62,7 +64,7 @@ const App = () => (
               }
             >
               <Route index element={<Dashboard />} />
-              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="overview" element={<Dashboard />} />
               <Route path="brand-profile" element={<BrandProfile />} />
               <Route path="creators" element={<CreatorDiscovery />} />
               <Route path="creators/:id" element={<CreatorProfile />} />
