@@ -55,12 +55,14 @@ export interface ToolCallResult {
 export type CampaignCreator = DiscoveredCreator & { currentState: string };
 
 export interface CampaignCreatorDetailsResult {
-  creators: CampaignCreator[];
-  campaignId: string;
   campaignName: string;
-  totalCreators: number;
-  filteredCount: number;
-  appliedFilters: unknown[];
   statusSummary: Record<string, number>;
-  lastUpdated?: string;
+  creators: Array<{
+    id: string;
+    name: string;
+    handle: string;
+    currentState: string;
+  }>;
+  lastUpdated: string;
+  message?: string;
 }

@@ -343,6 +343,103 @@ const ToolCallResultCard: React.FC<ToolCallResultCardProps> = ({
     );
   }
 
+  // Custom rendering for smart_campaign_status tool call (single campaign)
+  if (
+    functionName === "smart_campaign_status" &&
+    result.data &&
+    typeof result.data === "object" &&
+    result.data !== null &&
+    (result.data as { type?: string }).type === "single_campaign_status"
+  ) {
+    type SingleCampaignStatusResult = {
+      type: "single_campaign_status";
+      campaign: Campaign;
+      status: {
+        campaignId: string;
+        campaignName: string;
+        totalCreators: number;
+        statusCounts: Record<string, number>;
+        statusBreakdown: Array<{
+          stage: string;
+          count: number;
+          percentage: number;
+        }>;
+        lastUpdated: string;
+      };
+      totalCampaigns: number;
+    };
+    const { campaign, status } = result.data as SingleCampaignStatusResult;
+
+    return (
+      <Card className={cardClass}>
+        <div className={headerClass}>
+          <span className={badgeClass}>Tool Call</span>
+          <span className={titleClass}>{functionName}</span>
+        </div>
+        <CardContent className="py-2 px-3">
+          <div className="space-y-3">
+            <div>
+              <div className="font-semibold text-base">{campaign.name}</div>
+              <div className="text-xs text-gray-600">
+                {campaign.description}
+              </div>
+              <div className="text-xs text-gray-500">
+                {campaign.startDate && campaign.endDate && (
+                  <span>
+                    {new Date(campaign.startDate).toLocaleDateString()} -{" "}
+                    {new Date(campaign.endDate).toLocaleDateString()}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div>
+              <div className="text-sm font-semibold text-blue-900 mb-2">
+                Campaign Status Overview
+              </div>
+              <div className="text-xs text-gray-600 mb-2">
+                Total Creators:{" "}
+                <span className="font-medium">{status.totalCreators}</span>
+              </div>
+
+              {status.statusBreakdown && status.statusBreakdown.length > 0 && (
+                <div className="space-y-1">
+                  <div className="text-xs font-medium text-gray-700 mb-1">
+                    Status Breakdown:
+                  </div>
+                  {status.statusBreakdown
+                    .filter((item) => item.count > 0)
+                    .map((item) => (
+                      <div
+                        key={item.stage}
+                        className="flex justify-between items-center text-xs"
+                      >
+                        <span className="capitalize">
+                          {item.stage.replace(/_/g, " ")}
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">{item.count}</span>
+                          <span className="text-gray-500">
+                            ({item.percentage}%)
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              )}
+
+              {status.lastUpdated && (
+                <div className="text-xs text-gray-400 mt-2">
+                  Last updated: {new Date(status.lastUpdated).toLocaleString()}
+                </div>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   // Custom rendering for smart_campaign_status tool call (multiple campaigns)
   if (
     functionName === "smart_campaign_status" &&
