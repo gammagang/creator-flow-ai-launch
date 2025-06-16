@@ -32,6 +32,8 @@ import Settings from "./pages/Settings";
 import AnalyticsTab from "./components/creator-details/AnalyticsTab";
 import ContentManagementTab from "./components/creator-details/ContentManagementTab";
 import CreatorManagementTab from "./components/creator-details/CreatorManagementTab";
+import LandingAlt from "./pages/LandingAlt";
+import LandingNeat from "./pages/LandingNeat";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -52,7 +54,9 @@ const App = () => (
       <AuthProvider>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Landing />} />
+            <Route path="/" element={<LandingNeat />} />
+            <Route path="/1" element={<Landing />} />
+            <Route path="/2" element={<LandingAlt />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/agent-call" element={<AgentCall />} />
             <Route
