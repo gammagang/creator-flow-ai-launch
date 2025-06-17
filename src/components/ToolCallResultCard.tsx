@@ -558,6 +558,79 @@ const ToolCallResultCard: React.FC<ToolCallResultCardProps> = ({
     );
   }
 
+  // Custom rendering for get_campaign_creator_details tool call (multiple campaigns)
+  if (
+    functionName === "get_campaign_creator_details" &&
+    result.data &&
+    typeof result.data === "object" &&
+    result.data !== null &&
+    (result.data as { type?: string }).type === "multiple_campaigns" &&
+    Array.isArray((result.data as { campaigns?: Campaign[] }).campaigns)
+  ) {
+    type MultipleCampaignsResult = {
+      type: "multiple_campaigns";
+      message: string;
+      campaigns: Campaign[];
+      totalCampaigns: number;
+      requestedAction: string;
+      requestedParams: Record<string, unknown>;
+    };
+    const { message, campaigns, totalCampaigns } =
+      result.data as MultipleCampaignsResult;
+    return (
+      <Card className={cardClass}>
+        <div className={headerClass}>
+          <span className={badgeClass}>Tool Call</span>
+          <span className={titleClass}>{functionName}</span>
+        </div>
+        <CardContent className="py-2 px-3">
+          <div className="mb-2 text-sm text-blue-900 font-semibold">
+            {message}
+          </div>
+          <div className="mb-2 text-xs text-gray-500">
+            Total campaigns: {totalCampaigns}
+          </div>
+          <div className="space-y-3">
+            {campaigns.map((campaign: Campaign) => (
+              <div
+                key={campaign.id}
+                className="border-b last:border-b-0 pb-2 mb-2 last:pb-0 last:mb-0"
+              >
+                <div className="font-semibold text-base">{campaign.name}</div>
+                <div className="text-xs text-gray-600">
+                  {campaign.description}
+                </div>
+                <div className="text-xs text-gray-500">
+                  {campaign.startDate && campaign.endDate && (
+                    <span>
+                      {new Date(campaign.startDate).toLocaleDateString()} -{" "}
+                      {new Date(campaign.endDate).toLocaleDateString()}
+                    </span>
+                  )}
+                </div>
+                <div className="text-xs text-gray-700">
+                  Deliverables: {campaign.deliverables?.join(", ") || "-"}
+                </div>
+                <div className="text-xs text-gray-700">
+                  Status: <span className="font-medium">{campaign.status}</span>
+                </div>
+                {campaign.totalBudget !== undefined &&
+                  campaign.totalBudget !== null && (
+                    <div className="text-xs text-gray-700">
+                      Budget:{" "}
+                      <span className="font-medium">
+                        ${campaign.totalBudget}
+                      </span>
+                    </div>
+                  )}
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   // Custom rendering for smart_campaign_status tool call (single campaign)
   if (
     functionName === "smart_campaign_status" &&
@@ -720,6 +793,230 @@ const ToolCallResultCard: React.FC<ToolCallResultCardProps> = ({
                   )}
               </div>
             ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Custom rendering for create_brand_profile_from_website tool call
+  if (functionName === "create_brand_profile_from_website") {
+    // Handle successful brand profile creation from website
+    if (
+      result.data &&
+      typeof result.data === "object" &&
+      result.data !== null &&
+      "company" in result.data &&
+      typeof (result.data as { company?: unknown }).company === "object" &&
+      (result.data as { company?: unknown }).company !== null
+    ) {
+      const data = result.data as {
+        company: {
+          id: string;
+          name: string;
+          website: string;
+          category: string;
+          description: string;
+        };
+        extractedInfo?: {
+          brandName?: string;
+          industry?: string;
+          targetAudience?: string;
+          phone?: string;
+          email?: string;
+          location?: string;
+        };
+      };
+      const { company, extractedInfo } = data;
+
+      return (
+        <Card className={cardClass + " border-green-200"}>
+          <div className={headerClass + " bg-green-50 border-green-100"}>
+            <span className={badgeClass + " bg-green-100 text-green-700"}>
+              Tool Call
+            </span>
+            <span className={titleClass + " text-green-800"}>
+              {functionName}
+            </span>
+          </div>
+          <CardContent className="py-2 px-3">
+            <div className="space-y-2">
+              <div className="text-xs text-green-600 font-medium mb-2">
+                ✓ Brand profile created from website analysis
+              </div>
+
+              <div className="space-y-1">
+                <div className="font-semibold text-base">{company.name}</div>
+                <div className="text-xs text-gray-600">
+                  {company.description}
+                </div>
+                <div className="text-xs text-gray-500">
+                  <span className="font-medium">Website:</span>{" "}
+                  {company.website}
+                </div>
+                <div className="text-xs text-gray-700">
+                  <span className="font-medium">Industry:</span>{" "}
+                  {company.category}
+                </div>
+              </div>
+
+              {extractedInfo && (
+                <div className="mt-2 pt-2 border-t border-gray-100">
+                  <div className="text-xs font-medium text-gray-700 mb-1">
+                    Website Analysis:
+                  </div>
+                  <div className="space-y-1 text-xs text-gray-600">
+                    {extractedInfo.targetAudience && (
+                      <div>Target Audience: {extractedInfo.targetAudience}</div>
+                    )}
+                    {extractedInfo.phone && (
+                      <div>Phone: {extractedInfo.phone}</div>
+                    )}
+                    {extractedInfo.email && (
+                      <div>Email: {extractedInfo.email}</div>
+                    )}
+                    {extractedInfo.location && (
+                      <div>Location: {extractedInfo.location}</div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    // Handle website analysis with missing fields for brand profile
+    if (
+      result.data &&
+      typeof result.data === "object" &&
+      result.data !== null &&
+      "missingRequiredFields" in result.data &&
+      Array.isArray(
+        (result.data as { missingRequiredFields?: unknown })
+          .missingRequiredFields
+      )
+    ) {
+      const data = result.data as {
+        extractedInfo?: {
+          brandName?: string;
+          industry?: string;
+          targetAudience?: string;
+          phone?: string;
+          email?: string;
+          description?: string;
+          location?: string;
+        };
+        missingRequiredFields: string[];
+        canCreateProfile: boolean;
+      };
+      const { extractedInfo, missingRequiredFields } = data;
+
+      return (
+        <Card className={cardClass + " border-yellow-200"}>
+          <div className={headerClass + " bg-yellow-50 border-yellow-100"}>
+            <span className={badgeClass + " bg-yellow-100 text-yellow-700"}>
+              Tool Call
+            </span>
+            <span className={titleClass + " text-yellow-800"}>
+              {functionName}
+            </span>
+          </div>
+          <CardContent className="py-2 px-3">
+            <div className="space-y-2">
+              <div className="text-xs text-yellow-600 font-medium mb-2">
+                ⚠ Website analyzed - additional details needed
+              </div>
+
+              {extractedInfo && (
+                <div>
+                  <div className="text-xs font-medium text-gray-700 mb-1">
+                    Extracted Information:
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-2 space-y-1 text-xs">
+                    {extractedInfo.brandName && (
+                      <div>
+                        <span className="font-medium">Brand:</span>{" "}
+                        {extractedInfo.brandName}
+                      </div>
+                    )}
+                    {extractedInfo.industry && (
+                      <div>
+                        <span className="font-medium">Industry:</span>{" "}
+                        {extractedInfo.industry}
+                      </div>
+                    )}
+                    {extractedInfo.description && (
+                      <div>
+                        <span className="font-medium">Description:</span>{" "}
+                        {extractedInfo.description}
+                      </div>
+                    )}
+                    {extractedInfo.targetAudience && (
+                      <div>
+                        <span className="font-medium">Target Audience:</span>{" "}
+                        {extractedInfo.targetAudience}
+                      </div>
+                    )}
+                    {extractedInfo.phone && (
+                      <div>
+                        <span className="font-medium">Phone:</span>{" "}
+                        {extractedInfo.phone}
+                      </div>
+                    )}
+                    {extractedInfo.email && (
+                      <div>
+                        <span className="font-medium">Email:</span>{" "}
+                        {extractedInfo.email}
+                      </div>
+                    )}
+                    {extractedInfo.location && (
+                      <div>
+                        <span className="font-medium">Location:</span>{" "}
+                        {extractedInfo.location}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {missingRequiredFields.length > 0 && (
+                <div>
+                  <div className="text-xs font-medium text-yellow-700 mb-1">
+                    Missing Information:
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {missingRequiredFields.map((field) => (
+                      <span
+                        key={field}
+                        className="bg-yellow-100 text-yellow-800 text-xs px-2 py-0.5 rounded"
+                      >
+                        {field}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    // Fallback for create_brand_profile_from_website
+    return (
+      <Card className={cardClass}>
+        <div className={headerClass}>
+          <span className={badgeClass}>Tool Call</span>
+          <span className={titleClass}>{functionName}</span>
+        </div>{" "}
+        <CardContent className="py-2 px-3">
+          <div className="text-xs text-gray-600">
+            {result.success ? "✓ " : "✗ "}
+            {"message" in result && typeof result.message === "string"
+              ? result.message
+              : "Brand profile creation from website"}
           </div>
         </CardContent>
       </Card>
