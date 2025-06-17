@@ -4,13 +4,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import StatusTag from "@/components/StatusTag";
 import { Button } from "@/components/ui/button";
-import { Mail, FileText, CheckCircle, Send } from "lucide-react";
+import { Mail, FileText, CheckCircle, Send, ExternalLink } from "lucide-react";
 import ContractDialog from "@/components/contract/ContractDialog";
 import ContractSigningDialog from "@/components/ContractSigningDialog";
 import {
   CampaignCreatorMapping,
   campaignCreatorAPI,
   OutreachPreviewResponse,
+  Contract,
+  DocusealSubmission,
+  Submitter,
 } from "@/services/campaignCreatorApi";
 import { useMutation } from "@tanstack/react-query";
 import {
@@ -166,6 +169,153 @@ const OutreachPreviewDialog: React.FC<{
   );
 };
 
+// Contract View Dialog component
+const ContractViewDialog: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  contract: Contract | null;
+}> = ({ isOpen, onClose, contract }) => {
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        toast.success("Link copied to clipboard");
+      })
+      .catch((error) => {
+        console.error("Error copying text:", error);
+        toast.error("Failed to copy link");
+      });
+  };
+
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return new Intl.DateTimeFormat("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(date);
+    } catch (e) {
+      return dateString;
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Contract Details</DialogTitle>
+        </DialogHeader>
+        {contract ? (
+          <div className="space-y-6">
+            <div className="text-center">
+              <div className="bg-green-100 text-green-700 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <FileText className="w-8 h-8" />
+              </div>
+              <h3 className="text-lg font-medium">
+                Contract {contract.status === "sent" ? "Sent" : contract.status}
+              </h3>
+              <p className="text-sm text-gray-500 mt-2">
+                Sent on{" "}
+                {formatDate(
+                  contract.sent_at instanceof Date
+                    ? contract.sent_at.toString()
+                    : String(contract.sent_at)
+                )}
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h4 className="font-medium mb-2">Contract Details</h4>
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <p className="text-gray-500">Contract ID</p>
+                    <p className="font-medium">{contract.id}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">Status</p>
+                    <p className="font-medium capitalize">{contract.status}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h4 className="font-medium mb-2">Recipients</h4>
+                <div className="divide-y">
+                  {contract.meta?.docusealSubmission?.submitters?.map(
+                    (submitter: Submitter, index: number) => (
+                      <div key={index} className="py-3 text-sm">
+                        <div className="flex flex-col space-y-2">
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <p className="font-medium">{submitter.name}</p>
+                              <p className="text-gray-500">{submitter.email}</p>
+                            </div>
+                            <div className="flex items-center">
+                              <span className="text-xs font-medium uppercase px-2 py-1 rounded bg-gray-100">
+                                {submitter.role}
+                              </span>
+                              {submitter.completed_at ? (
+                                <span className="ml-2 text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">
+                                  Signed
+                                </span>
+                              ) : (
+                                <span className="ml-2 text-xs font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded">
+                                  {submitter.status}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <div>
+                            <p className="text-gray-500 text-xs mb-1">
+                              Signing Link:
+                            </p>
+                            <div className="flex items-center">
+                              <a
+                                href={submitter.embed_src}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:text-blue-800 break-all text-sm flex items-center mr-2 flex-1"
+                              >
+                                {submitter.embed_src}
+                                <ExternalLink className="h-3 w-3 ml-1 flex-shrink-0" />
+                              </a>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="flex-shrink-0 h-7 px-2"
+                                onClick={() =>
+                                  copyToClipboard(submitter.embed_src)
+                                }
+                              >
+                                Copy
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="py-8 text-center">
+            <p>No contract data available.</p>
+          </div>
+        )}
+        <DialogFooter>
+          <Button onClick={onClose}>Close</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
   mappingData,
   campaignId,
@@ -174,6 +324,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
 }) => {
   const navigate = useNavigate();
   const [showOutreachPreview, setShowOutreachPreview] = useState(false);
+  const [showContractDetails, setShowContractDetails] = useState(false);
   const [outreachEmailContent, setOutreachEmailContent] = useState("");
   const [isUpdatingState, setIsUpdatingState] = useState(false);
 
@@ -184,6 +335,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
     contractSent: false,
     contractSigned: false,
     contractData: null as ContractData | null,
+    contract: null as Contract | null,
   });
 
   const refreshMappingData = () => {
@@ -266,7 +418,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
         currentStage: mappingData.campaign_creator_current_state,
         outreachSent:
           mappingData.campaign_creator_current_state !== "discovered",
-        contractGenerated: false,
+        contractGenerated: mappingData.contract !== null,
         contractSent: [
           "waiting for signature",
           "onboarded",
@@ -275,7 +427,20 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
         contractSigned: ["onboarded", "fulfilled"].includes(
           mappingData.campaign_creator_current_state
         ),
-        contractData: null,
+        contractData: mappingData.contract
+          ? {
+              campaignName: mappingData.campaign_name,
+              creatorName: mappingData.creator_name,
+              agreedBudget: String(mappingData.assigned_budget || 0),
+              deliverables:
+                mappingData.campaign_meta?.contentDeliverables || "",
+              timeline: `${mappingData.campaign_start_date || ""} - ${
+                mappingData.campaign_end_date || ""
+              }`,
+              additionalTerms: "",
+            }
+          : null,
+        contract: mappingData.contract,
       });
     }
   }, [mappingData]);
@@ -481,43 +646,6 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                               }));
                             }}
                           />
-                          <Button
-                            size="sm"
-                            variant="default"
-                            disabled={
-                              creatorState.currentStage !== "call complete" ||
-                              callCompleteAction !== "send" ||
-                              updateCampaignCreatorStateMutation.isPending ||
-                              isUpdatingState
-                            }
-                            onClick={handleSendContract}
-                            className="font-semibold bg-blue-600 hover:bg-blue-700 text-white"
-                          >
-                            {updateCampaignCreatorStateMutation.isPending ||
-                            isUpdatingState ? (
-                              <>
-                                <span className="animate-spin mr-2 w-3 h-3 border-2 border-white border-t-transparent rounded-full"></span>
-                                Sending...
-                              </>
-                            ) : (
-                              <>
-                                <Mail className="w-4 h-4 mr-2" />
-                                Send Contract
-                              </>
-                            )}
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            disabled={
-                              creatorState.currentStage !== "call complete" ||
-                              callCompleteAction !== "view"
-                            }
-                            className="border-gray-400 opacity-60 cursor-not-allowed"
-                          >
-                            <FileText className="w-4 h-4 mr-2" />
-                            View Contract
-                          </Button>
                         </>
                       )}
                       {stage.key === "waiting for contract" && (
@@ -531,36 +659,50 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                         </Button>
                       )}
                       {stage.key === "waiting for signature" && (
-                        <ContractSigningDialog
-                          trigger={
+                        <>
+                          <ContractSigningDialog
+                            trigger={
+                              <Button
+                                size="sm"
+                                variant="default"
+                                disabled={
+                                  creatorState.currentStage !==
+                                    "waiting for signature" ||
+                                  updateCampaignCreatorStateMutation.isPending ||
+                                  isUpdatingState
+                                }
+                                className="font-semibold bg-blue-600 hover:bg-blue-700 text-white"
+                              >
+                                {updateCampaignCreatorStateMutation.isPending ||
+                                isUpdatingState ? (
+                                  <>
+                                    <span className="animate-spin mr-2 w-3 h-3 border-2 border-white border-t-transparent rounded-full"></span>
+                                    Processing...
+                                  </>
+                                ) : (
+                                  <>
+                                    <CheckCircle className="w-4 h-4 mr-2" />
+                                    E-Sign Contract
+                                  </>
+                                )}
+                              </Button>
+                            }
+                            contractData={creatorState.contractData}
+                            onContractSigned={handleContractSigned}
+                          />
+
+                          {creatorState.contract && (
                             <Button
                               size="sm"
-                              variant="default"
-                              disabled={
-                                creatorState.currentStage !==
-                                  "waiting for signature" ||
-                                updateCampaignCreatorStateMutation.isPending ||
-                                isUpdatingState
-                              }
-                              className="font-semibold bg-blue-600 hover:bg-blue-700 text-white"
+                              variant="outline"
+                              onClick={() => setShowContractDetails(true)}
+                              className="border-blue-400 text-blue-600 hover:bg-blue-50"
                             >
-                              {updateCampaignCreatorStateMutation.isPending ||
-                              isUpdatingState ? (
-                                <>
-                                  <span className="animate-spin mr-2 w-3 h-3 border-2 border-white border-t-transparent rounded-full"></span>
-                                  Processing...
-                                </>
-                              ) : (
-                                <>
-                                  <CheckCircle className="w-4 h-4 mr-2" />
-                                  E-Sign Contract
-                                </>
-                              )}
+                              <FileText className="w-4 h-4 mr-2" />
+                              View Contract
                             </Button>
-                          }
-                          contractData={creatorState.contractData}
-                          onContractSigned={handleContractSigned}
-                        />
+                          )}
+                        </>
                       )}
                       {stage.key === "fulfilled" && (
                         <Button
@@ -586,6 +728,11 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
         emailContent={outreachEmailContent}
         mappingId={mappingId!}
         onEmailSent={handleEmailSent}
+      />
+      <ContractViewDialog
+        isOpen={showContractDetails}
+        onClose={() => setShowContractDetails(false)}
+        contract={creatorState.contract}
       />
     </div>
   );

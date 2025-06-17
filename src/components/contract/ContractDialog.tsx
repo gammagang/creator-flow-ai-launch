@@ -225,7 +225,7 @@ const ContractDialog = ({
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h4 className="font-medium mb-2">Recipients</h4>
                   <div className="divide-y">
-                    {submissionData.submitters.map((submitter, index) => (
+                    {submissionData.submitters?.map((submitter, index) => (
                       <div key={index} className="py-3 text-sm">
                         <div className="flex flex-col space-y-2">
                           <div className="flex justify-between items-center">

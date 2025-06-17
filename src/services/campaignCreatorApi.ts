@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { apiService, publicAxiosInstance } from "./api";
 
 export type CampaignCreator = {
@@ -70,6 +71,49 @@ export type CampaignCreatorDetailsResponse = {
   creator: Creator;
 };
 
+export interface Contract {
+  id: string;
+  campaign_creator_id: string;
+  pdf_url: null;
+  status: string;
+  sent_at: Date;
+  signed_by_brand_at: null;
+  signed_by_creator_at: null;
+  meta: {
+    docusealSubmission: DocusealSubmission;
+  };
+}
+export interface Submitter {
+  id: number;
+  name: string;
+  role: string;
+  slug: string;
+  uuid: string;
+  email: string;
+  phone: null;
+  status: string;
+  values: any[];
+  sent_at: Date | null;
+  embed_src: string;
+  opened_at: null;
+  created_at: Date;
+  updated_at: Date;
+  declined_at: null;
+  external_id: null;
+  preferences: {
+    send_sms: boolean;
+    send_email: boolean;
+  };
+  completed_at: null;
+  submission_id: number;
+  application_key: null;
+}
+export interface DocusealSubmission {
+  id: number;
+  expire_at: null;
+  created_at: Date;
+  submitters: Submitter[];
+}
 export type CampaignCreatorLink = {
   id: string;
   campaignId: string;
@@ -186,6 +230,8 @@ export type CampaignCreatorMapping = {
     profileUrl?: string;
     qualityScore?: number;
   };
+
+  contract: Contract | null;
 };
 
 export type OutreachPreviewResponse = {
