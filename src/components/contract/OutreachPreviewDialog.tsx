@@ -19,6 +19,7 @@ interface OutreachPreviewDialogProps {
   emailContent: string;
   mappingId: string;
   onEmailSent: () => void;
+  creatorEmail: string;
 }
 
 const OutreachPreviewDialog: React.FC<OutreachPreviewDialogProps> = ({
@@ -27,9 +28,12 @@ const OutreachPreviewDialog: React.FC<OutreachPreviewDialogProps> = ({
   emailContent: initialEmailContent,
   mappingId,
   onEmailSent,
+  creatorEmail,
 }) => {
   const [editedContent, setEditedContent] = useState(initialEmailContent);
-  const [receiverEmail, setReceiverEmail] = useState("gammagang100x@gmail.com"); // New state for receiver email
+  const [receiverEmail, setReceiverEmail] = useState(
+    creatorEmail || "gammagang100x@gmail.com"
+  ); // New state for receiver email
   const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {

@@ -335,6 +335,12 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                         <>
                           <ContractDialog
                             mappingId={mappingId}
+                            deliverables={
+                              mappingData.campaign_creator_meta?.campaignInfo
+                                ?.contentDeliverables ||
+                              mappingData.campaign_meta?.contentDeliverables ||
+                              ""
+                            }
                             trigger={
                               <Button
                                 size="sm"
@@ -411,6 +417,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
         emailContent={outreachEmailContent}
         mappingId={mappingId!}
         onEmailSent={handleEmailSent}
+        creatorEmail={mappingData.creator_email || ""}
       />
       <ContractViewDialog
         isOpen={showContractDetails}

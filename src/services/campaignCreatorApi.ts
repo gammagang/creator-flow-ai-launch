@@ -157,7 +157,7 @@ export type CampaignCreatorMapping = {
   campaign_creator_current_state: string;
   assigned_budget: number | null;
   cc_notes: string | null;
-  campaign_creator_meta: Record<string, unknown>;
+  campaign_creator_meta: Record<string, any>;
   campaign_id: string;
   company_id: string;
   campaign_name: string;

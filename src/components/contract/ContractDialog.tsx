@@ -70,6 +70,7 @@ interface ContractDialogProps {
   campaignName: string;
   mappingId: string;
   onContractGenerated: (contractData: ContractData) => void;
+  deliverables: string;
 }
 
 const ContractDialog = ({
@@ -78,6 +79,7 @@ const ContractDialog = ({
   campaignName,
   mappingId,
   onContractGenerated,
+  deliverables,
 }: ContractDialogProps) => {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -87,8 +89,8 @@ const ContractDialog = ({
   const [contractData, setContractData] = useState({
     campaignName: campaignName,
     creatorName: creatorName,
-    agreedBudget: "$5,000",
-    deliverables: "2 Instagram posts, 3 Instagram stories",
+    agreedBudget: "₹1,000",
+    deliverables: deliverables,
     timeline: "Content delivery within 2 weeks",
     additionalTerms: "Brand approval required before posting",
   });
@@ -323,6 +325,7 @@ const ContractDialog = ({
             <div>
               <Label htmlFor="deliverables">Deliverables</Label>
               <Textarea
+                disabled
                 id="deliverables"
                 value={contractData.deliverables}
                 onChange={(e) =>
