@@ -84,6 +84,80 @@ export const ToolCallResultCard: React.FC<ToolCallResultCardProps> = ({
       );
     }
 
+    case "create_campaign_from_profile": {
+      const data = result.data as {
+        campaign?: {
+          id: number;
+          name: string;
+          description: string;
+          startDate: string;
+          endDate: string;
+          deliverables: string[];
+          status: string;
+        };
+        brandInfo?: {
+          companyName: string;
+          description?: string;
+          category?: string;
+          targetAudience?: string;
+        };
+      };
+
+      if (!data?.campaign) return null;
+
+      return (
+        <CardWrapper title="Campaign Created from Brand Profile">
+          <div className="space-y-2">
+            <div className="font-semibold">{data.campaign.name}</div>
+            <div className="text-sm text-gray-600">
+              {data.campaign.description}
+            </div>
+
+            {/* Brand info */}
+            {data.brandInfo && (
+              <div className="p-2 bg-blue-50 border border-blue-200 rounded">
+                <div className="text-xs font-medium text-blue-800 mb-1">
+                  Created for: {data.brandInfo.companyName}
+                </div>
+                {data.brandInfo.category && (
+                  <div className="text-xs text-blue-700">
+                    Industry: {data.brandInfo.category}
+                  </div>
+                )}
+                {data.brandInfo.targetAudience && (
+                  <div className="text-xs text-blue-700">
+                    Target: {data.brandInfo.targetAudience}
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="text-xs text-gray-500 space-y-1">
+              <div>Status: {data.campaign.status}</div>
+              <div>
+                Start: {new Date(data.campaign.startDate).toLocaleDateString()}
+              </div>
+              <div>
+                End: {new Date(data.campaign.endDate).toLocaleDateString()}
+              </div>
+            </div>
+
+            {data.campaign.deliverables &&
+              data.campaign.deliverables.length > 0 && (
+                <div className="text-xs">
+                  <div className="font-medium text-gray-700">Deliverables:</div>
+                  <ul className="list-disc list-inside text-gray-600">
+                    {data.campaign.deliverables.map((deliverable, index) => (
+                      <li key={index}>{deliverable}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+          </div>
+        </CardWrapper>
+      );
+    }
+
     case "create_campaign_from_website": {
       const data = result.data as {
         extractedInfo?: {
