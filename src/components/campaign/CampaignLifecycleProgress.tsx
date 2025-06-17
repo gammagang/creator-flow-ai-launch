@@ -99,6 +99,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
           currentStage: response.data.campaign_creator_current_state,
           outreachSent:
             response.data.campaign_creator_current_state !== "discovered",
+          contractGenerated: response.data.contract !== null,
           contractSent: [
             "waiting for signature",
             "onboarded",
@@ -107,6 +108,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
           contractSigned: ["onboarded", "fulfilled"].includes(
             response.data.campaign_creator_current_state
           ),
+          contract: response.data.contract,
         }));
 
         // Only show toast when manually refreshing, not on initial load
@@ -178,8 +180,10 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
   // Determine active state for call complete's three actions
   let callCompleteAction: "generate" | "send" | "view" = "generate";
   if (creatorState.currentStage === "call complete") {
-    if (creatorState.contractGenerated) {
-      callCompleteAction = creatorState.contractSent ? "view" : "send";
+    if (creatorState.contract) {
+      callCompleteAction = "view";
+    } else if (creatorState.contractGenerated) {
+      callCompleteAction = "send";
     }
   }
 
@@ -365,7 +369,38 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                                 contractData: data,
                               }));
                             }}
+                            onContractSent={(contract: Contract) => {
+                              // Update local state with new contract data
+                              setCreatorState((prev) => ({
+                                ...prev,
+                                contractGenerated: true,
+                                contractSent: true,
+                                contract: contract,
+                              }));
+
+                              // Update campaign creator state to "waiting for signature"
+                              setIsUpdatingState(true);
+                              updateCampaignCreatorStateMutation.mutate(
+                                "waiting for signature"
+                              );
+
+                              // Refresh mapping data to get the latest state
+                              refreshMappingData();
+                            }}
                           />
+
+                          {/* Show View Contract button when contract is available */}
+                          {creatorState.contract && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setShowContractDetails(true)}
+                              className="border-blue-400 text-blue-600 hover:bg-blue-50"
+                            >
+                              <FileText className="w-4 h-4 mr-2" />
+                              View Contract
+                            </Button>
+                          )}
                         </>
                       )}
                       {stage.key === "waiting for contract" && (
