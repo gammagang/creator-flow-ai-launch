@@ -123,6 +123,221 @@ const ToolCallResultCard: React.FC<ToolCallResultCardProps> = ({
       </Card>
     );
   }
+  // Custom rendering for create_campaign_from_website tool call
+  if (functionName === "create_campaign_from_website") {
+    // Handle successful campaign creation from website
+    if (
+      result.data &&
+      typeof result.data === "object" &&
+      result.data !== null &&
+      "campaign" in result.data &&
+      typeof (result.data as { campaign?: unknown }).campaign === "object" &&
+      (result.data as { campaign?: unknown }).campaign !== null
+    ) {
+      const data = result.data as {
+        campaign: Campaign;
+        extractedInfo?: {
+          brandName?: string;
+          industry?: string;
+          targetAudience?: string;
+          campaignType?: string;
+        };
+      };
+      const { campaign, extractedInfo } = data;
+
+      return (
+        <Card className={cardClass + " border-green-200"}>
+          <div className={headerClass + " bg-green-50 border-green-100"}>
+            <span className={badgeClass + " bg-green-100 text-green-700"}>
+              Tool Call
+            </span>
+            <span className={titleClass + " text-green-800"}>
+              {functionName}
+            </span>
+          </div>
+          <CardContent className="py-2 px-3">
+            <div className="space-y-2">
+              <div className="text-xs text-green-600 font-medium mb-2">
+                ✓ Campaign created from website analysis
+              </div>
+
+              <div className="space-y-1">
+                <div className="font-semibold text-base">{campaign.name}</div>
+                <div className="text-xs text-gray-600">
+                  {campaign.description}
+                </div>
+                <div className="text-xs text-gray-500">
+                  {campaign.startDate && campaign.endDate && (
+                    <span>
+                      {new Date(campaign.startDate).toLocaleDateString()} -{" "}
+                      {new Date(campaign.endDate).toLocaleDateString()}
+                    </span>
+                  )}
+                </div>
+                <div className="text-xs text-gray-700">
+                  Deliverables: {campaign.deliverables?.join(", ") || "-"}
+                </div>
+                <div className="text-xs text-gray-700">
+                  Status: <span className="font-medium">{campaign.status}</span>
+                </div>
+              </div>
+
+              {extractedInfo && (
+                <div className="mt-2 pt-2 border-t border-gray-100">
+                  <div className="text-xs font-medium text-gray-700 mb-1">
+                    Website Analysis:
+                  </div>
+                  <div className="space-y-1 text-xs text-gray-600">
+                    {extractedInfo.brandName && (
+                      <div>Brand: {extractedInfo.brandName}</div>
+                    )}
+                    {extractedInfo.industry && (
+                      <div>Industry: {extractedInfo.industry}</div>
+                    )}
+                    {extractedInfo.campaignType && (
+                      <div>Type: {extractedInfo.campaignType}</div>
+                    )}
+                    {extractedInfo.targetAudience && (
+                      <div>Target: {extractedInfo.targetAudience}</div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    // Handle website analysis with missing fields
+    if (
+      result.data &&
+      typeof result.data === "object" &&
+      result.data !== null &&
+      "missingRequiredFields" in result.data &&
+      Array.isArray(
+        (result.data as { missingRequiredFields?: unknown })
+          .missingRequiredFields
+      )
+    ) {
+      const data = result.data as {
+        extractedInfo?: {
+          suggestedCampaignName?: string;
+          brandName?: string;
+          industry?: string;
+          targetAudience?: string;
+          campaignType?: string;
+          suggestedDeliverables?: string[];
+        };
+        missingRequiredFields: string[];
+        canCreateCampaign: boolean;
+      };
+      const { extractedInfo, missingRequiredFields } = data;
+
+      return (
+        <Card className={cardClass + " border-yellow-200"}>
+          <div className={headerClass + " bg-yellow-50 border-yellow-100"}>
+            <span className={badgeClass + " bg-yellow-100 text-yellow-700"}>
+              Tool Call
+            </span>
+            <span className={titleClass + " text-yellow-800"}>
+              {functionName}
+            </span>
+          </div>
+          <CardContent className="py-2 px-3">
+            <div className="space-y-2">
+              <div className="text-xs text-yellow-600 font-medium mb-2">
+                ⚠ Website analyzed - additional details needed
+              </div>
+
+              {extractedInfo && (
+                <div>
+                  <div className="text-xs font-medium text-gray-700 mb-1">
+                    Extracted Information:
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-2 space-y-1 text-xs">
+                    {extractedInfo.suggestedCampaignName && (
+                      <div>
+                        <span className="font-medium">Campaign:</span>{" "}
+                        {extractedInfo.suggestedCampaignName}
+                      </div>
+                    )}
+                    {extractedInfo.brandName && (
+                      <div>
+                        <span className="font-medium">Brand:</span>{" "}
+                        {extractedInfo.brandName}
+                      </div>
+                    )}
+                    {extractedInfo.industry && (
+                      <div>
+                        <span className="font-medium">Industry:</span>{" "}
+                        {extractedInfo.industry}
+                      </div>
+                    )}
+                    {extractedInfo.campaignType && (
+                      <div>
+                        <span className="font-medium">Type:</span>{" "}
+                        {extractedInfo.campaignType}
+                      </div>
+                    )}
+                    {extractedInfo.suggestedDeliverables &&
+                      extractedInfo.suggestedDeliverables.length > 0 && (
+                        <div>
+                          <span className="font-medium">
+                            Suggested Deliverables:
+                          </span>{" "}
+                          {extractedInfo.suggestedDeliverables.join(", ")}
+                        </div>
+                      )}
+                    {extractedInfo.targetAudience && (
+                      <div>
+                        <span className="font-medium">Target Audience:</span>{" "}
+                        {extractedInfo.targetAudience}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {missingRequiredFields.length > 0 && (
+                <div>
+                  <div className="text-xs font-medium text-yellow-700 mb-1">
+                    Missing Information:
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {missingRequiredFields.map((field) => (
+                      <span
+                        key={field}
+                        className="bg-yellow-100 text-yellow-800 text-xs px-2 py-0.5 rounded"
+                      >
+                        {field}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    // Fallback for create_campaign_from_website
+    return (
+      <Card className={cardClass}>
+        <div className={headerClass}>
+          <span className={badgeClass}>Tool Call</span>
+          <span className={titleClass}>{functionName}</span>
+        </div>
+        <CardContent className="py-2 px-3">
+          <pre className="text-xs bg-gray-50 rounded p-2 overflow-x-auto">
+            {JSON.stringify(result.data, null, 2)}
+          </pre>
+        </CardContent>
+      </Card>
+    );
+  }
+
   // Custom rendering for discover_creators tool call
   if (
     functionName === "discover_creators" &&
