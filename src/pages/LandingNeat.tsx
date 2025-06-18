@@ -33,16 +33,14 @@ const LandingNeat = () => {
         <div className="container mx-auto px-6 py-6 flex justify-between items-center">
           {" "}
           <div className="flex items-center space-x-3">
-            {" "}
-            <div className="w-10 h-10 bg-gradient-to-br from-orange-300 to-pink-300 rounded-2xl flex items-center justify-center relative">
-              <Bot className="w-6 h-6 text-white" />
-              <Sparkles className="w-3 h-3 text-yellow-300 absolute -top-1 -right-1" />
-            </div>{" "}
-            <span className="text-2xl font-bold text-gray-800">
-              <span className="bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent">
-                Flow
-              </span>
-            </span>
+            {/* Logo clipped to header size, h-24, width full, cropped horizontally */}
+            <div className="h-7 overflow-hidden flex items-center justify-center">
+              <img
+                src="/logos/logo.svg"
+                alt="Flow AI Logo"
+                className="h-7 w-auto object-contain object-center"
+              />
+            </div>
           </div>
           <div className="flex items-center space-x-4">
             {" "}
@@ -506,7 +504,6 @@ const LandingNeat = () => {
                   <Bot className="w-6 h-6 text-white" />
                   <Sparkles className="w-3 h-3 text-yellow-300 absolute -top-1 -right-1" />
                 </div>
-                <span className="text-2xl font-bold">Flow</span>
               </div>
               <p className="text-gray-300 leading-relaxed font-medium">
                 Automate your entire influencer marketing workflow with

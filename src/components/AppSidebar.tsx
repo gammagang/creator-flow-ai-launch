@@ -122,18 +122,12 @@ export function AppSidebar() {
   return (
     <Sidebar className="w-64 bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 border-r border-orange-100 rounded-2xl">
       <SidebarHeader className="px-6 py-3 border-b border-orange-200 bg-white/60 backdrop-blur-sm rounded-t-2xl">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-pink-400 rounded-xl flex items-center justify-center relative">
-            <Zap className="w-5 h-5 text-white drop-shadow-[0_0_4px_#a78bfa]" />
-          </div>
-          <div>
-            <h2 className="text-lg font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent leading-tight">
-              Flow
-            </h2>
-            <p className="text-xs text-orange-500 font-semibold tracking-wide">
-              AI Platform
-            </p>
-          </div>
+        <div className="flex items-center justify-center py-[7px]">
+          <img
+            src="/logos/logo.svg"
+            alt="Flow AI Logo"
+            className="h-6 w-auto"
+          />
         </div>
       </SidebarHeader>
 
