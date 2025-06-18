@@ -10,7 +10,14 @@ import {
 import type { DiscoveredCreator } from "@/services/creatorApi";
 import type { Campaign } from "@/types/shared";
 import { formatFollowerCount, formatNumber } from "@/utils/formatters";
-import { Eye, Heart, MessageCircle, Plus, Users } from "lucide-react";
+import {
+  Eye,
+  Heart,
+  MessageCircle,
+  Plus,
+  Users,
+  CheckCircle2,
+} from "lucide-react";
 
 interface CreatorCardProps {
   creator: DiscoveredCreator;
@@ -29,18 +36,18 @@ const CreatorCard = ({
   const verified = creator.qualityScore ? creator.qualityScore > 80 : false;
 
   return (
-    <Card className="hover:shadow-lg transition-shadow cursor-pointer relative">
-      <CardHeader className="pb-3">
+    <Card className="rounded-2xl border border-gray-100 bg-white/90 backdrop-blur-md shadow-md group cursor-pointer relative transition-transform duration-200 hover:scale-[1.025] hover:shadow-lg">
+      <CardHeader className="pb-2 p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
             {creator.profileImageUrl ? (
               <img
                 src={creator.profileImageUrl}
                 alt={creator.name}
-                className="w-12 h-12 rounded-full object-cover"
+                className="w-12 h-12 rounded-full object-cover border border-gray-200 shadow-sm"
               />
             ) : (
-              <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
+              <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 border border-gray-100">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="w-6 h-6"
@@ -58,18 +65,16 @@ const CreatorCard = ({
                 </svg>
               </div>
             )}
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="font-semibold truncate min-w-0 max-w-[120px]">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5">
+                <h3 className="font-semibold truncate min-w-0 max-w-[120px] text-base text-gray-900">
                   {creator.name}
                 </h3>
-                {verified && (
-                  <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                    <div className="w-2 h-2 bg-white rounded-full"></div>
-                  </div>
-                )}
+                {verified && <CheckCircle2 className="w-4 h-4 text-blue-500" />}
               </div>
-              <p className="text-sm text-gray-500 truncate">{username}</p>
+              <p className="text-xs text-gray-500 truncate font-mono">
+                {username}
+              </p>
             </div>
           </div>
           {campaigns && campaigns.length > 0 && (
@@ -78,20 +83,20 @@ const CreatorCard = ({
                 <DropdownMenuTrigger asChild>
                   <Button
                     size="sm"
-                    className="h-8 w-8 p-0 bg-blue-600 hover:bg-blue-700"
+                    className="h-8 w-8 p-0 bg-white border border-orange-200 text-orange-600 rounded-full shadow-sm hover:bg-orange-50 transition"
                   >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="w-4 h-4 text-orange-500" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="end"
-                  className="bg-white border shadow-lg z-50"
+                  className="bg-white border border-orange-100 rounded-xl shadow-lg z-50"
                 >
                   {campaigns.map((campaign) => (
                     <DropdownMenuItem
                       key={campaign.id}
                       onClick={() => onAddToCampaign(creator.id, campaign.id)}
-                      className="hover:bg-gray-100"
+                      className="rounded-lg"
                     >
                       {campaign.name}
                     </DropdownMenuItem>
@@ -102,56 +107,61 @@ const CreatorCard = ({
           )}
         </div>
       </CardHeader>
-      <CardContent className="space-y-4 p-4">
+      <CardContent className="space-y-4 p-5 pt-2">
         <div className="flex flex-col gap-4">
           <div className="flex justify-between items-center">
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5">
               <Users className="w-4 h-4 text-gray-400" aria-label="Followers" />
-              <span className="text-sm font-medium">
+              <span className="text-sm font-medium text-gray-800">
                 {formatFollowerCount(creator.followersCount)}
               </span>
             </div>
-            <Badge variant="outline" className="text-xs px-2 py-0.5">
+            <Badge
+              variant="outline"
+              className="text-xs px-3 py-0.5 rounded-full border-gray-200 bg-gray-50 text-gray-700 font-medium"
+            >
               {creator.category || "General"}
             </Badge>
           </div>
           <div className="grid gap-2 text-center grid-cols-1 sm:grid-cols-3">
             <div>
               <div
-                className="flex items-center justify-center gap-1"
+                className="flex items-center justify-center gap-1.5"
                 title="Average Views"
               >
                 <Eye
                   className="w-4 h-4 text-green-500"
                   aria-label="Avg Views"
                 />
-                <span className="text-xs">
+                <span className="text-xs text-gray-700 font-medium">
                   {formatNumber(creator.averageViews)}
                 </span>
               </div>
             </div>
             <div>
               <div
-                className="flex items-center justify-center gap-1"
+                className="flex items-center justify-center gap-1.5"
                 title="Posts"
               >
                 <MessageCircle
                   className="w-4 h-4 text-blue-500"
                   aria-label="Posts"
                 />
-                <span className="text-xs">{creator.postsCount}</span>
+                <span className="text-xs text-gray-700 font-medium">
+                  {creator.postsCount}
+                </span>
               </div>
             </div>
             <div>
               <div
-                className="flex items-center justify-center gap-1"
+                className="flex items-center justify-center gap-1.5"
                 title="Engagement Rate"
               >
                 <Heart
                   className="w-4 h-4 text-red-500"
                   aria-label="Engagement"
                 />
-                <span className="text-xs">
+                <span className="text-xs text-gray-700 font-medium">
                   {(creator.engagement_rate * 100).toFixed(1)}%
                 </span>
               </div>
@@ -162,7 +172,7 @@ const CreatorCard = ({
               <Button
                 variant="outline"
                 size="sm"
-                className="flex-1 max-w-xs"
+                className="flex-1 max-w-xs rounded-full border-gray-200 bg-white hover:bg-gray-50 text-gray-700 font-semibold shadow-sm transition"
                 onClick={() => window.open(creator.profileUrl, "_blank")}
                 aria-label="View Profile"
               >

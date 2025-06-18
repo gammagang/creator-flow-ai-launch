@@ -2,7 +2,7 @@ import ToolCallResultCard from "@/components/ToolCallResultCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAgenticChat } from "@/hooks/useAgenticChat";
-import { RefreshCw, Trash2 } from "lucide-react";
+import { RefreshCw, Trash2, Bot } from "lucide-react";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 
@@ -75,9 +75,7 @@ const AgenticManager = () => {
     // Skip rendering if message content is empty or just whitespace
     if (!msg.content || !msg.content.trim()) {
       return null;
-    }
-
-    // Regular chat messages
+    } // Regular chat messages
     return (
       <div
         key={idx}
@@ -85,11 +83,12 @@ const AgenticManager = () => {
           msg.role === "user" ? "justify-end" : "justify-start"
         }`}
       >
+        {" "}
         <div
-          className={`rounded-lg px-4 py-2 max-w-[75%] text-base shadow-sm break-words ${
+          className={`rounded-xl px-4 py-3 max-w-[70%] text-sm font-medium break-words ${
             msg.role === "user"
-              ? "bg-blue-600 text-white"
-              : "bg-gray-100 text-gray-900"
+              ? "bg-gradient-to-r from-orange-400 to-pink-400 text-white border-2 border-transparent"
+              : "bg-white/90 backdrop-blur-sm text-gray-800 border-2 border-gray-200"
           }`}
         >
           {msg.role === "assistant" ? (
@@ -101,106 +100,127 @@ const AgenticManager = () => {
       </div>
     );
   };
-
   return (
-    <div className="space-y-6">
-      {" "}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Agentic Manager</h1>
-          <p className="text-gray-600 mt-1">
-            AI-powered assistant for campaign management and creator discovery
-          </p>
-        </div>{" "}
-        <div className="flex items-center gap-4">
-          <Button
-            onClick={refreshConversation}
-            variant="ghost"
-            size="sm"
-            className="text-gray-600 hover:text-gray-800"
-            disabled={isLoadingHistory}
-          >
-            <RefreshCw
-              className={`h-4 w-4 mr-2 ${
-                isLoadingHistory ? "animate-spin" : ""
-              }`}
-            />
-            {isLoadingHistory ? "Loading..." : "Refresh"}
-          </Button>
-          <Button
-            onClick={clearChat}
-            variant="outline"
-            size="sm"
-            className="text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
-          >
-            <Trash2 className="h-4 w-4 mr-2" />
-            Clear Chat
-          </Button>
-        </div>
-      </div>
-      <div className="flex flex-col h-[calc(100vh-8rem)] overflow-hidden bg-background border rounded-lg">
-        <div className="flex-1 flex justify-center overflow-hidden">
-          <div className="w-full max-w-4xl flex flex-col overflow-hidden">
-            {" "}
-            <div className="flex-1 overflow-y-auto space-y-4 p-4">
-              {isLoadingHistory && messages.length === 0 && (
-                <div className="flex justify-center items-center py-8">
-                  <div className="text-gray-500">Loading conversation...</div>
-                </div>
-              )}
-              {historyError && (
-                <div className="flex justify-center items-center py-8">
-                  <div className="text-red-500">
-                    Failed to load conversation history.
-                    <Button
-                      variant="link"
-                      onClick={refreshConversation}
-                      className="p-0 ml-1 h-auto"
-                    >
-                      Try again
-                    </Button>
-                  </div>
-                </div>
-              )}
-              {messages.map(renderMessage).filter(Boolean)}
-              {loading &&
-                messages.length > 0 &&
-                messages[messages.length - 1].role === "user" && (
-                  <div className="flex justify-start">
-                    <div className="rounded-lg px-4 py-2 max-w-[75%] bg-gray-100 text-gray-900">
-                      <span className="shimmer-text block relative">
-                        Assistant is thinking...
-                      </span>
-                    </div>
-                  </div>
-                )}
-              <div ref={messagesEndRef} />
-            </div>
-            <form
-              onSubmit={handleSendWithFocus}
-              className="flex gap-2 p-4 border-t bg-background flex-shrink-0"
-            >
-              <Input
-                ref={inputRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Type your message..."
-                disabled={loading}
-                className="flex-1"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    handleSendWithFocus(e);
-                  }
-                }}
-              />
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 relative overflow-hidden">
+      {/* Decorative sparkles */}
+      <div className="container mx-auto px-6 py-8 relative z-10">
+        <div className="max-w-6xl mx-auto">
+          {/* Header */}
+          <div className="flex justify-between items-center mb-8">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-orange-300 to-pink-300 rounded-2xl flex items-center justify-center relative">
+                <Bot className="w-7 h-7 text-white" />
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold text-gray-800">
+                  <span className="bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent">
+                    Agentic Manager
+                  </span>
+                </h1>
+                <p className="text-lg text-gray-600 font-medium mt-1">
+                  AI-powered assistant for campaign management and creator
+                  discovery
+                </p>
+              </div>
+            </div>{" "}
+            <div className="flex items-center gap-4">
               <Button
-                type="submit"
-                disabled={loading || !input.trim()}
-                className="bg-blue-600 hover:bg-blue-700"
+                onClick={refreshConversation}
+                variant="ghost"
+                size="sm"
+                className="text-gray-600 hover:text-orange-600 hover:bg-white/50 rounded-xl px-4 py-2 transition-all duration-200"
+                disabled={isLoadingHistory}
               >
-                {loading ? "Sending..." : "Send"}
+                <RefreshCw
+                  className={`h-4 w-4 mr-2 ${
+                    isLoadingHistory ? "animate-spin" : ""
+                  }`}
+                />
+                {isLoadingHistory ? "Loading..." : "Refresh"}
               </Button>
-            </form>
+              <Button
+                onClick={clearChat}
+                variant="outline"
+                size="sm"
+                className="text-red-600 hover:text-red-700 border-2 border-red-200 hover:border-red-300 bg-white/80 backdrop-blur-sm rounded-xl px-4 py-2 transition-all duration-200"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Clear Chat
+              </Button>
+            </div>
+          </div>
+
+          {/* Chat Container */}
+          <div className="flex flex-col h-[calc(100vh-12rem)] overflow-hidden bg-white/90 backdrop-blur-sm border-2 border-gray-200 rounded-3xl shadow-[2px_2px_0px_0px_#000]">
+            <div className="flex-1 flex justify-center overflow-hidden">
+              <div className="w-full max-w-4xl flex flex-col overflow-hidden">
+                {" "}
+                {/* Messages Area */}
+                <div className="flex-1 overflow-y-auto space-y-4 p-3">
+                  {isLoadingHistory && messages.length === 0 && (
+                    <div className="flex justify-center items-center py-16">
+                      <div className="text-gray-500 text-lg font-medium">
+                        Loading conversation...
+                      </div>
+                    </div>
+                  )}
+                  {historyError && (
+                    <div className="flex justify-center items-center py-16">
+                      <div className="text-red-500 text-lg font-medium">
+                        Failed to load conversation history.
+                        <Button
+                          variant="link"
+                          onClick={refreshConversation}
+                          className="p-0 ml-2 h-auto text-orange-600 hover:text-pink-600"
+                        >
+                          Try again
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                  {messages.map(renderMessage).filter(Boolean)}
+                  {loading &&
+                    messages.length > 0 &&
+                    messages[messages.length - 1].role === "user" && (
+                      <div className="flex justify-start">
+                        <div className="rounded-xl px-4 py-3 max-w-[70%] bg-gradient-to-r from-orange-100 to-pink-100 border-2 border-orange-200">
+                          <span className="shimmer-text block relative text-gray-700 text-sm font-medium">
+                            Assistant is thinking...
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  <div ref={messagesEndRef} />
+                </div>
+                {/* Input Area */}
+                <form
+                  onSubmit={handleSendWithFocus}
+                  className="flex gap-4 p-3 border-t-2 border-gray-200 bg-white/95 backdrop-blur-sm flex-shrink-0 rounded-b-3xl"
+                >
+                  {" "}
+                  <Input
+                    ref={inputRef}
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Type your message..."
+                    disabled={loading}
+                    className="flex-1 h-12 text-base rounded-xl border-2 border-gray-200 focus:border-orange-400 focus:ring-0 bg-white/80 backdrop-blur-sm font-medium"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        handleSendWithFocus(e);
+                      }
+                    }}
+                  />
+                  <Button
+                    type="submit"
+                    disabled={loading || !input.trim()}
+                    className="h-12 bg-gradient-to-r from-orange-400 to-pink-400 hover:from-orange-500 hover:to-pink-500 text-white font-semibold px-8 rounded-xl shadow-[2px_2px_0px_0px_#000] hover:shadow-[3px_3px_0px_0px_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200"
+                  >
+                    {loading ? "Sending..." : "Send"}
+                  </Button>
+                </form>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -217,8 +237,8 @@ if (typeof window !== "undefined") {
     .shimmer-text {
       position: relative;
       display: inline-block;
-      color: #444;
-      background: linear-gradient(90deg, #444 0%, #bbb 50%, #444 100%);
+      color: #6b7280;
+      background: linear-gradient(90deg, #6b7280 0%, #f97316 50%, #ec4899 100%);
       background-size: 200% 100%;
       background-clip: text;
       -webkit-background-clip: text;

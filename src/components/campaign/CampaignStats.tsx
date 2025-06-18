@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { IndianRupee, Users, FileText, Target } from "lucide-react";
 
 interface Campaign {
   spent: string;
@@ -16,44 +15,48 @@ interface CampaignStatsProps {
 
 const CampaignStats = ({ campaign }: CampaignStatsProps) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <Card>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <Card className="rounded-3xl border-2 border-gray-200 bg-white/80 backdrop-blur-sm shadow-[4px_4px_0px_0px_#000] hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 group">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Spent</CardTitle>
-          <IndianRupee className="w-4 h-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{campaign.spent}</div>
+          <div className="text-3xl font-bold text-gray-900 mb-1">
+            {campaign.spent}
+          </div>
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="rounded-3xl border-2 border-gray-200 bg-white/80 backdrop-blur-sm shadow-[4px_4px_0px_0px_#000] hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 group">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Contacted</CardTitle>
-          <Users className="w-4 h-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{campaign.creatorsContacted}</div>
+          <div className="text-3xl font-bold text-gray-900 mb-1">
+            {campaign.creatorsContacted}
+          </div>
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="rounded-3xl border-2 border-gray-200 bg-white/80 backdrop-blur-sm shadow-[4px_4px_0px_0px_#000] hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 group">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Signed</CardTitle>
-          <FileText className="w-4 h-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{campaign.contractsSigned}</div>
+          <div className="text-3xl font-bold text-gray-900 mb-1">
+            {campaign.contractsSigned}
+          </div>
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="rounded-3xl border-2 border-gray-200 bg-white/80 backdrop-blur-sm shadow-[4px_4px_0px_0px_#000] hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 group">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Delivered</CardTitle>
-          <Target className="w-4 h-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{campaign.contentDelivered}</div>
+          <div className="text-3xl font-bold text-gray-900 mb-1">
+            {campaign.contentDelivered}
+          </div>
         </CardContent>
       </Card>
     </div>

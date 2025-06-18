@@ -58,13 +58,12 @@ const ContentDeliverablesCard = ({
   };
 
   return (
-    <Card className="mb-6">
+    <Card className="mb-6 rounded-3xl border-2 border-gray-200 bg-white/80 backdrop-blur-sm shadow-[4px_4px_0px_0px_#000] transition-all duration-200 group">
       <CardHeader>
-        <CardTitle className="text-lg flex items-center">
-          <FileText className="w-5 h-5 mr-2 text-blue-500" />
+        <CardTitle className="text-xl font-bold text-gray-800">
           Content Deliverables
         </CardTitle>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-base text-gray-500 mt-1">
           Define what the creator will deliver as part of this campaign
         </p>
       </CardHeader>
@@ -73,14 +72,14 @@ const ContentDeliverablesCard = ({
           <Textarea
             value={contentDeliverables}
             onChange={(e) => setContentDeliverables(e.target.value)}
-            className="min-h-[120px] w-full font-mono text-sm"
+            className="min-h-[48px] w-full font-mono text-base rounded-xl border-2 border-gray-200 bg-white/80"
             placeholder="Enter content deliverables (e.g., 2 Instagram posts, 3 Stories, 1 Reel)"
           />
           <div className="flex justify-end">
             <Button
               onClick={handleSaveDeliverables}
               disabled={isSavingDeliverables}
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-gradient-to-r from-orange-400 to-pink-400 hover:from-orange-500 hover:to-pink-500 text-white rounded-xl px-6 py-2 text-lg font-semibold shadow-[3px_3px_0px_0px_#000] hover:shadow-[5px_5px_0px_0px_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200"
             >
               {isSavingDeliverables ? (
                 <span className="flex items-center">
@@ -88,10 +87,7 @@ const ContentDeliverablesCard = ({
                   Saving...
                 </span>
               ) : (
-                <>
-                  <Save className="w-4 h-4 mr-2" />
-                  Save Deliverables
-                </>
+                <>Save Deliverables</>
               )}
             </Button>
           </div>

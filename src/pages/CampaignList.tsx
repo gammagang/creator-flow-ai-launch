@@ -230,96 +230,104 @@ const CampaignList = () => {
   const campaignsJSX = campaigns.length ? (
     <>
       {campaigns.map((campaign) => (
-        <Card key={campaign.id} className="hover:shadow-lg transition-shadow">
-          <CardHeader className="pb-3">
-            <div className="flex justify-between items-start">
-              <div>
-                <CardTitle className="text-lg">{campaign.name}</CardTitle>
-                <Badge className={`mt-2 ${getStatusColor(campaign.status)}`}>
-                  {campaign.status.charAt(0).toUpperCase() +
-                    campaign.status.slice(1)}
-                </Badge>
-              </div>
-              <div className="relative">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm">
-                      <MoreHorizontal className="w-4 h-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem
-                      className="text-red-600 focus:text-red-700"
-                      onClick={() =>
-                        handleDeleteClick({
-                          id: campaign.id,
-                          name: campaign.name,
-                        })
-                      }
-                    >
-                      <Trash2 className="w-4 h-4 mr-2" /> Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <div className="flex items-center gap-1 text-gray-500">
-                  <IndianRupee className="w-3 h-3" />
-                  <span>Budget</span>
+        <div
+          key={campaign.id}
+          className="flex flex-col flex-1 basis-full lg:basis-1/2 xl:basis-1/3"
+        >
+          <Card className="flex flex-col flex-1 w-full rounded-3xl border-2 border-gray-200 bg-white/80 backdrop-blur-sm shadow-[4px_4px_0px_0px_#000] transition-all duration-200 px-6 py-4">
+            <CardHeader className="pb-3">
+              <div className="flex justify-between items-start">
+                <div>
+                  <CardTitle className="text-lg">{campaign.name}</CardTitle>
+                  <Badge className={`mt-2 ${getStatusColor(campaign.status)}`}>
+                    {campaign.status.charAt(0).toUpperCase() +
+                      campaign.status.slice(1)}
+                  </Badge>
                 </div>
-                <p className="font-medium">{campaign.budget}</p>
-              </div>
-              <div>
-                <div className="flex items-center gap-1 text-gray-500">
-                  <Users className="w-3 h-3" />
-                  <span>Creators</span>
+                <div className="relative">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm">
+                        <MoreHorizontal className="w-4 h-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        className="text-red-600 focus:text-red-700"
+                        onClick={() =>
+                          handleDeleteClick({
+                            id: campaign.id,
+                            name: campaign.name,
+                          })
+                        }
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" /> Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
-                <p className="font-medium">
-                  {campaign.creatorsContacted} contacted
-                </p>
               </div>
-            </div>
+            </CardHeader>
+            <CardContent className="flex-1 flex flex-col pt-2 space-y-4">
+              <div className="flex-1 flex flex-col space-y-4">
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <div className="flex items-center gap-1 text-gray-500">
+                      <IndianRupee className="w-3 h-3" />
+                      <span>Budget</span>
+                    </div>
+                    <p className="font-medium">{campaign.budget}</p>
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1 text-gray-500">
+                      <Users className="w-3 h-3" />
+                      <span>Creators</span>
+                    </div>
+                    <p className="font-medium">
+                      {campaign.creatorsContacted} contacted
+                    </p>
+                  </div>
+                </div>
 
-            <div className="text-sm">
-              <div className="flex items-center gap-1 text-gray-500 mb-1">
-                <Calendar className="w-3 h-3" />
-                <span>Timeline</span>
+                <div className="text-sm">
+                  <div className="flex items-center gap-1 text-gray-500 mb-1">
+                    <Calendar className="w-3 h-3" />
+                    <span>Timeline</span>
+                  </div>
+                  <p className="text-gray-700">
+                    {campaign.startDate && campaign.endDate
+                      ? `${new Date(
+                          campaign.startDate
+                        ).toLocaleDateString()} - ${new Date(
+                          campaign.endDate
+                        ).toLocaleDateString()}`
+                      : "No dates set"}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-sm text-gray-500 mb-2">Deliverables</p>
+                  <div className="flex flex-wrap gap-1">
+                    <p className="text-sm max-w-md">
+                      {campaign.contentDeliverables || " "}
+                    </p>
+                  </div>
+                </div>
               </div>
-              <p className="text-gray-700">
-                {campaign.startDate && campaign.endDate
-                  ? `${new Date(
-                      campaign.startDate
-                    ).toLocaleDateString()} - ${new Date(
-                      campaign.endDate
-                    ).toLocaleDateString()}`
-                  : "No dates set"}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-sm text-gray-500 mb-2">Deliverables</p>
-              <div className="flex flex-wrap gap-1">
-                <p className="text-sm max-w-md">
-                  {campaign.contentDeliverables || " "}
-                </p>
+              <div className="flex gap-2 pt-2 mt-auto">
+                <Button
+                  size="sm"
+                  className="bg-amber-200 hover:bg-amber-300 text-orange-900 rounded-xl w-full text-base font-semibold py-2 transition-all duration-200"
+                  onClick={() =>
+                    navigate(`/dashboard/campaigns/${campaign.id}`)
+                  }
+                >
+                  Manage
+                </Button>
               </div>
-            </div>
-
-            <div className="flex gap-2 pt-2">
-              <Button
-                size="sm"
-                className="bg-blue-600 hover:bg-blue-700 w-full"
-                onClick={() => navigate(`/dashboard/campaigns/${campaign.id}`)}
-              >
-                Manage
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       ))}
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <AlertDialogContent>
@@ -371,27 +379,140 @@ const CampaignList = () => {
   );
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Campaigns</h1>
-          <p className="text-gray-600 mt-1">
-            Manage your influencer marketing campaigns
-          </p>{" "}
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 relative overflow-hidden py-12 px-4 md:px-10 lg:px-24">
+      <div className="max-w-7xl mx-auto space-y-10">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2 tracking-tight">
+              Campaigns
+            </h1>
+            <p className="text-gray-600 text-lg font-medium">
+              Manage your influencer marketing campaigns
+            </p>
+          </div>
+          <Link to="/dashboard/campaigns/create">
+            <Button
+              className="bg-gradient-to-r from-orange-400 to-pink-400 hover:from-orange-500 hover:to-pink-500 text-white rounded-xl px-8 py-3 text-lg font-semibold shadow-[3px_3px_0px_0px_#000] hover:shadow-[5px_5px_0px_0px_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200"
+              disabled={isNoCompanyError}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              New Campaign
+            </Button>
+          </Link>
         </div>
-        <Link to="/dashboard/campaigns/create">
-          <Button
-            className="bg-blue-600 hover:bg-blue-700"
-            disabled={isNoCompanyError}
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            New Campaign
-          </Button>
-        </Link>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {campaignsJSX}
+        <div className="flex flex-wrap gap-6 items-stretch">
+          {Array.isArray(campaigns) && campaigns.length > 0
+            ? campaigns.map((campaign) => (
+                <div
+                  key={campaign.id}
+                  className="flex flex-col flex-1 basis-full lg:basis-1/2 xl:basis-1/3"
+                >
+                  <Card className="flex flex-col flex-1 w-full rounded-3xl border-2 border-gray-200 bg-white/80 backdrop-blur-sm shadow-[4px_4px_0px_0px_#000] transition-all duration-200 px-6 py-4">
+                    <CardHeader className="pb-3">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <CardTitle className="text-lg">
+                            {campaign.name}
+                          </CardTitle>
+                          <Badge
+                            className={`mt-2 ${getStatusColor(
+                              campaign.status
+                            )}`}
+                          >
+                            {campaign.status.charAt(0).toUpperCase() +
+                              campaign.status.slice(1)}
+                          </Badge>
+                        </div>
+                        <div className="relative">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="sm">
+                                <MoreHorizontal className="w-4 h-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem
+                                className="text-red-600 focus:text-red-700"
+                                onClick={() =>
+                                  handleDeleteClick({
+                                    id: campaign.id,
+                                    name: campaign.name,
+                                  })
+                                }
+                              >
+                                <Trash2 className="w-4 h-4 mr-2" /> Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="flex-1 flex flex-col pt-2 space-y-4">
+                      <div className="flex-1 flex flex-col space-y-4">
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <div className="flex items-center gap-1 text-gray-500">
+                              <IndianRupee className="w-3 h-3" />
+                              <span>Budget</span>
+                            </div>
+                            <p className="font-medium">{campaign.budget}</p>
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-1 text-gray-500">
+                              <Users className="w-3 h-3" />
+                              <span>Creators</span>
+                            </div>
+                            <p className="font-medium">
+                              {campaign.creatorsContacted} contacted
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="text-sm">
+                          <div className="flex items-center gap-1 text-gray-500 mb-1">
+                            <Calendar className="w-3 h-3" />
+                            <span>Timeline</span>
+                          </div>
+                          <p className="text-gray-700">
+                            {campaign.startDate && campaign.endDate
+                              ? `${new Date(
+                                  campaign.startDate
+                                ).toLocaleDateString()} - ${new Date(
+                                  campaign.endDate
+                                ).toLocaleDateString()}`
+                              : "No dates set"}
+                          </p>
+                        </div>
+
+                        <div>
+                          <p className="text-sm text-gray-500 mb-2">
+                            Deliverables
+                          </p>
+                          <div className="flex flex-wrap gap-1">
+                            <p className="text-sm max-w-md">
+                              {campaign.contentDeliverables || " "}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex gap-2 pt-2 mt-auto">
+                        <Button
+                          size="sm"
+                          className="bg-amber-200 hover:bg-amber-300 text-orange-900 rounded-xl w-full text-base font-semibold py-2 transition-all duration-200"
+                          onClick={() =>
+                            navigate(`/dashboard/campaigns/${campaign.id}`)
+                          }
+                        >
+                          Manage
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              ))
+            : campaignsJSX}
+        </div>
       </div>
     </div>
   );

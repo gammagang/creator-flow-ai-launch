@@ -1,5 +1,4 @@
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 
 interface Campaign {
   id: number;
@@ -25,12 +24,6 @@ const CampaignHeader = ({ campaign, getStatusColor }: CampaignHeaderProps) => {
           <span className="text-gray-500">•</span>
           <span className="text-gray-600">{campaign.progress}% Complete</span>
         </div>
-      </div>
-      <div className="flex gap-2">
-        <Button variant="outline">Edit Campaign</Button>
-        <Button className="bg-blue-600 hover:bg-blue-700">
-          Generate Report
-        </Button>
       </div>
     </div>
   );

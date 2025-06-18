@@ -1,4 +1,3 @@
-
 import { Outlet } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
@@ -11,7 +10,7 @@ const Layout = () => {
         <AppSidebar />
         <div className="flex-1 flex flex-col">
           <Header />
-          <main className="flex-1 p-6">
+          <main className="flex-1">
             <Outlet />
           </main>
         </div>

@@ -175,8 +175,9 @@ const CreatorSearchFilters = ({
 
   return (
     <Card>
-      <CardContent className="p-6">
-        <div className="flex flex-col lg:flex-row gap-4">
+      <CardContent className="p-4">
+        {/* Main Search Row */}
+        <div className="flex flex-col lg:flex-row gap-2">
           <div className="flex-1">
             <div className="relative">
               <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />{" "}
@@ -189,35 +190,41 @@ const CreatorSearchFilters = ({
                     onSearch();
                   }
                 }}
-                className="pl-10"
+                className="pl-10 h-10 text-sm"
               />
             </div>
           </div>
-          <div className="flex gap-2">
-            {" "}
+          <div className="flex gap-2 items-center">
             <Button
+              className="border-2 border-orange-300 text-orange-600 rounded-xl h-10 px-4 text-sm"
               variant="outline"
+              size="sm"
               onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
             >
-              <Filter className="w-4 h-4 mr-2" />
+              <Filter className="w-4 h-4 mr-1" />
               Filters
             </Button>
             <Button
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-gradient-to-r from-orange-400 to-pink-400 text-white rounded-xl h-10 px-4 text-sm shadow-[3px_3px_0px_0px_#000] font-semibold transition-all duration-200"
+              size="sm"
               onClick={onSearch}
             >
-              Search Creators
+              Search
             </Button>
           </div>
         </div>
-
+        {/* Divider below main search row */}
+        <div className="border-b border-orange-100 my-3" />
         {/* Advanced Filters */}
         {showAdvancedFilters && (
-          <div className="mt-6 space-y-4 border-t pt-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="mt-1 mb-4 space-y-2">
+            <h3 className="text-base font-semibold text-orange-600 mb-1">
+              Advanced Filters
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
               {/* Country Filter */}
               <div>
-                <label className="text-sm font-medium mb-2 block">
+                <label className="text-xs font-medium mb-1 block">
                   Country
                 </label>
                 <Select onValueChange={(value) => addFilter("country", value)}>
@@ -235,7 +242,7 @@ const CreatorSearchFilters = ({
               </div>
               {/* Tier Filter */}
               <div>
-                <label className="text-sm font-medium mb-2 block">Tier</label>
+                <label className="text-xs font-medium mb-1 block">Tier</label>
                 <Select onValueChange={(value) => addFilter("tier", value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select tier" />
@@ -251,7 +258,7 @@ const CreatorSearchFilters = ({
               </div>
               {/* Engagement Rate Filter */}
               <div>
-                <label className="text-sm font-medium mb-2 block">
+                <label className="text-xs font-medium mb-1 block">
                   Engagement Rate
                 </label>
                 <Select onValueChange={(value) => addFilter("er", value)}>
@@ -269,7 +276,7 @@ const CreatorSearchFilters = ({
               </div>{" "}
               {/* Gender Filter */}
               <div>
-                <label className="text-sm font-medium mb-2 block">Gender</label>
+                <label className="text-xs font-medium mb-1 block">Gender</label>
                 <Select
                   value={filters.gender?.[0] || "all"}
                   onValueChange={(value) => addFilter("gender", value)}
@@ -292,7 +299,7 @@ const CreatorSearchFilters = ({
               </div>
               {/* Category Filter */}
               <div>
-                <label className="text-sm font-medium mb-2 block">
+                <label className="text-xs font-medium mb-1 block">
                   Category
                 </label>
                 <Select onValueChange={(value) => addFilter("category", value)}>
@@ -327,7 +334,6 @@ const CreatorSearchFilters = ({
                 </Select>
               </div>
             </div>
-
             {/* Bio Search */}
             <div>
               <label className="text-sm font-medium mb-2 block">Bio</label>
@@ -341,53 +347,34 @@ const CreatorSearchFilters = ({
                 }}
               />
             </div>
+            <div className="border-b-2 border-orange-100 mt-6" />
           </div>
         )}
-
-        {/* Quick Filters */}
-        <div className="flex flex-wrap gap-2 mt-4">
-          <Badge
-            variant="secondary"
-            className="cursor-pointer hover:bg-gray-300"
-            onClick={() => addFilter("category", "fashion")}
-          >
-            Fashion
-          </Badge>
-          <Badge
-            variant="secondary"
-            className="cursor-pointer hover:bg-gray-300"
-            onClick={() => addFilter("category", "health & fitness")}
-          >
-            Health & Fitness
-          </Badge>
-          <Badge
-            variant="secondary"
-            className="cursor-pointer hover:bg-gray-300"
-            onClick={() => addFilter("category", "food & beverages")}
-          >
-            Food & Beverages
-          </Badge>
-          <Badge
-            variant="secondary"
-            className="cursor-pointer hover:bg-gray-300"
-            onClick={() => addFilter("category", "technology")}
-          >
-            Technology
-          </Badge>
-          <Badge
-            variant="secondary"
-            className="cursor-pointer hover:bg-gray-300"
-            onClick={() => addFilter("category", "travel & adventure")}
-          >
-            Travel & Adventure
-          </Badge>
-          <Badge
-            variant="secondary"
-            className="cursor-pointer hover:bg-gray-300"
-            onClick={() => addFilter("category", "beauty & hygiene")}
-          >
-            Beauty & Hygiene
-          </Badge>
+        {/* Quick Filters Section */}
+        <div className="mt-6">
+          <div className="mb-2 text-base font-semibold text-orange-600">
+            Popular Categories
+          </div>
+          <div className="flex flex-wrap gap-1">
+            <span className="bg-white border border-gray-200 text-gray-500 rounded px-2 py-0.5 text-xs font-normal">
+              Fashion
+            </span>
+            <span className="bg-white border border-gray-200 text-gray-500 rounded px-2 py-0.5 text-xs font-normal">
+              Health & Fitness
+            </span>
+            <span className="bg-white border border-gray-200 text-gray-500 rounded px-2 py-0.5 text-xs font-normal">
+              Food & Beverages
+            </span>
+            <span className="bg-white border border-gray-200 text-gray-500 rounded px-2 py-0.5 text-xs font-normal">
+              Technology
+            </span>
+            <span className="bg-white border border-gray-200 text-gray-500 rounded px-2 py-0.5 text-xs font-normal">
+              Travel & Adventure
+            </span>
+            <span className="bg-white border border-gray-200 text-gray-500 rounded px-2 py-0.5 text-xs font-normal">
+              Beauty & Hygiene
+            </span>
+          </div>
         </div>
       </CardContent>
     </Card>

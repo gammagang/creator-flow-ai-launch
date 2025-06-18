@@ -120,9 +120,8 @@ const CampaignCreatorMappingDetails = () => {
   // Determine active tab based on current URL
   const getActiveTab = () => {
     const path = location.pathname;
-    if (path.includes("/creator-management")) return "creator-management";
-    if (path.includes("/content-management")) return "content-management";
-    if (path.includes("/analytics")) return "analytics";
+    if (path.includes("/negotiation-transcription"))
+      return "negotiation-transcription";
     return "overview";
   };
   const handleTabChange = (value: string) => {
@@ -131,14 +130,8 @@ const CampaignCreatorMappingDetails = () => {
       case "overview":
         navigate(basePath);
         break;
-      case "creator-management":
-        navigate(`${basePath}/creator-management`);
-        break;
-      case "content-management":
-        navigate(`${basePath}/content-management`);
-        break;
-      case "analytics":
-        navigate(`${basePath}/analytics`);
+      case "negotiation-transcription":
+        navigate(`${basePath}/negotiation-transcription`);
         break;
       default:
         navigate(basePath);
@@ -236,7 +229,7 @@ const CampaignCreatorMappingDetails = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
+      <div className="flex items-center justify-center py-12 min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
           <p className="mt-2 text-gray-600">Loading creator details...</p>
@@ -247,12 +240,13 @@ const CampaignCreatorMappingDetails = () => {
 
   if (error || !mappingData) {
     return (
-      <div className="flex items-center justify-center py-12">
+      <div className="flex items-center justify-center py-12 min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
         <div className="text-center">
           <p className="text-red-600">{error || "Creator details not found"}</p>{" "}
           <Button
             variant="outline"
             onClick={() => navigate(`/dashboard/campaigns/${campaignId}`)}
+            className="bg-gradient-to-r from-orange-400 to-pink-400 hover:from-orange-500 hover:to-pink-500 text-white rounded-xl px-8 py-3 text-lg font-semibold shadow-[3px_3px_0px_0px_#000] hover:shadow-[5px_5px_0px_0px_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 mt-4"
           >
             <ArrowLeft className="w-4 h-4 mr-1" />
           </Button>
@@ -262,162 +256,170 @@ const CampaignCreatorMappingDetails = () => {
   }
 
   return (
-    <div className="space-y-6">
-      {" "}
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          {" "}
-          <Button
-            variant="outline"
-            onClick={() => navigate(`/dashboard/campaigns/${campaignId}`)}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </Button>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-3xl font-bold text-gray-900">
-                {mappingData.creator_name}
-              </h1>
-              <StatusTag status={mappingData.campaign_creator_current_state} />
-            </div>
-            <p className="text-gray-600">
-              {mappingData.creator_platform} Creator
-            </p>
-          </div>
-        </div>
-        {/* Remove Creator Button */}
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 overflow-hidden py-12 px-4 md:px-10 lg:px-24">
+      <div className="max-w-7xl mx-auto space-y-10">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div className="flex items-center gap-4">
             <Button
-              variant="destructive"
-              disabled={deleteCreatorMutation.isPending}
-              className="flex items-center gap-2"
+              variant="outline"
+              onClick={() => navigate(`/dashboard/campaigns/${campaignId}`)}
+              className="flex items-center gap-2 bg-gradient-to-r from-orange-400 to-pink-400 hover:from-orange-500 hover:to-pink-500 text-white rounded-xl px-4 py-2 text-lg font-semibold shadow-[3px_3px_0px_0px_#000] hover:shadow-[5px_5px_0px_0px_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200"
             >
-              <Trash2 className="w-4 h-4" />
-              {deleteCreatorMutation.isPending
-                ? "Removing..."
-                : "Remove Creator"}
+              <ArrowLeft className="w-4 h-4" />
             </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Remove Creator from Campaign</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to remove{" "}
-                <strong>{mappingData.creator_name}</strong> from this campaign?
-                This action cannot be undone and will permanently delete all
-                associated data including outreach history, contracts, and
-                payments.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={handleRemoveCreator}
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-4xl font-bold text-gray-900 mb-2 tracking-tight">
+                  {mappingData.creator_name}
+                </h1>
+                <StatusTag
+                  status={mappingData.campaign_creator_current_state}
+                />
+              </div>
+              <p className="text-gray-600 text-lg font-medium">
+                {mappingData.creator_platform} Creator
+              </p>
+            </div>
+          </div>
+          {/* Remove Creator Button */}
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="destructive"
+                disabled={deleteCreatorMutation.isPending}
+                className="flex items-center gap-2 bg-gradient-to-r from-orange-400 to-pink-400 hover:from-orange-500 hover:to-pink-500 text-white rounded-xl px-6 py-2 text-lg font-semibold shadow-[3px_3px_0px_0px_#000] hover:shadow-[5px_5px_0px_0px_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200"
               >
-                Remove Creator
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
-      {/* Creator Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Followers</CardTitle>
-            <Users className="w-4 h-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {mappingData.creator_meta.followersCount || "N/A"}
-            </div>
-            <p className="text-xs text-muted-foreground">Total followers</p>
-          </CardContent>
-        </Card>
+                <Trash2 className="w-4 h-4" />
+                {deleteCreatorMutation.isPending
+                  ? "Removing..."
+                  : "Remove Creator"}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Remove Creator from Campaign
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to remove{" "}
+                  <strong>{mappingData.creator_name}</strong> from this
+                  campaign? This action cannot be undone and will permanently
+                  delete all associated data including outreach history,
+                  contracts, and payments.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleRemoveCreator}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Remove Creator
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+        {/* Creator Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <Card className="rounded-3xl border-2 border-gray-200 bg-white/80 backdrop-blur-sm shadow-[4px_4px_0px_0px_#000] hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 group">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-6">
+              <CardTitle className="text-base font-semibold text-gray-700">
+                Followers
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 pt-0">
+              <div className="text-3xl font-bold text-gray-900 mb-1">
+                {mappingData.creator_meta.followersCount || "N/A"}
+              </div>
+              <p className="text-sm text-gray-500 font-medium">
+                Total followers
+              </p>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Likes</CardTitle>
-            <Heart className="w-4 h-4 text-red-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {mappingData.creator_meta.averageViews ||
-                mappingData.creator_meta.postsCount ||
-                "N/A"}
-            </div>
-            <p className="text-xs text-muted-foreground">Per post</p>
-          </CardContent>
-        </Card>
+          <Card className="rounded-3xl border-2 border-gray-200 bg-white/80 backdrop-blur-sm shadow-[4px_4px_0px_0px_#000] hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 group">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-6">
+              <CardTitle className="text-base font-semibold text-gray-700">
+                Avg Likes
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 pt-0">
+              <div className="text-3xl font-bold text-gray-900 mb-1">
+                {mappingData.creator_meta.averageViews ||
+                  mappingData.creator_meta.postsCount ||
+                  "N/A"}
+              </div>
+              <p className="text-sm text-gray-500 font-medium">Per post</p>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Comments</CardTitle>
-            <MessageCircle className="w-4 h-4 text-blue-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">N/A</div>
-            <p className="text-xs text-muted-foreground">Per post</p>
-          </CardContent>
-        </Card>
+          <Card className="rounded-3xl border-2 border-gray-200 bg-white/80 backdrop-blur-sm shadow-[4px_4px_0px_0px_#000] hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 group">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-6">
+              <CardTitle className="text-base font-semibold text-gray-700">
+                Avg Comments
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 pt-0">
+              <div className="text-3xl font-bold text-gray-900 mb-1">N/A</div>
+              <p className="text-sm text-gray-500 font-medium">Per post</p>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Engagement Rate
-            </CardTitle>
-            <Eye className="w-4 h-4 text-green-500" />
+          <Card className="rounded-3xl border-2 border-gray-200 bg-white/80 backdrop-blur-sm shadow-[4px_4px_0px_0px_#000] hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 group">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-6">
+              <CardTitle className="text-base font-semibold text-gray-700">
+                Engagement Rate
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 pt-0">
+              <div className="text-3xl font-bold text-gray-900 mb-1">
+                {mappingData.creator_engagement_rate
+                  ? `${(+mappingData.creator_engagement_rate * 100).toFixed(
+                      1
+                    )}%`
+                  : "N/A"}
+              </div>
+              <p className="text-sm text-gray-500 font-medium">Overall rate</p>
+            </CardContent>
+          </Card>
+        </div>
+        {/* Navigation Tabs */}
+        <Card className="rounded-3xl border-2 border-gray-200 bg-white/90 backdrop-blur-sm shadow-[4px_4px_0px_0px_#000]">
+          <CardHeader>
+            <Tabs value={getActiveTab()} onValueChange={handleTabChange}>
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="overview">Overview</TabsTrigger>
+                <TabsTrigger value="negotiation-transcription">
+                  Negotiation Transcription
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {mappingData.creator_engagement_rate
-                ? `${(+mappingData.creator_engagement_rate * 100).toFixed(1)}%`
-                : "N/A"}
-            </div>
-            <p className="text-xs text-muted-foreground">Overall rate</p>
-          </CardContent>
         </Card>
-      </div>
-      {/* Navigation Tabs */}
-      <Card>
-        <CardHeader>
-          <Tabs value={getActiveTab()} onValueChange={handleTabChange}>
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="creator-management">
-                Creator Management
-              </TabsTrigger>
-              <TabsTrigger value="content-management">Content</TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </CardHeader>
-      </Card>
-      {/* Tab Content */}
-      <div className="min-h-[400px]">
-        {getActiveTab() === "overview" && (
-          <>
-            {/* Content Deliverables Card */}
-            <ContentDeliverablesCard
-              mappingId={mappingId}
-              initialContentDeliverables={contentDeliverables}
-              onDeliverablesUpdated={refreshMappingData}
-            />
+        {/* Tab Content */}
+        <div className="min-h-[400px]">
+          {getActiveTab() === "overview" && (
+            <>
+              {/* Content Deliverables Card */}
+              <ContentDeliverablesCard
+                mappingId={mappingId}
+                initialContentDeliverables={contentDeliverables}
+                onDeliverablesUpdated={refreshMappingData}
+              />
 
-            {/* Campaign Lifecycle Progress */}
-            <CampaignLifecycleProgress
-              mappingData={mappingData}
-              campaignId={campaignId}
-              creatorId={creatorId}
-              mappingId={mappingId}
-            />
-          </>
-        )}
-        <Outlet />
+              {/* Campaign Lifecycle Progress */}
+              <CampaignLifecycleProgress
+                mappingData={mappingData}
+                campaignId={campaignId}
+                creatorId={creatorId}
+                mappingId={mappingId}
+              />
+            </>
+          )}
+          <Outlet />
+        </div>
       </div>
     </div>
   );

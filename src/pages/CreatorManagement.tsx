@@ -128,12 +128,10 @@ const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-center py-12">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-2 text-gray-600">Loading creator data...</p>
-          </div>
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Loading creator data...</p>
         </div>
       </div>
     );
@@ -141,22 +139,20 @@ const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
 
   if (error) {
     return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-center py-12">
-          <div className="text-center">
-            <p className="text-red-600">Error: {error}</p>
-          </div>
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <p className="text-red-600">Error: {error}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <>
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2 tracking-tight">
             Creator Management
           </h1>
         </div>
@@ -169,21 +165,23 @@ const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
       </div>
 
       {/* Stats Overview */}
-      <div className="flex items-center justify-between bg-white rounded-lg p-4 border">
+      <div className="mt-6 rounded-3xl border-2 border-gray-200 bg-white/80 backdrop-blur-sm shadow-[4px_4px_0px_0px_#000] p-6 flex items-center justify-between">
         <div className="flex-1 text-center">
-          <div className="text-xl font-bold">{creators.length}</div>
+          <div className="text-3xl font-bold text-gray-900 mb-1">
+            {creators.length}
+          </div>
           <div className="text-xs text-gray-500">Total Creators</div>
         </div>
         <div className="w-px h-8 bg-gray-200 mx-4" />
         <div className="flex-1 text-center">
-          <div className="text-xl font-bold">
+          <div className="text-3xl font-bold text-gray-900 mb-1">
             {creators.filter((c) => c.current_state === "fulfilled").length}
           </div>
           <div className="text-xs text-gray-500">Fulfilled</div>
         </div>
         <div className="w-px h-8 bg-gray-200 mx-4" />
         <div className="flex-1 text-center">
-          <div className="text-xl font-bold">
+          <div className="text-3xl font-bold text-gray-900 mb-1">
             {formatCurrency(
               creators.reduce(
                 (sum, creator) => sum + (creator.assigned_budget || 0),
@@ -196,7 +194,7 @@ const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
       </div>
 
       {/* Creators Table */}
-      <Card>
+      <Card className="mt-6 rounded-3xl border-2 border-gray-200 bg-white/80 backdrop-blur-sm shadow-[4px_4px_0px_0px_#000]">
         <CardHeader>
           <CardTitle>Campaign Creators</CardTitle>
         </CardHeader>
@@ -209,103 +207,105 @@ const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
               </p>{" "}
               <Button
                 onClick={() => navigate("/dashboard/creators")}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className="bg-gradient-to-r from-orange-400 to-pink-400 hover:from-orange-500 hover:to-pink-500 text-white rounded-xl px-8 py-3 text-lg font-semibold shadow-[3px_3px_0px_0px_#000] hover:shadow-[5px_5px_0px_0px_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200"
               >
                 Discover Creators
               </Button>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Creator Name</TableHead>
-                  <TableHead>Platform</TableHead>
-                  <TableHead>Current State</TableHead>
-                  <TableHead>Engagement Rate</TableHead>
-                  <TableHead>Assigned Budget</TableHead>
-                  <TableHead>Last Updated</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {creators.map((creator) => (
-                  <TableRow
-                    key={creator.campaign_creator_id}
-                    onClick={() =>
-                      navigate(
-                        `/dashboard/campaigns/${campaignId}/creators/${creator.id}/mapping/${creator.campaign_creator_id}`
-                      )
-                    }
-                    className="cursor-pointer hover:bg-gray-50"
-                  >
-                    <TableCell className="font-medium">
-                      <div>
-                        <div>{creator.name}</div>
-                        {creator.tier && (
-                          <div className="text-sm text-gray-500">
-                            {creator.tier}
-                          </div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{creator.platform}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <StatusTag status={creator.current_state} />
-                    </TableCell>
-                    <TableCell>
-                      {creator.engagement_rate
-                        ? `${(creator.engagement_rate * 100).toFixed(1)}%`
-                        : "N/A"}
-                    </TableCell>
-                    <TableCell>
-                      {formatCurrency(creator.assigned_budget)}
-                    </TableCell>
-                    <TableCell>
-                      {formatDate(creator.last_state_change_at)}
-                    </TableCell>{" "}
-                    <TableCell className="text-right">
-                      <div onClick={(e) => e.stopPropagation()}>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <Trash2 className="w-4 h-4 text-red-500" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>
-                                Remove Creator from Campaign
-                              </AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Are you sure you want to remove{" "}
-                                <strong>{creator.name}</strong> from this
-                                campaign? This action cannot be undone and will
-                                permanently delete all associated data.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => handleRemoveCreator(creator)}
-                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                              >
-                                Remove Creator
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
-                    </TableCell>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Creator Name</TableHead>
+                    <TableHead>Platform</TableHead>
+                    <TableHead>Current State</TableHead>
+                    <TableHead>Engagement Rate</TableHead>
+                    <TableHead>Assigned Budget</TableHead>
+                    <TableHead>Last Updated</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {creators.map((creator) => (
+                    <TableRow
+                      key={creator.campaign_creator_id}
+                      onClick={() =>
+                        navigate(
+                          `/dashboard/campaigns/${campaignId}/creators/${creator.id}/mapping/${creator.campaign_creator_id}`
+                        )
+                      }
+                      className="cursor-pointer hover:bg-gray-50"
+                    >
+                      <TableCell className="font-medium">
+                        <div>
+                          <div>{creator.name}</div>
+                          {creator.tier && (
+                            <div className="text-sm text-gray-500">
+                              {creator.tier}
+                            </div>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{creator.platform}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        <StatusTag status={creator.current_state} />
+                      </TableCell>
+                      <TableCell>
+                        {creator.engagement_rate
+                          ? `${(creator.engagement_rate * 100).toFixed(1)}%`
+                          : "N/A"}
+                      </TableCell>
+                      <TableCell>
+                        {formatCurrency(creator.assigned_budget)}
+                      </TableCell>
+                      <TableCell>
+                        {formatDate(creator.last_state_change_at)}
+                      </TableCell>{" "}
+                      <TableCell className="text-right">
+                        <div onClick={(e) => e.stopPropagation()}>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="ghost" size="icon">
+                                <Trash2 className="w-4 h-4 text-red-500" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Remove Creator from Campaign
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Are you sure you want to remove{" "}
+                                  <strong>{creator.name}</strong> from this
+                                  campaign? This action cannot be undone and
+                                  will permanently delete all associated data.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleRemoveCreator(creator)}
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                >
+                                  Remove Creator
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>
-    </div>
+    </>
   );
 };
 

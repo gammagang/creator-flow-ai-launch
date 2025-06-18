@@ -248,7 +248,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
       <div className="flex justify-end mb-4">
         <Button
           size="sm"
-          className="bg-blue-600 hover:bg-blue-700"
+          className="bg-white/80 border border-gray-300 text-gray-700 rounded-xl px-4 py-2 text-sm font-semibold shadow-sm hover:bg-gray-100 transition-all duration-200"
           onClick={refreshMappingData}
           disabled={fetchMappingData.isPending || isUpdatingState}
         >
@@ -263,11 +263,13 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
         </Button>
       </div>
 
-      <Card>
+      <Card className="rounded-3xl border-2 border-gray-200 bg-white/80 backdrop-blur-sm shadow-[4px_4px_0px_0px_#000] transition-all duration-200 group">
         <CardHeader>
           <div>
-            <CardTitle className="mb-2">Campaign Lifecycle Progress</CardTitle>
-            <div className="text-sm text-gray-600">
+            <CardTitle className="text-xl font-bold text-gray-800 mb-2">
+              Campaign Lifecycle Progress
+            </CardTitle>
+            <div className="text-base text-gray-500">
               Current stage:{" "}
               <span className="ml-2 inline-block">
                 <StatusTag status={creatorState.currentStage} />
@@ -310,7 +312,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                             sendOutreachMutation.isPending ||
                             isUpdatingState
                           }
-                          className="font-semibold bg-blue-600 hover:bg-blue-700 text-white"
+                          className="bg-gradient-to-r from-orange-400 to-pink-400 hover:from-orange-500 hover:to-pink-500 text-white rounded-xl px-4 py-2 text-sm font-semibold shadow-[3px_3px_0px_0px_#000] hover:shadow-[5px_5px_0px_0px_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200"
                         >
                           {sendOutreachMutation.isPending || isUpdatingState ? (
                             <>
@@ -318,10 +320,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                               Loading...
                             </>
                           ) : (
-                            <>
-                              <Mail className="w-4 h-4 mr-2" />
-                              Preview Outreach E-mail
-                            </>
+                            <>Preview Outreach E-mail</>
                           )}
                         </Button>
                       )}
@@ -330,7 +329,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                           size="sm"
                           variant="secondary"
                           disabled
-                          className="opacity-60 cursor-not-allowed"
+                          className="opacity-60 cursor-not-allowed bg-gray-200 text-gray-500 rounded-xl px-4 py-2 text-sm font-semibold"
                         >
                           Negotiation underway
                         </Button>
@@ -354,9 +353,8 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                                     "call complete" ||
                                   callCompleteAction !== "generate"
                                 }
-                                className="font-semibold bg-blue-600 hover:bg-blue-700 text-white"
+                                className="bg-gradient-to-r from-orange-400 to-pink-400 hover:from-orange-500 hover:to-pink-500 text-white rounded-xl px-4 py-2 text-sm font-semibold shadow-[3px_3px_0px_0px_#000] hover:shadow-[5px_5px_0px_0px_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200"
                               >
-                                <FileText className="w-4 h-4 mr-2" />
                                 Generate Contract
                               </Button>
                             }
@@ -395,9 +393,8 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                               size="sm"
                               variant="outline"
                               onClick={() => setShowContractDetails(true)}
-                              className="border-blue-400 text-blue-600 hover:bg-blue-50"
+                              className="bg-gradient-to-r from-orange-400 to-pink-400 hover:from-orange-500 hover:to-pink-500 text-white rounded-xl px-4 py-2 text-sm font-semibold shadow-[3px_3px_0px_0px_#000] hover:shadow-[5px_5px_0px_0px_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200"
                             >
-                              <FileText className="w-4 h-4 mr-2" />
                               View Contract
                             </Button>
                           )}
@@ -408,7 +405,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                           size="sm"
                           variant="secondary"
                           disabled
-                          className="opacity-60 cursor-not-allowed"
+                          className="opacity-60 cursor-not-allowed bg-gray-200 text-gray-500 rounded-xl px-4 py-2 text-sm font-semibold"
                         >
                           No Action
                         </Button>
@@ -420,9 +417,8 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                               size="sm"
                               variant="outline"
                               onClick={() => setShowContractDetails(true)}
-                              className="border-blue-400 text-blue-600 hover:bg-blue-50"
+                              className="bg-gradient-to-r from-orange-400 to-pink-400 hover:from-orange-500 hover:to-pink-500 text-white rounded-xl px-4 py-2 text-sm font-semibold shadow-[3px_3px_0px_0px_#000] hover:shadow-[5px_5px_0px_0px_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200"
                             >
-                              <FileText className="w-4 h-4 mr-2" />
                               View Contract
                             </Button>
                           )}
@@ -433,7 +429,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                           size="sm"
                           variant="secondary"
                           disabled
-                          className="opacity-60 cursor-not-allowed"
+                          className="opacity-60 cursor-not-allowed bg-gray-200 text-gray-500 rounded-xl px-4 py-2 text-sm font-semibold"
                         >
                           No Action
                         </Button>

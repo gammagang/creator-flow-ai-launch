@@ -12,6 +12,7 @@ import {
   type DiscoverCreatorsRequest,
 } from "@/services/creatorApi";
 import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface DiscoverCreatorsQuery {
   country?: string[];
@@ -236,82 +237,95 @@ const CreatorDiscovery = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 relative overflow-hidden py-12 px-4 md:px-10 lg:px-24">
+      <div className="max-w-7xl mx-auto space-y-10">
+        <div className="flex items-center gap-3">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2 tracking-tight">
+              Creator Discovery
+            </h1>
+            <p className="text-gray-600 text-lg font-medium">
+              Find the perfect Instagram creators for your campaigns
+            </p>
+          </div>
+        </div>
+        <Card className="rounded-3xl border-2 border-gray-200 bg-white/80 backdrop-blur-sm shadow-[4px_4px_0px_0px_#000] transition-all duration-200 group">
+          <CardHeader>
+            <CardTitle className="text-xl font-bold text-gray-800">
+              Search & Filters
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <CreatorSearchFilters
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              onFiltersChange={handleFiltersChange}
+              onSearch={handleSearch}
+            />
+          </CardContent>
+        </Card>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
-            Creator Discovery
-          </h1>
-          <p className="text-gray-600 mt-1">
-            Find the perfect Instagram creators for your campaigns
-          </p>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            Creator Results
+          </h2>
+          {/* Loading State */}
+          {isLoadingCreators && (
+            <div className="flex flex-col items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+              <p className="mt-2 text-gray-600">Discovering creators...</p>
+            </div>
+          )}
+          {/* Error State */}
+          {creatorsError && (
+            <div className="flex flex-col items-center justify-center py-12">
+              <p className="text-red-600 mb-4 text-center">
+                Error loading creators. Please try again.
+              </p>
+              <button
+                onClick={() => window.location.reload()}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Retry
+              </button>
+            </div>
+          )}
+          {/* Creator Results and Load More */}
+          {!isLoadingCreators && !creatorsError && creators.length > 0 && (
+            <CreatorGrid
+              creators={creators}
+              campaigns={campaigns}
+              onAddToCampaign={handleAddToCampaign}
+            />
+          )}
+          {/* No Results State */}
+          {!isLoadingCreators &&
+            !creatorsError &&
+            creators.length === 0 &&
+            creatorsData !== null && (
+              <div className="flex flex-col items-center justify-center py-12">
+                <p className="text-gray-600 mb-4 text-center">
+                  No creators found matching your criteria.
+                </p>
+                <p className="text-sm text-gray-500 text-center">
+                  Try adjusting your filters or search terms.
+                </p>
+              </div>
+            )}
+          {/* Initial State - No search performed yet */}
+          {!isLoadingCreators && !creatorsError && creatorsData === null && (
+            <div className="flex flex-col items-center justify-center py-12">
+              <Search className="w-16 h-16 text-gray-300 mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                Ready to discover creators?
+              </h3>
+              <p className="text-gray-600 mb-4 text-center">
+                Use the search filters above and click "Search Creators" to find
+                the perfect Instagram creators for your campaigns.
+              </p>
+            </div>
+          )}
         </div>
-      </div>{" "}
-      {/* Search and Filters */}
-      <CreatorSearchFilters
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        onFiltersChange={handleFiltersChange}
-        onSearch={handleSearch}
-      />
-      {/* Loading State */}
-      {isLoadingCreators && (
-        <div className="text-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Discovering creators...</p>
-        </div>
-      )}
-      {/* Error State */}
-      {creatorsError && (
-        <div className="text-center py-12">
-          <p className="text-red-600 mb-4">
-            Error loading creators. Please try again.
-          </p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            Retry
-          </button>
-        </div>
-      )}
-      {/* Creator Results and Load More */}
-      {!isLoadingCreators && !creatorsError && (
-        <CreatorGrid
-          creators={creators}
-          campaigns={campaigns}
-          onAddToCampaign={handleAddToCampaign}
-        />
-      )}{" "}
-      {/* No Results State */}
-      {!isLoadingCreators &&
-        !creatorsError &&
-        creators.length === 0 &&
-        creatorsData !== null && (
-          <div className="text-center py-12">
-            <p className="text-gray-600 mb-4">
-              No creators found matching your criteria.
-            </p>
-            <p className="text-sm text-gray-500">
-              Try adjusting your filters or search terms.
-            </p>
-          </div>
-        )}
-      {/* Initial State - No search performed yet */}
-      {!isLoadingCreators && !creatorsError && creatorsData === null && (
-        <div className="text-center py-12">
-          <div className="max-w-md mx-auto">
-            <Search className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Ready to discover creators?
-            </h3>
-            <p className="text-gray-600 mb-4">
-              Use the search filters above and click "Search Creators" to find
-              the perfect Instagram creators for your campaigns.
-            </p>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 };

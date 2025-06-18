@@ -89,42 +89,44 @@ const CampaignDetails = () => {
   };
 
   return (
-    <div className="space-y-6">
-      {loading && (
-        <div className="flex items-center justify-center py-12">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-2 text-gray-600">Loading campaign data...</p>
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 relative overflow-hidden py-12 px-4 md:px-10 lg:px-24">
+      <div className="max-w-7xl mx-auto space-y-10">
+        {loading && (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+              <p className="mt-2 text-gray-600">Loading campaign data...</p>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {error && (
-        <div className="flex items-center justify-center py-12">
-          <div className="text-center">
-            <p className="text-red-600">Error: {error}</p>
+        {error && (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <p className="text-red-600">Error: {error}</p>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {campaign && !loading && !error && (
-        <div className="space-y-8">
-          <section>
-            <CampaignHeader
-              campaign={campaign}
-              getStatusColor={getStatusColor}
-            />
-          </section>
+        {campaign && !loading && !error && (
+          <div className="space-y-10">
+            <section>
+              <CampaignHeader
+                campaign={campaign}
+                getStatusColor={getStatusColor}
+              />
+            </section>
 
-          <section>
-            <CampaignStats campaign={campaign} />
-          </section>
+            <section>
+              <CampaignStats campaign={campaign} />
+            </section>
 
-          <section>
-            <CreatorManagement campaignId={campaign.id} />
-          </section>
-        </div>
-      )}
+            <section>
+              <CreatorManagement campaignId={campaign.id} />
+            </section>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

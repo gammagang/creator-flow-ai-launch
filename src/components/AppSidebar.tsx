@@ -119,61 +119,29 @@ export function AppSidebar() {
     return acc;
   }, {} as Record<string, typeof navigationItems>);
 
-  // Extract Agentic Manager and the rest
-  const agenticManager = navigationItems.find(
-    (item) => item.title === "Agentic Manager"
-  );
-  const otherItems = navigationItems.filter(
-    (item) => item.title !== "Agentic Manager"
-  );
-  const groupedOtherItems = otherItems.reduce((acc, item) => {
-    if (!acc[item.group]) acc[item.group] = [];
-    acc[item.group].push(item);
-    return acc;
-  }, {} as Record<string, typeof navigationItems>);
-
   return (
-    <Sidebar className="w-64">
-      <SidebarHeader className="p-4 border-b">
+    <Sidebar className="w-64 bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 border-r border-orange-100 rounded-2xl">
+      <SidebarHeader className="px-6 py-3 border-b border-orange-200 bg-white/60 backdrop-blur-sm rounded-t-2xl">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-            <Zap className="w-5 h-5 text-white" />
+          <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-pink-400 rounded-xl flex items-center justify-center relative">
+            <Zap className="w-5 h-5 text-white drop-shadow-[0_0_4px_#a78bfa]" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-gray-900">InfluencerFlow</h2>
-            <p className="text-xs text-gray-500">AI Platform</p>
+            <h2 className="text-lg font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent leading-tight">
+              Flow
+            </h2>
+            <p className="text-xs text-orange-500 font-semibold tracking-wide">
+              AI Platform
+            </p>
           </div>
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2 py-4">
-        {/* Highlighted Agentic Manager Button */}
-        {agenticManager && (
-          <div className="mb-4">
-            <NavLink
-              to={agenticManager.url}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg border-2 border-blue-700/80 bg-gradient-to-r from-blue-600 to-purple-700 text-white font-semibold shadow transition-all duration-150 hover:shadow-lg hover:translate-y-[-2px] active:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 relative ${
-                isActive(agenticManager.url) ? "ring-2 ring-blue-400" : ""
-              }`}
-              style={{ boxShadow: "0 2px 8px 0 rgba(80, 72, 229, 0.13)" }}
-            >
-              <agenticManager.icon
-                className="w-5 h-5 flex-shrink-0"
-                style={{ filter: "drop-shadow(0 0 4px #a78bfa)" }}
-              />
-              <span className="font-semibold text-sm">
-                {agenticManager.title}
-              </span>
-              <span className="ml-1 px-1.5 py-0.5 text-[10px] rounded bg-white/10 border border-white/20 text-white font-normal">
-                Featured
-              </span>
-            </NavLink>
-          </div>
-        )}
+      <SidebarContent className="px-3 py-6">
         {/* Grouped Navigation Items */}
-        {Object.entries(groupedOtherItems).map(([groupKey, items]) => (
-          <SidebarGroup key={groupKey} className="mb-4">
-            <SidebarGroupLabel className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+        {Object.entries(groupedItems).map(([groupKey, items]) => (
+          <SidebarGroup key={groupKey} className="mb-6">
+            <SidebarGroupLabel className="text-xs font-bold text-orange-500 uppercase tracking-wider mb-3 pl-2">
               {groupLabels[groupKey as keyof typeof groupLabels]}
             </SidebarGroupLabel>
             <SidebarGroupContent>
@@ -183,12 +151,22 @@ export function AppSidebar() {
                     <SidebarMenuButton asChild>
                       <NavLink
                         to={item.url}
-                        className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${getNavClass(
-                          item.url
-                        )}`}
+                        className={`flex items-center gap-3 px-4 py-2 rounded-xl font-semibold transition-colors duration-150 border focus:outline-none focus:ring-2 focus:ring-orange-200 ${
+                          isActive(item.url)
+                            ? "bg-orange-100 text-orange-700 border-orange-300"
+                            : "bg-transparent text-gray-700 border-transparent hover:bg-orange-50 hover:text-orange-700"
+                        }`}
                       >
-                        <item.icon className="w-5 h-5 flex-shrink-0" />
-                        <span className="font-medium">{item.title}</span>
+                        <item.icon
+                          className={`w-5 h-5 flex-shrink-0 ${
+                            isActive(item.url)
+                              ? "text-orange-600"
+                              : "text-orange-400"
+                          }`}
+                        />
+                        <span className="font-medium text-base tracking-wide">
+                          {item.title}
+                        </span>
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
