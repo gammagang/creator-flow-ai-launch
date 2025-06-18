@@ -43,7 +43,7 @@ interface DocuSealSubmitter {
   declined_at: string | null;
   external_id: string | null;
   submission_id: number;
-  metadata: Record<string, unknown>;
+  metadata: any;
   opened_at: string | null;
   sent_at: string | null;
   created_at: string;
@@ -68,12 +68,7 @@ interface DocuSealSubmission {
 
 // API response interface
 interface ContractApiResponse {
-  data: {
-    data: {
-      submission: DocuSealSubmission;
-      contract: Contract;
-    };
-  };
+  data: Contract;
 }
 
 interface ContractDialogProps {
@@ -133,22 +128,20 @@ const ContractDialog = ({
       );
 
       // Store both the submission and contract data
-      if (response.data && response.data.data) {
-        const submissionData = response.data.data.submission;
-        const contractData = response.data.data.contract;
+      if (response.data) {
+        console.log("Contract sent successfully:", response.data);
+        const submissionData = response.data.meta.docusealSubmission;
+        const contractData = response.data;
 
-        setSubmissionData(submissionData);
+        setSubmissionData(submissionData as any);
         setContractDetails(contractData);
 
         // Call the onContractSent callback with the contract data if provided
-        if (onContractSent && contractData) {
-          onContractSent(contractData);
-        }
+        if (onContractSent && contractData) onContractSent(contractData);
 
         // Close the dialog after a short delay to allow the user to see the success message
-        setTimeout(() => {
-          setOpen(false);
-        }, 2000);
+
+        setShowContractView(false);
       }
 
       toast.success("Contract sent successfully", {

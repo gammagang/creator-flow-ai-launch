@@ -393,7 +393,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                               size="sm"
                               variant="outline"
                               onClick={() => setShowContractDetails(true)}
-                              className="bg-gradient-to-r from-orange-400 to-pink-400 hover:from-orange-500 hover:to-pink-500 text-white rounded-xl px-4 py-2 text-sm font-semibold shadow-[3px_3px_0px_0px_#000] hover:shadow-[5px_5px_0px_0px_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200"
+                              className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 text-white rounded-xl px-4 py-2 text-sm font-semibold shadow-[3px_3px_0px_0px_#000] hover:shadow-[5px_5px_0px_0px_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200"
                             >
                               View Contract
                             </Button>
@@ -412,14 +412,19 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                       )}
                       {stage.key === "waiting for signature" && (
                         <>
-                          {creatorState.contract && (
+                          {creatorState.contract?.pdf_url && (
                             <Button
                               size="sm"
-                              variant="outline"
-                              onClick={() => setShowContractDetails(true)}
+                              variant="default"
+                              onClick={() =>
+                                window.open(
+                                  creatorState.contract?.pdf_url,
+                                  "_blank"
+                                )
+                              }
                               className="bg-gradient-to-r from-orange-400 to-pink-400 hover:from-orange-500 hover:to-pink-500 text-white rounded-xl px-4 py-2 text-sm font-semibold shadow-[3px_3px_0px_0px_#000] hover:shadow-[5px_5px_0px_0px_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200"
                             >
-                              View Contract
+                              Sign Contract
                             </Button>
                           )}
                         </>
