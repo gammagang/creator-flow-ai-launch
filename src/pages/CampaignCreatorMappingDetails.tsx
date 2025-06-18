@@ -109,7 +109,7 @@ const CampaignCreatorMappingDetails = () => {
   // Initialize contentDeliverables from mappingData
   useEffect(() => {
     if (mappingData) {
-      const deliverables = (mappingData.campaign_creator_meta
+      const deliverables = (mappingData.campaign_creator_meta?.campaignInfo
         ?.contentDeliverables ||
         mappingData.campaign_meta?.contentDeliverables ||
         "") as string;
@@ -136,57 +136,6 @@ const CampaignCreatorMappingDetails = () => {
       default:
         navigate(basePath);
     }
-  };
-
-  const lifecycleStages = [
-    { key: "discovered", label: "Discovered" },
-    { key: "outreached", label: "Outreached" },
-    { key: "call complete", label: "Call Complete" },
-    { key: "waiting for contract", label: "Waiting for Contract" },
-    { key: "waiting for signature", label: "Waiting for Signature" },
-    { key: "fulfilled", label: "Fulfilled" },
-  ];
-
-  const currentStageIndex = lifecycleStages.findIndex(
-    (stage) => stage.key === creatorState.currentStage
-  );
-
-  const getStageColor = (index: number) => {
-    if (index <= currentStageIndex) {
-      return "bg-green-500 text-white border-green-500";
-    }
-    return "bg-gray-200 text-gray-500 border-gray-300";
-  };
-
-  const getConnectorColor = (index: number) => {
-    if (index < currentStageIndex) {
-      return "bg-green-500";
-    }
-    return "bg-gray-300";
-  };
-
-  const handleContractGenerated = (contractData: ContractData) => {
-    setCreatorState((prev) => ({
-      ...prev,
-      contractGenerated: true,
-      contractData,
-    }));
-  };
-
-  const handleSendContract = () => {
-    setCreatorState((prev) => ({
-      ...prev,
-      contractSent: true,
-      currentStage: "waiting for signature",
-    }));
-  };
-
-  const handleContractSigned = () => {
-    setCreatorState((prev) => ({
-      ...prev,
-      contractSigned: true,
-      currentStage: "onboarded",
-    }));
   };
 
   // Refresh mapping data from API
