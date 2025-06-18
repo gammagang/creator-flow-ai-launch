@@ -317,7 +317,7 @@ const CampaignList = () => {
               <div className="flex gap-2 pt-2 mt-auto">
                 <Button
                   size="sm"
-                  className="bg-amber-200 hover:bg-amber-300 text-orange-900 rounded-xl w-full text-base font-semibold py-2 transition-all duration-200"
+                  className="bg-orange-100 hover:bg-orange-200 text-orange-700 border border-orange-200 font-semibold rounded-xl w-full text-base py-2 transition-all duration-200"
                   onClick={() =>
                     navigate(`/dashboard/campaigns/${campaign.id}`)
                   }
@@ -499,7 +499,7 @@ const CampaignList = () => {
                       <div className="flex gap-2 pt-2 mt-auto">
                         <Button
                           size="sm"
-                          className="bg-amber-200 hover:bg-amber-300 text-orange-900 rounded-xl w-full text-base font-semibold py-2 transition-all duration-200"
+                          className="bg-orange-100 hover:bg-orange-200 text-orange-700 border border-orange-200 font-semibold rounded-xl w-full text-base py-2 transition-all duration-200"
                           onClick={() =>
                             navigate(`/dashboard/campaigns/${campaign.id}`)
                           }
