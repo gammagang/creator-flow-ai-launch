@@ -10,8 +10,8 @@ export type CampaignCreator = {
     | "discovered"
     | "outreached"
     | "call complete"
-    | "waiting for contract"
     | "waiting for signature"
+    | "signatures complete"
     | "fulfilled";
   lastStateChangeAt: string;
   assignedBudget: number;

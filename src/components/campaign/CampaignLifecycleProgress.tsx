@@ -172,8 +172,8 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
     { key: "discovered", label: "Discovered" },
     { key: "outreached", label: "Outreached" },
     { key: "call complete", label: "Call Complete" },
-    { key: "waiting for contract", label: "Waiting for Contract" },
     { key: "waiting for signature", label: "Waiting for Signature" },
+    { key: "signatures complete", label: "Signatures Complete" },
     { key: "fulfilled", label: "Fulfilled" },
   ];
 
@@ -274,6 +274,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
               <span className="ml-2 inline-block">
                 <StatusTag status={creatorState.currentStage} />
               </span>
+              {creatorState.contract?.status}
             </div>
           </div>
         </CardHeader>
@@ -412,7 +413,23 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                       )}
                       {stage.key === "waiting for signature" && (
                         <>
-                          {creatorState.contract?.pdf_url && (
+                          {creatorState.contract?.status ===
+                          "submission.completed" ? (
+                            <div className="flex flex-col space-y-2">
+                              <div className="flex items-center text-green-600 font-medium">
+                                <CheckCircle className="w-5 h-5 mr-2" />
+                                Contract signed by both parties
+                              </div>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setShowContractDetails(true)}
+                                className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 text-white rounded-xl px-4 py-2 text-sm font-semibold shadow-[3px_3px_0px_0px_#000] hover:shadow-[5px_5px_0px_0px_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200"
+                              >
+                                View Contract
+                              </Button>
+                            </div>
+                          ) : creatorState.contract?.pdf_url ? (
                             <Button
                               size="sm"
                               variant="default"
@@ -426,7 +443,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                             >
                               Sign Contract
                             </Button>
-                          )}
+                          ) : null}
                         </>
                       )}
                       {stage.key === "fulfilled" && (
@@ -447,6 +464,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
           </div>
         </CardContent>
       </Card>
+
       <OutreachPreviewDialog
         isOpen={showOutreachPreview}
         onClose={() => setShowOutreachPreview(false)}
