@@ -401,16 +401,7 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
                           )}
                         </>
                       )}
-                      {stage.key === "waiting for contract" && (
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          disabled
-                          className="opacity-60 cursor-not-allowed bg-gray-200 text-gray-500 rounded-xl px-4 py-2 text-sm font-semibold"
-                        >
-                          No Action
-                        </Button>
-                      )}
+                     
                       {stage.key === "waiting for signature" && (
                         <>
                           {creatorState.contract?.status ===
