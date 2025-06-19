@@ -5,8 +5,8 @@ export type CreatorState =
   | "discovered"
   | "outreached"
   | "call complete"
-  | "waiting for contract"
   | "waiting for signature"
+  | "signatures complete"
   | "fulfilled";
 
 interface StatusTagProps {
@@ -29,7 +29,7 @@ const StatusTag: React.FC<StatusTagProps> = ({ status, className = "" }) => {
         label: "Call Complete",
         color: "bg-indigo-100 text-indigo-800",
       },
-      "waiting for contract": {
+      "signatures complete": {
         label: "Contract Pending",
         color: "bg-amber-100 text-amber-800",
       },
