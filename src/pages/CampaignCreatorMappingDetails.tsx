@@ -335,18 +335,26 @@ const CampaignCreatorMappingDetails = () => {
           </Card>
         </div>
         {/* Navigation Tabs */}
-        <Card className="rounded-3xl border-2 border-gray-200 bg-white/90 backdrop-blur-sm shadow-[4px_4px_0px_0px_#000]">
-          <CardHeader>
-            <Tabs value={getActiveTab()} onValueChange={handleTabChange}>
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="negotiation-transcription">
-                  Negotiation Transcription
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </CardHeader>
-        </Card>
+        <Tabs
+          value={getActiveTab()}
+          onValueChange={handleTabChange}
+          className="mb-8"
+        >
+          <TabsList className="inline-flex h-10 items-center justify-center rounded-md bg-white/80 backdrop-blur-sm p-1 border-2 border-gray-200">
+            <TabsTrigger
+              value="overview"
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none data-[state=active]:bg-orange-400 data-[state=active]:text-white"
+            >
+              Overview
+            </TabsTrigger>
+            <TabsTrigger
+              value="negotiation-transcription"
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none data-[state=active]:bg-orange-400 data-[state=active]:text-white"
+            >
+              Transcript
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
         {/* Tab Content */}
         <div className="min-h-[400px]">
           {getActiveTab() === "overview" && (

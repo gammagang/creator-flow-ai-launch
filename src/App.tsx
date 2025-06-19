@@ -23,6 +23,7 @@ import CreatorProfile from "./pages/CreatorProfile";
 import Dashboard from "./pages/Dashboard";
 import Landing from "./pages/Landing";
 import Negotiation from "./pages/Negotiation";
+import NegotiationTranscription from "./pages/NegotiationTranscription";
 import NotFound from "./pages/NotFound";
 import Outreach from "./pages/Outreach";
 import Payments from "./pages/Payments";
@@ -79,11 +80,15 @@ const App = () => (
                 <Route path="creators" element={<CampaignDetails />} />
                 <Route path="content" element={<CampaignDetails />} />
                 <Route path="analytics" element={<CampaignDetails />} />
-              </Route>
+              </Route>{" "}
               <Route
                 path="campaigns/:campaignId/creators/:creatorId/mapping/:mappingId"
                 element={<CampaignCreatorMappingDetails />}
               >
+                <Route
+                  path="negotiation-transcription"
+                  element={<NegotiationTranscription />}
+                />
                 <Route
                   path="creator-management"
                   element={<CreatorManagementTab />}

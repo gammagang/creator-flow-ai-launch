@@ -178,116 +178,114 @@ const CampaignList = () => {
     );
   } else {
     content = (
-      <div className="flex flex-wrap gap-6 items-stretch">
+      <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-6">
         {campaigns.length > 0 ? (
           campaigns.map((campaign) => (
-            <div
+            <Card
               key={campaign.id}
-              className="flex flex-col flex-1 basis-full lg:basis-1/2 xl:basis-1/3"
+              className="flex flex-col rounded-3xl border-2 border-gray-200 bg-white/80 backdrop-blur-sm shadow-[4px_4px_0px_0px_#000] transition-all duration-200 px-6 py-4"
             >
-              <Card className="flex flex-col flex-1 w-full rounded-3xl border-2 border-gray-200 bg-white/80 backdrop-blur-sm shadow-[4px_4px_0px_0px_#000] transition-all duration-200 px-6 py-4">
-                <CardHeader className="pb-3">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="text-lg">{campaign.name}</CardTitle>
-                      <Badge
-                        className={`mt-2 ${getStatusColor(campaign.status)}`}
-                      >
-                        {campaign.status.charAt(0).toUpperCase() +
-                          campaign.status.slice(1)}
-                      </Badge>
-                    </div>
-                    <div className="relative">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="hover:bg-orange-100 rounded-xl transition-colors"
-                          >
-                            <MoreHorizontal className="w-4 h-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                          align="end"
-                          className="min-w-[160px] rounded-xl border-2 border-gray-200 bg-white/80 backdrop-blur-sm shadow-[4px_4px_0px_0px_#000] p-2"
-                        >
-                          <DropdownMenuItem
-                            className="rounded-lg text-red-600 hover:text-red-700 hover:bg-red-50 focus:text-red-700 focus:bg-red-50 cursor-pointer px-3 py-2 text-sm font-medium transition-colors"
-                            onClick={() =>
-                              handleDeleteClick({
-                                id: campaign.id,
-                                name: campaign.name,
-                              })
-                            }
-                          >
-                            <Trash2 className="w-4 h-4 mr-2" /> Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
+              <CardHeader className="pb-3">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <CardTitle className="text-lg">{campaign.name}</CardTitle>
+                    <Badge
+                      className={`mt-2 ${getStatusColor(campaign.status)}`}
+                    >
+                      {campaign.status.charAt(0).toUpperCase() +
+                        campaign.status.slice(1)}
+                    </Badge>
                   </div>
-                </CardHeader>
-                <CardContent className="flex-1 flex flex-col pt-2 space-y-4">
-                  <div className="flex-1 flex flex-col space-y-4">
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <div className="flex items-center gap-1 text-gray-500">
-                          <IndianRupee className="w-3 h-3" />
-                          <span>Budget</span>
-                        </div>
-                        <p className="font-medium">{campaign.budget}</p>
+                  <div className="relative">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="hover:bg-orange-100 rounded-xl transition-colors"
+                        >
+                          <MoreHorizontal className="w-4 h-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="min-w-[160px] rounded-xl border-2 border-gray-200 bg-white/80 backdrop-blur-sm shadow-[4px_4px_0px_0px_#000] p-2"
+                      >
+                        <DropdownMenuItem
+                          className="rounded-lg text-red-600 hover:text-red-700 hover:bg-red-50 focus:text-red-700 focus:bg-red-50 cursor-pointer px-3 py-2 text-sm font-medium transition-colors"
+                          onClick={() =>
+                            handleDeleteClick({
+                              id: campaign.id,
+                              name: campaign.name,
+                            })
+                          }
+                        >
+                          <Trash2 className="w-4 h-4 mr-2" /> Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="flex-1 flex flex-col pt-2 space-y-4">
+                <div className="flex-1 flex flex-col space-y-4">
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <div className="flex items-center gap-1 text-gray-500">
+                        <IndianRupee className="w-3 h-3" />
+                        <span>Budget</span>
                       </div>
-                      <div>
-                        <div className="flex items-center gap-1 text-gray-500">
-                          <Users className="w-3 h-3" />
-                          <span>Creators</span>
-                        </div>
-                        <p className="font-medium">
-                          {campaign.creatorsContacted} contacted
-                        </p>
-                      </div>
+                      <p className="font-medium">{campaign.budget}</p>
                     </div>
-
-                    <div className="text-sm">
-                      <div className="flex items-center gap-1 text-gray-500 mb-1">
-                        <Calendar className="w-3 h-3" />
-                        <span>Timeline</span>
+                    <div>
+                      <div className="flex items-center gap-1 text-gray-500">
+                        <Users className="w-3 h-3" />
+                        <span>Creators</span>
                       </div>
-                      <p className="text-gray-700">
-                        {campaign.startDate && campaign.endDate
-                          ? `${new Date(
-                              campaign.startDate
-                            ).toLocaleDateString()} - ${new Date(
-                              campaign.endDate
-                            ).toLocaleDateString()}`
-                          : "No dates set"}
+                      <p className="font-medium">
+                        {campaign.creatorsContacted} contacted
                       </p>
                     </div>
+                  </div>
 
-                    <div>
-                      <p className="text-sm text-gray-500 mb-2">Deliverables</p>
-                      <div className="flex flex-wrap gap-1">
-                        <p className="text-sm max-w-md">
-                          {campaign.contentDeliverables}
-                        </p>
-                      </div>
+                  <div className="text-sm">
+                    <div className="flex items-center gap-1 text-gray-500 mb-1">
+                      <Calendar className="w-3 h-3" />
+                      <span>Timeline</span>
+                    </div>
+                    <p className="text-gray-700">
+                      {campaign.startDate && campaign.endDate
+                        ? `${new Date(
+                            campaign.startDate
+                          ).toLocaleDateString()} - ${new Date(
+                            campaign.endDate
+                          ).toLocaleDateString()}`
+                        : "No dates set"}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-gray-500 mb-2">Deliverables</p>
+                    <div className="flex flex-wrap gap-1">
+                      <p className="text-sm max-w-md">
+                        {campaign.contentDeliverables}
+                      </p>
                     </div>
                   </div>
-                  <div className="flex gap-2 pt-2 mt-auto">
-                    <Button
-                      size="sm"
-                      className="bg-orange-100 hover:bg-orange-200 text-orange-700 border border-orange-200 font-semibold rounded-xl w-full text-base py-2 transition-all duration-200"
-                      onClick={() =>
-                        navigate(`/dashboard/campaigns/${campaign.id}`)
-                      }
-                    >
-                      Manage
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                </div>
+                <div className="flex gap-2 pt-2 mt-auto">
+                  <Button
+                    size="sm"
+                    className="bg-orange-100 hover:bg-orange-200 text-orange-700 border border-orange-200 font-semibold rounded-xl w-full text-base py-2 transition-all duration-200"
+                    onClick={() =>
+                      navigate(`/dashboard/campaigns/${campaign.id}`)
+                    }
+                  >
+                    Manage
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           ))
         ) : (
           <div className="col-span-1 lg:col-span-2 xl:col-span-3 flex flex-col items-center justify-center text-center py-16 px-4 border border-dashed border-gray-300 rounded-lg bg-gray-50">

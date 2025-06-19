@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { apiService, publicAxiosInstance } from "./api";
+import type { NegotiationTranscriptionsResponse } from "@/types/negotiation";
 
 export type CampaignCreator = {
   id: string;
@@ -356,5 +357,41 @@ export const campaignCreatorAPI = {
     return apiService.get<{
       data: CampaignCreatorMapping;
     }>(`/campaign-creator/${mappingId}`);
+  },
+  // Get all negotiation transcriptions for a campaign-creator mapping
+  getNegotiationTranscriptions: async (mappingId: string) => {
+    return apiService.get<{
+      data: NegotiationTranscriptionsResponse;
+    }>(`/campaign-creator/${mappingId}/negotiations`);
+  },
+
+  // Get a specific negotiation transcription by ID
+  getNegotiationTranscription: async (negotiationId: string) => {
+    return apiService.get<{
+      data: {
+        id: string;
+        campaignCreatorId: string;
+        negotiationType: string;
+        startedAt: string;
+        endedAt: string;
+        outcome: string;
+        transcript:
+          | Array<{
+              role: string;
+              message: string;
+              timeInCall?: number;
+            }>
+          | string;
+        summary: string;
+        deliverables: string;
+        agreedPrice: number;
+        timeline: string;
+        callRecordingUrl: string | null;
+        meta: any;
+        campaignCreatorState: string;
+        campaignName: string;
+        creatorName: string;
+      };
+    }>(`/campaign-creator/negotiation/${negotiationId}`);
   },
 };

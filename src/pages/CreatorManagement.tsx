@@ -272,23 +272,27 @@ const CreatorManagement = ({ campaignId }: { campaignId: number }) => {
                                 <Trash2 className="w-4 h-4 text-red-500" />
                               </Button>
                             </AlertDialogTrigger>
-                            <AlertDialogContent>
+                            <AlertDialogContent className="rounded-3xl border-2 border-gray-200 bg-white/80 backdrop-blur-sm shadow-[4px_4px_0px_0px_#000] p-6">
                               <AlertDialogHeader>
-                                <AlertDialogTitle>
+                                <AlertDialogTitle className="text-2xl font-bold text-gray-900">
                                   Remove Creator from Campaign
                                 </AlertDialogTitle>
-                                <AlertDialogDescription>
+                                <AlertDialogDescription className="text-gray-600 mt-2">
                                   Are you sure you want to remove{" "}
-                                  <strong>{creator.name}</strong> from this
-                                  campaign? This action cannot be undone and
-                                  will permanently delete all associated data.
+                                  <span className="font-bold text-gray-900">
+                                    {creator.name}
+                                  </span>
+                                  ? This action cannot be undone and will
+                                  permanently delete all associated data.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogFooter className="mt-6 gap-3">
+                                <AlertDialogCancel className="rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 border-2 border-gray-200 font-semibold transition-all hover:-translate-y-0.5">
+                                  Cancel
+                                </AlertDialogCancel>
                                 <AlertDialogAction
                                   onClick={() => handleRemoveCreator(creator)}
-                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                  className="rounded-xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold shadow-[2px_2px_0px_0px_#991b1b] hover:shadow-[3px_3px_0px_0px_#991b1b] transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                   Remove Creator
                                 </AlertDialogAction>
