@@ -274,7 +274,6 @@ const CampaignLifecycleProgress: React.FC<CampaignLifecycleProgressProps> = ({
               <span className="ml-2 inline-block">
                 <StatusTag status={creatorState.currentStage} />
               </span>
-              {creatorState.contract?.status}
             </div>
           </div>
         </CardHeader>

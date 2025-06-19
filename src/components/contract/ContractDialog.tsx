@@ -267,7 +267,7 @@ const ContractDialog = ({
               </div>
 
               <div>
-                <Label htmlFor="agreedBudget">Agreed Budget</Label>
+                <Label htmlFor="agreedBudget">Campaigned Assigned Budget</Label>
                 <Input
                   id="agreedBudget"
                   value={contractData.agreedBudget}
