@@ -141,7 +141,8 @@ const ContractDialog = ({
 
         // Close the dialog after a short delay to allow the user to see the success message
 
-        setShowContractView(false);
+        setOpen(false);
+        setShowContractView(true);
       }
 
       toast.success("Contract sent successfully", {
