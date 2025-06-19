@@ -8,7 +8,7 @@ import { companyApi } from "@/services/companyApi";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Globe, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import { toast } from "@/hooks/use-toast";
 
 interface AnalysisResult {
   brandName: string;
@@ -87,10 +87,10 @@ const BrandProfile = () => {
       return response;
     },
     onSuccess: () => {
-      toast.success("Brand profile saved successfully!");
+      toast({ title: "Brand profile saved successfully!", variant: "default" });
     },
     onError: (error) => {
-      toast.error("Failed to save brand profile");
+      toast({ title: "Failed to save brand profile", variant: "destructive" });
       console.error("Save error:", error);
     },
   });
@@ -107,7 +107,7 @@ const BrandProfile = () => {
         industry: analysisData.industry || prev.industry,
         targetAudience: analysisData.targetAudience || prev.targetAudience,
       }));
-      toast.success("Website analysis completed!");
+      toast({ title: "Website analysis completed!", variant: "default" });
     }
   }, [analysisData]);
 
@@ -122,33 +122,28 @@ const BrandProfile = () => {
 
   const handleAnalyzeWebsite = async () => {
     if (!website) {
-      toast.error("Please enter a website URL");
+      toast({ title: "Please enter a website URL", variant: "destructive" });
       return;
     }
     setIsAnalyzing(true);
     try {
       await analyzeWebsite();
     } catch (error) {
-      toast.error("Failed to analyze website");
+      toast({ title: "Failed to analyze website", variant: "destructive" });
     } finally {
       setIsAnalyzing(false);
     }
   };
 
   const handleSaveProfile = async () => {
-    try {
-      // Save to company database
-      saveBrandMutation.mutate({
-        name: formData.brandName,
-        website: formData.websiteUrl,
-        description: formData.description,
-        category: formData.industry,
-        phone: formData.phone,
-      });
-    } catch (error) {
-      toast.error("An error occurred while saving");
-      console.error("Save error:", error);
-    }
+    // Save to company database
+    saveBrandMutation.mutate({
+      name: formData.brandName,
+      website: formData.websiteUrl,
+      description: formData.description,
+      category: formData.industry,
+      phone: formData.phone,
+    });
   };
 
   return (

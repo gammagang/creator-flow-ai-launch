@@ -277,17 +277,37 @@ const CreatorDiscovery = () => {
           )}
           {/* Error State */}
           {creatorsError && (
-            <div className="flex flex-col items-center justify-center py-12">
-              <p className="text-red-600 mb-4 text-center">
-                Error loading creators. Please try again.
-              </p>
-              <button
-                onClick={() => window.location.reload()}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              >
-                Retry
-              </button>
-            </div>
+            <Card className="rounded-3xl border-2 border-red-200 bg-white/90 backdrop-blur-sm shadow-[4px_4px_0px_0px_#000] max-w-md mx-auto my-8">
+              <CardHeader className="flex flex-col items-center">
+                <div className="bg-red-100 rounded-full p-3 mb-2">
+                  <svg
+                    className="w-8 h-8 text-red-500"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 9v2m0 4h.01M21 12A9 9 0 11 3 12a9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+                <CardTitle className="text-xl font-bold text-red-700 mb-2">
+                  Error loading creators
+                </CardTitle>
+                <p className="text-gray-600 text-center mb-4">
+                  Something went wrong while loading creators. Please try again.
+                </p>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg font-semibold shadow hover:bg-red-700 transition-colors"
+                >
+                  Retry
+                </button>
+              </CardHeader>
+            </Card>
           )}
           {/* Creator Results and Load More */}
           {!isLoadingCreators && !creatorsError && creators.length > 0 && (
