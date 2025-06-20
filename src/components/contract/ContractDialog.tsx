@@ -14,7 +14,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { apiService } from "@/services/api";
 import { Loader2, CheckCircle2, Copy, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
-import ContractViewDialog from "./ContractViewDialog";
 import { Contract } from "@/services/campaignCreatorApi";
 
 /**
@@ -103,7 +102,6 @@ const ContractDialog = ({
     additionalTerms: "Brand approval required before posting",
   });
   const [contractDetails, setContractDetails] = useState<Contract | null>(null);
-  const [showContractView, setShowContractView] = useState(false);
 
   /**
    * Handles the submission of contract data to the API
@@ -138,11 +136,9 @@ const ContractDialog = ({
 
         // Call the onContractSent callback with the contract data if provided
         if (onContractSent && contractData) onContractSent(contractData);
-
-        // Close the dialog after a short delay to allow the user to see the success message
-
-        setOpen(false);
-        setShowContractView(true);
+        
+        // Stay in the same dialog instead of closing and opening a new one
+        setSubmissionData(submissionData as any);
       }
 
       toast.success("Contract sent successfully", {
@@ -207,11 +203,12 @@ const ContractDialog = ({
         <DialogTrigger asChild>{trigger}</DialogTrigger>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Generate Contract</DialogTitle>
+            {!submissionData && <DialogTitle>Generate Contract</DialogTitle>}
           </DialogHeader>
           {submissionData ? (
             <>
-              <div className="flex justify-start mb-4">
+              <div className="flex justify-between mb-4 items-center">
+                <DialogTitle className="text-xl font-bold">Contract Details</DialogTitle>
                 <Button
                   variant="outline"
                   size="sm"
@@ -221,7 +218,7 @@ const ContractDialog = ({
                 </Button>
               </div>
               <div className="space-y-6">
-                <div className="text-center">
+                <div className="text-center mb-6">
                   <div className="bg-green-100 text-green-700 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                     <CheckCircle2 className="w-8 h-8" />
                   </div>
@@ -232,15 +229,59 @@ const ContractDialog = ({
                     The contract has been sent to all parties for signing.
                   </p>
                 </div>
-
-                <div className="flex justify-center">
-                  <Button
-                    onClick={() => setShowContractView(true)}
-                    className="bg-blue-600 hover:bg-blue-700"
-                  >
-                    View Contract Details
-                  </Button>
-                </div>
+                
+                {contractDetails && (
+                  <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <div className="grid grid-cols-2 gap-y-4 text-sm">
+                      <div>
+                        <p className="text-gray-500">Contract ID</p>
+                        <p className="font-medium">{contractDetails.id}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500">Status</p>
+                        <p className="font-medium">{contractDetails.status || "Contract Created"}</p>
+                      </div>
+                      
+                      <div className="col-span-2 mt-2">
+                        <h4 className="font-medium mb-2">Recipients</h4>
+                        {submissionData.submitters?.map((submitter, index) => (
+                          <div key={submitter.id} className="mb-4 p-3 bg-white rounded border border-gray-200">
+                            <div className="flex justify-between items-center mb-2">
+                              <div>
+                                <p className="font-medium">{submitter.name}</p>
+                                <p className="text-sm text-gray-500">{submitter.email}</p>
+                              </div>
+                              <div className="bg-amber-100 text-amber-700 px-2 py-1 rounded-full text-xs">
+                                {submitter.role?.toUpperCase() || "RECIPIENT"}
+                              </div>
+                            </div>
+                            <div className="mt-2">
+                              <p className="text-xs text-gray-500">Signing Link:</p>
+                              <div className="flex items-center mt-1">
+                                <a 
+                                  href={submitter.embed_src}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 text-sm truncate flex-1"
+                                >
+                                  {submitter.embed_src}
+                                  <ExternalLink className="inline-block ml-1 w-3 h-3" />
+                                </a>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => copyToClipboard(submitter.embed_src)}
+                                >
+                                  <Copy className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </>
           ) : (
@@ -329,13 +370,6 @@ const ContractDialog = ({
           )}
         </DialogContent>
       </Dialog>
-
-      {/* Contract view dialog */}
-      <ContractViewDialog
-        isOpen={showContractView}
-        onClose={() => setShowContractView(false)}
-        contract={contractDetails}
-      />
     </>
   );
 };

@@ -552,7 +552,7 @@ const LandingAlt = () => {
           </div>
           <div className="border-t border-gray-700 mt-8 pt-8 text-center">
             <p className="text-gray-400">
-              &copy; 2024 Flow. All rights reserved.
+              &copy; {new Date().getFullYear()} Flow. All rights reserved.
             </p>
           </div>
         </div>

@@ -508,7 +508,7 @@ const LandingNeat = () => {
               <p className="text-gray-300 leading-relaxed font-medium">
                 Automate your entire influencer marketing workflow with
                 AI-powered platform. Made with{" "}
-                <Heart className="w-4 h-4 inline text-pink-400" /> for creators.
+                <Heart className="w-4 h-4 inline text-pink-400" /> for creators and brands.
               </p>
             </div>
             <div>
@@ -625,7 +625,7 @@ const LandingNeat = () => {
           </div>
           <div className="border-t border-gray-700 mt-12 pt-8 text-center">
             <p className="text-gray-400 font-medium">
-              &copy; 2024 Flow. All rights reserved. Built with{" "}
+              &copy; {new Date().getFullYear()} Flow. All rights reserved. Built with{" "}
               <Heart className="w-4 h-4 inline text-pink-400" /> and lots of ☕
             </p>
           </div>
