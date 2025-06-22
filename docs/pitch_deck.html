@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>Flow AI Pitch Deck</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.0/reset.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.0/reveal.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.0/theme/white.min.css"
+      id="theme"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.0/plugin/highlight/monokai.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+
+    <style>
+      /* Custom styles for the pitch deck */
+      .reveal {
+        background: linear-gradient(to bottom right, #fffbeb, #fff7ed, #fefce8);
+      }
+
+      .reveal .slides section h1,
+      .reveal .slides section h2,
+      .reveal .slides section h3 {
+        color: #111827; /* gray-900 */
+        font-family: sans-serif;
+        font-weight: bold;
+        letter-spacing: -0.025em; /* tracking-tight */
+      }
+
+      .reveal .slides section h1 {
+        font-size: 2.8em;
+        text-transform: uppercase;
+      }
+
+      .reveal .slides section h2 {
+        font-size: 2em;
+      }
+
+      .reveal .slides section h3 {
+        font-size: 1.1em;
+        color: #4b5563; /* gray-600 */
+      }
+
+      .reveal .slides section p,
+      .reveal .slides section ul li {
+        color: #374151; /* gray-700 */
+        font-size: 0.85em;
+        line-height: 1.4;
+      }
+
+      .reveal .slides section ul {
+        list-style-type: none; /* Remove default bullet points */
+        padding-left: 0;
+      }
+
+      .reveal .slides section ul li:before {
+        content: "- "; /* Custom bullet point */
+        margin-right: 10px;
+        color: #f97316; /* orange-500 */
+      }
+
+      .reveal .slides section.title-slide h1 {
+        font-size: 3.2em;
+        margin-bottom: 0.2em;
+      }
+
+      .reveal .slides section.title-slide .logo {
+        max-width: 150px;
+        margin-bottom: 0.8em;
+      }
+
+      .reveal .slides section.title-slide h2 {
+        font-size: 1.1em;
+        margin-top: 0;
+        color: #4b5563; /* gray-600 */
+        font-weight: 500;
+      }
+
+      .reveal .slides section.title-slide .tagline {
+        font-size: 1em;
+        color: #ea580c; /* orange-600 */
+        margin-top: 1.2em;
+        padding: 8px 16px;
+        border: 2px solid #fb923c; /* orange-400 */
+        border-radius: 12px;
+        display: inline-block;
+        background-color: rgba(255, 255, 255, 0.6);
+        font-weight: 600;
+      }
+
+      /* Grids for cards */
+      .reveal .slides section .problem-grid,
+      .reveal .slides section .solution-grid,
+      .reveal .slides section .traction-grid,
+      .reveal .slides section .team-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1em;
+        margin-top: 1.5em;
+      }
+
+      /* Special layout for traction (2 cards) */
+      .reveal .slides section .traction-grid {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+        gap: 2em;
+        justify-content: center;
+      }
+
+      /* Special layout for problems (3 cards) */
+      .reveal .slides section .problem-grid {
+        grid-template-columns: repeat(3, 1fr);
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        gap: 1.5em;
+        justify-content: center;
+      }
+
+      /* Special layout for solution (3 cards) */
+      .reveal .slides section .solution-grid {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        max-width: 800px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        gap: 1.5em !important;
+        width: 100% !important;
+        justify-content: center !important;
+      }
+
+      /* Special layout for team (3 cards) */
+      .reveal .slides section .team-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      /* Card styles */
+      .reveal .slides section .visual-card,
+      .reveal .slides section .team-member {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        padding: 1.2em;
+        border-radius: 20px;
+        text-align: center;
+        border: 2px solid #e5e7eb; /* border-gray-200 */
+        box-shadow: 4px 4px 0px 0px #000;
+        transition: all 0.2s ease-in-out;
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .reveal .slides section .visual-card:hover,
+      .reveal .slides section .team-member:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 6px 6px 0px 0px #000;
+      }
+
+      .reveal .slides section .visual-card i,
+      .reveal .slides section .team-member i {
+        font-size: 1.6em;
+        color: #f97316; /* orange-500 */
+        margin-bottom: 0.2em;
+        display: block;
+      }
+
+      .reveal .slides section .visual-card h3,
+      .reveal .slides section .team-member h3 {
+        color: #1f2937; /* gray-800 */
+        font-size: 1em;
+        font-weight: 600;
+        margin-bottom: 0.2em;
+        word-wrap: break-word;
+        hyphens: auto;
+      }
+
+      .reveal .slides section .visual-card p,
+      .reveal .slides section .team-member p {
+        font-size: 0.85em;
+        line-height: 1.3;
+        color: #4b5563; /* gray-600 */
+        margin: 0;
+      }
+
+      .reveal .slides section .metric {
+        font-size: 1.4em;
+        font-weight: bold;
+        color: #111827; /* gray-900 */
+        display: block;
+        margin-bottom: 0.2em;
+      }
+
+      .reveal .slides section .team-member p strong {
+        color: #f97316; /* orange-500 */
+        font-weight: 600;
+      }
+
+      /* Specific adjustments for solutions slide */
+      .reveal .slides section .solution-grid .visual-card h3 {
+        font-size: 0.95em;
+        line-height: 1.2;
+      }
+
+      /* Specific adjustments for solution cards */
+      .reveal .slides section .solution-grid .visual-card {
+        aspect-ratio: 1;
+        width: 100%;
+        max-width: 220px;
+        margin: 0 auto;
+        padding: 1.2em;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .reveal .slides section .solution-grid .visual-card i {
+        font-size: 1.8em;
+        margin-bottom: 0.3em;
+        flex-shrink: 0;
+      }
+
+      .reveal .slides section .solution-grid .visual-card h3 {
+        font-size: 0.85em;
+        margin: 0;
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1.2;
+        text-align: center;
+      }
+
+      /* Specific adjustments for problems slide */
+      .reveal .slides section .problem-grid .visual-card {
+        aspect-ratio: 1;
+        width: 100%;
+        max-width: 250px;
+        margin: 0 auto;
+        padding: 1.2em;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .reveal .slides section .problem-grid .visual-card i {
+        font-size: 1.8em;
+        margin-bottom: 0.3em;
+        flex-shrink: 0;
+      }
+
+      .reveal .slides section .problem-grid .visual-card h3 {
+        font-size: 0.9em;
+        margin: 0;
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1.2;
+        text-align: center;
+      }
+
+      /* Specific adjustments for traction slide */
+      .reveal .slides section .traction-grid .visual-card {
+        aspect-ratio: 1;
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+        padding: 1.2em;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .reveal .slides section .traction-grid .visual-card i {
+        font-size: 1.8em;
+        margin-bottom: 0.3em;
+        flex-shrink: 0;
+      }
+
+      .reveal .slides section .traction-grid .metric {
+        font-size: 1.5em;
+        margin-bottom: 0.2em;
+      }
+
+      .reveal .slides section .traction-grid .visual-card h3 {
+        font-size: 0.9em;
+        margin: 0;
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1.2;
+        text-align: center;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .reveal .slides section h1 {
+          font-size: 2.2em;
+        }
+        .reveal .slides section h2 {
+          font-size: 1.6em;
+        }
+        .reveal .slides section p,
+        .reveal .slides section ul li {
+          font-size: 0.9em;
+        }
+        .reveal .slides section.title-slide .tagline {
+          font-size: 0.9em;
+          padding: 6px 12px;
+        }
+        .reveal .slides section .problem-grid,
+        .reveal .slides section .solution-grid,
+        .reveal .slides section .traction-grid,
+        .reveal .slides section .team-grid {
+          grid-template-columns: 1fr;
+          gap: 1.2em;
+        }
+        .reveal .slides section .visual-card,
+        .reveal .slides section .team-member {
+          padding: 1.2em 0.8em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section class="title-slide">
+          <img
+            src="https://i.ibb.co/L8g3Vz7/logo.png"
+            alt="Flow AI"
+            class="logo"
+          />
+          <h2>Smart discovery. Seamless deals. Powered by AI</h2>
+          <div class="tagline">From Discovery to Deal, Effortlessly</div>
+        </section>
+
+        <section>
+          <h2>Traction</h2>
+          <div class="traction-grid">
+            <div class="visual-card">
+              <i class="fas fa-users"></i>
+              <span class="metric">25+</span>
+              <h3>people on the waiting list</h3>
+            </div>
+            <div class="visual-card">
+              <i class="fas fa-file-signature"></i>
+              <span class="metric">5+</span>
+              <h3>Letters of Intent</h3>
+            </div>
+          </div>
+          <aside class="notes">
+            15-20 seconds. Provide concrete numbers and validation points to
+            build credibility.
+          </aside>
+        </section>
+
+        <section>
+          <h2>Problems</h2>
+          <div class="problem-grid">
+            <div class="visual-card">
+              <i class="fas fa-search"></i>
+              <h3>Discovery Challenge</h3>
+            </div>
+            <div class="visual-card">
+              <i class="fas fa-eye-slash"></i>
+              <h3>Invisible Talent</h3>
+            </div>
+            <div class="visual-card">
+              <i class="fas fa-handshake"></i>
+              <h3>Manual Process</h3>
+            </div>
+          </div>
+          <aside class="notes">
+            Spend 10-15 seconds on this. Emphasize the core pain points for both
+            brands and creators.
+          </aside>
+        </section>
+
+        <section>
+          <h2>Solution</h2>
+          <div class="solution-grid">
+            <div class="visual-card">
+              <i class="fas fa-robot"></i>
+              <h3>AI-Powered Discovery</h3>
+            </div>
+            <div class="visual-card">
+              <i class="fas fa-microphone"></i>
+              <h3>Voice AI Negotiations</h3>
+            </div>
+            <div class="visual-card">
+              <i class="fas fa-chart-line"></i>
+              <h3>Campaign Management</h3>
+            </div>
+          </div>
+          <aside class="notes">
+            Spend 20-30 seconds. Clearly articulate how each solution directly
+            addresses a problem.
+          </aside>
+        </section>
+
+        <section>
+          <h2>Buildathon Journey</h2>
+          <ul>
+            <li>User interviews conducted: validated real pain points.</li>
+            <li>
+              Built MVP with AI discovery + voice negotiation + AI chat manager.
+            </li>
+            <li>Early partnerships lined up with agencies.</li>
+          </ul>
+          <aside class="notes">
+            20-30 seconds. Share your process and how you arrived at the
+            solution.
+          </aside>
+        </section>
+
+        <section>
+          <h2>Team</h2>
+          <div class="team-grid">
+            <div class="team-member">
+              <i class="fas fa-code"></i>
+              <h3>Vignesh & Madhu</h3>
+              <p><strong>Tech & Product</strong></p>
+            </div>
+            <div class="team-member">
+              <i class="fas fa-briefcase"></i>
+              <h3>Atharva</h3>
+              <p><strong>Business & PM</strong></p>
+            </div>
+            <div class="team-member">
+              <i class="fas fa-rocket"></i>
+              <h3>Mohnish</h3>
+              <p><strong>Growth & Strategy</strong></p>
+            </div>
+          </div>
+          <aside class="notes">
+            30 seconds. Highlight each team member's relevant expertise and
+            contribution.
+          </aside>
+        </section>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.0/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.0/plugin/markdown/markdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.0/plugin/highlight/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.0/plugin/notes/notes.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.0/plugin/zoom/zoom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.0/plugin/print-pdf/print-pdf.min.js"></script>
+    <script>
+      // More info about initialization & config:
+      // - https://revealjs.com/initialization/
+      // - https://revealjs.com/config/
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        transition: "slide", // none/fade/slide/convex/concave/zoom
+        backgroundTransition: "fade", // none/fade/slide/convex/concave/zoom
+
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [
+          RevealMarkdown,
+          RevealHighlight,
+          RevealNotes,
+          RevealZoom,
+          // RevealPrint is typically not needed here, as the print-pdf.min.js script
+          // automatically registers itself with Reveal.js when loaded.
+        ],
+        width: 960,
+        height: 700,
+        // Configure slide number
+        slideNumber: "h/v",
+      });
+    </script>
+  </body>
+</html>
