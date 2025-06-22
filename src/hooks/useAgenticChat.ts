@@ -2,6 +2,7 @@ import { chatAPI } from "@/services/chatApi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ToolCall {
   id: string;
@@ -21,35 +22,49 @@ export interface Message {
 
 export function useAgenticChat() {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
 
-  // Load user's conversation history (no conversation ID needed)
+  // Load user's conversation history (user-specific)
   const {
     data: conversationHistory,
     isLoading: isLoadingHistory,
     error: historyError,
     refetch: refetchHistory,
   } = useQuery({
-    queryKey: ["userConversation"],
+    queryKey: ["userConversation", user?.id],
     queryFn: () => chatAPI.getUserConversation(),
     retry: 2,
     retryDelay: 1000,
     staleTime: 30 * 1000, // Consider data fresh for 30 seconds
     gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
+    enabled: !!user?.id, // Only run query when user is authenticated
   });
 
-  // Effect to load conversation history into messages
+  // Combined effect to handle user changes and conversation history loading
   useEffect(() => {
-    console.log("History effect triggered:", {
+    console.log("Combined user/history effect triggered:", {
+      userId: user?.id,
       hasHistory: !!conversationHistory?.data?.messages,
       isLoadingHistory,
       historyError,
       messagesCount: conversationHistory?.data?.messages?.length,
     });
 
-    // Wait for loading to complete before processing
+    // If no user, show sign-in message
+    if (!user?.id) {
+      setMessages([
+        { role: "assistant", content: "Please sign in to start chatting." },
+      ]);
+      return;
+    } // If user exists but data is still loading, show default message (don't override if already set)
     if (isLoadingHistory) {
+      setMessages((prev) =>
+        prev.length === 0
+          ? [{ role: "assistant", content: "Hello! How can I help you today?" }]
+          : prev
+      );
       return;
     }
 
@@ -143,27 +158,36 @@ export function useAgenticChat() {
           i++;
         }
       }
-
       console.log("Setting messages from history:", processedMessages.length);
       setMessages(processedMessages);
-    } else if (!historyError) {
-      // No conversation history found, set default message
-      console.log("No conversation history found, setting default message");
-      setMessages([
-        { role: "assistant", content: "Hello! How can I help you today?" },
-      ]);
+    } else if (!historyError && !isLoadingHistory) {
+      // No conversation history found and not loading, keep default message
+      console.log("No conversation history found, keeping default message");
+      // Only set default if messages are empty to avoid overriding user change effect
+      setMessages((prev) =>
+        prev.length === 0
+          ? [{ role: "assistant", content: "Hello! How can I help you today?" }]
+          : prev
+      );
     }
-  }, [conversationHistory, isLoadingHistory, historyError]);
+  }, [conversationHistory, isLoadingHistory, historyError, user?.id]);
 
   // Debug effect to monitor component mount/unmount and conversation state
   useEffect(() => {
     console.log("useAgenticChat hook mounted/updated:", {
+      userId: user?.id,
       messagesCount: messages.length,
       isLoadingHistory,
       hasHistoryData: !!conversationHistory?.data?.messages,
       historyError: !!historyError,
     });
-  }, [messages.length, isLoadingHistory, conversationHistory, historyError]);
+  }, [
+    messages.length,
+    isLoadingHistory,
+    conversationHistory,
+    historyError,
+    user?.id,
+  ]);
 
   const sendMessageMutation = useMutation({
     mutationFn: chatAPI.sendMessage,
@@ -210,11 +234,9 @@ export function useAgenticChat() {
         newMessages.push({ role: "assistant", content: message });
       }
 
-      setMessages((prev) => [...prev, ...newMessages]);
-
-      // Invalidate and refetch conversation history to stay in sync
+      setMessages((prev) => [...prev, ...newMessages]); // Invalidate and refetch conversation history to stay in sync
       queryClient.invalidateQueries({
-        queryKey: ["userConversation"],
+        queryKey: ["userConversation", user?.id],
       });
     },
     onError: (error: unknown) => {
@@ -241,10 +263,9 @@ export function useAgenticChat() {
   const clearConversationMutation = useMutation({
     mutationFn: chatAPI.clearUserConversation,
     onSuccess: () => {
-      console.log("User conversation cleared on backend successfully");
-      // Invalidate and refetch to get fresh state
+      console.log("User conversation cleared on backend successfully"); // Invalidate and refetch to get fresh state
       queryClient.invalidateQueries({
-        queryKey: ["userConversation"],
+        queryKey: ["userConversation", user?.id],
       });
     },
     onError: (error: unknown) => {
